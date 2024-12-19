@@ -40,7 +40,7 @@ export default async function Header(): Promise<JSX.Element> {
 
     const service = new PostService()
     const pt = await service.List(1, 0, 4, [], true)
-    var content = pt && pt.length > 0 && pt[0] ? pt[0].content : null
+    var content = pt && pt.posts && pt.posts.length > 0 && pt.posts[0] ? pt.posts[0].content : null
 
     const editor = createHeadlessEditor({
         namespace: 'Readonly-editor',

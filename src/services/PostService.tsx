@@ -1,4 +1,5 @@
 import PostModel from "~/models/PostModel";
+import PostModelResponse from "~/models/PostModelResponse";
 
 export default class PostService {
 
@@ -16,7 +17,7 @@ export default class PostService {
     return data;
   }
 
-  async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean): Promise<PostModel[]> {
+  async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean): Promise<PostModelResponse> {
 
     var url = "http://localhost:5079/post?limit="+ limit + "&offset=" + offset;
 

@@ -17,9 +17,10 @@ export default function RootLayout({
     <html data-theme="lofi" lang="en" className={`${GeistSans.variable}`}>
       <body>
       
-        <main className=" bg-white text-black ">
-        <VerticalMenu />
-          <div className="flex flex-col items-center justify-center overflow-x-scroll">
+      <VerticalMenu />
+        <main className=" bg-white text-black overflow-scroll h-auto">
+        
+          <div className="flex flex-col items-center justify-center">
 
             {children}
           </div>

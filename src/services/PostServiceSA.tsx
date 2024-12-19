@@ -18,7 +18,7 @@ export default class PostServiceSA {
     return data;
   }
 
-  async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean, includeTotalElements?: boolean): Promise<PostModelResponse> {
+  async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean): Promise<PostModelResponse> {
 
     var url = "http://localhost:5079/post?limit=" + limit + "&offset=" + offset;
 
@@ -38,24 +38,17 @@ export default class PostServiceSA {
 
     var response: Response | undefined = undefined;
 
-    response = await fetch(url, {
-      headers: {
-        "x-include-total-elements": "true",
-      }
-    });
+    response = await fetch(url);
 
     const data = await response.json();
-    const totalElement = response.headers.get("x-total-elements")
-
-    var totalElementsNum = totalElement ? Number(totalElement) : 0
-
+    
     if (data.error) {
       console.error(data.error)
       throw new Error("Error while loading data")
     }
 
     
-    return {posts: data, totalElements: totalElementsNum};
+    return data;
   }
 
   async Save(post: PostModel): Promise<PostModel> {

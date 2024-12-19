@@ -15,9 +15,9 @@ export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Elem
 
     const [posts, setPosts] = useState<PostModel[]>([])
     const [offset, setOffset] = useState(3);
-    const [hasMoreData, setHasMoreData] = useState(initialPosts.posts.length != 0 && initialPosts.totalElements > 6);
+    const [hasMoreData, setHasMoreData] = useState(initialPosts.posts.length != 0 && initialPosts.pagination.totalCount > 6);
     const [selectedTags, setSelectedTags] = useState<string[]>(tags)
-    const [totalElements, setTotalElements] = useState(initialPosts.totalElements)
+    const [totalElements, setTotalElements] = useState(initialPosts.pagination.totalCount)
     const router = useRouter()
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Elem
 
         setPosts((prevPosts) => [...prevPosts, ...apiPosts.posts]);
         setOffset((prevOffset) => prevOffset + 6);
-        setTotalElements(apiPosts.totalElements)
+        setTotalElements(apiPosts.pagination.totalCount)
 
         if (apiPosts.posts.length == 0 || initialPostsCount + apiPosts.posts.length == totalElements) {
             setHasMoreData(false);

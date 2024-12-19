@@ -43,7 +43,7 @@ export default async function PostServiceCodeSnippetTransformSA(limit: number, o
     theme: EditorCodePreviewTheme
   });
 
-    var posts = await service.List(limit, offset, typeId, tags, published, true);
+    var posts = await service.List(limit, offset, typeId, tags, published);
 
     posts.posts.forEach(c => {
 
