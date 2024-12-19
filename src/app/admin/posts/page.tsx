@@ -1,6 +1,7 @@
 'use client'
 
 import { stat } from 'fs';
+import { pages } from 'next/dist/build/templates/app-page';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import PostRow from "~/components/admin/Row/PostRow";
@@ -53,9 +54,15 @@ export default function Posts() {
 
         const offset = state.page == 1 ? 0 : (state.pageSize * ( state.page - ( state.page == 1 ? 0 : 1)))
 
-        console.log(offset)
-
         const data = (await postService.List(state.pageSize, offset ));
+        setPostResponse(data)
+    }
+
+    async function loadDataWithParams(_tags, _state) {
+
+        const offset = _state.page == 1 ? 0 : (_state.pageSize * ( _state.page - ( _state.page == 1 ? 0 : 1)))
+
+        const data = (await postService.List(_state.pageSize, offset ));
         setPostResponse(data)
     }
 
@@ -95,8 +102,9 @@ export default function Posts() {
     function handlePageSizeChanged(newPageSize: number) {
 
         if (state.pageSize == newPageSize) return
-        const newState = { ...state, pageSize: newPageSize }
+        const newState = { ...state, pageSize: newPageSize, page: 1  }
         setState({ ...newState })
+        loadDataWithParams([], newState)
     }
 
     function handlePageChanged(newPage: number) {
@@ -104,6 +112,7 @@ export default function Posts() {
         if (state.pageSize == newPage) return
         const newState = { ...state, page: newPage }
         setState({ ...newState })
+        loadDataWithParams([], newState)
     }
 
     useEffect(() => {
