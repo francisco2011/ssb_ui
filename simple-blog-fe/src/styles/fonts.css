@@ -1,0 +1,47 @@
+@font-face {
+    font-family: "Anton";
+    src: url("../../public/fonts/Anton-Regular.ttf");
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "Bangers";
+    src: url("../../public/fonts/Bangers-Regular.ttf");
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "Jaro";
+    src: url("../../public/fonts/Jaro-Regular.ttf");
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "Kanit";
+    src: url("../../public/fonts/Kanit-Regular.ttf");
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "Nova Square";
+    src: url("../../public/fonts/NovaSquare-Regular.ttf");
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "Rubik Burned";
+    src: url("../../public/fonts/RubikBurned-Regular.ttf");
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "Share Tech Mono";
+    src: url("../../public/fonts/ShareTechMono-Regular.ttf");
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Geist";
+    src: url("../../public/fonts/Geist-Regular.ttf");
+    font-style: normal;
+  }
