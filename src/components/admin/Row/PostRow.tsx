@@ -10,6 +10,7 @@ export default function PostRow({post, onEditClickCallback}: {post: PostModel, o
     return (
 
         <tr className="bg-gray-100">
+        <td className="content-center border px-2 py-2">{post.id}</td>  
         <td className="content-center border px-2 py-2">{post.title}</td>
         <td className="content-center border px-2 py-2 line-clamp-2">{post.description}</td>
         <td className="content-center border px-2 py-2">{post.type?.name?? ''}</td>
