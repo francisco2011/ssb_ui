@@ -1,18 +1,16 @@
 'use client'
 
-import { stat } from 'fs';
-import { pages } from 'next/dist/build/templates/app-page';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from "react";
 import PostRow from "~/components/admin/Row/PostRow";
 import CustomPaginator from '~/components/pagination/CustomPaginator';
 import PostModelResponse from '~/models/PostModelResponse';
 import PostTypeModel from '~/models/PostTypeModel';
-import TagModel from '~/models/TagModel';
 import PostService from "~/services/PostService";
 import PostTypeService from '~/services/PostTypeService';
 import TagService from '~/services/TagService';
-import Select from 'react-select';
+import Select, { SelectInstance } from 'react-select';
+import PostModel from '~/models/PostModel';
 
 type LocalState = {
     selectedTags: string[],
@@ -52,7 +50,9 @@ export default function Posts() {
     const [tags, setTags] = useState<option[]>([])
     const [state, setState] = useState<LocalState>(getEmptyState())
 
-    const selectInputRef = useRef(null);
+    const [isClient, setIsClient] = useState(false)
+
+    const selectInputRef = useRef<SelectInstance<option | null>>(null)
     const router = useRouter()
 
     const postService = new PostService();
@@ -121,7 +121,7 @@ export default function Posts() {
         loadDataWithParams(newState)
     }
 
-    function  handlePageChanged(newPage: number) {
+    function handlePageChanged(newPage: number) {
 
         if (state.pageSize == newPage) return
         const newState = { ...state, page: newPage }
@@ -131,9 +131,15 @@ export default function Posts() {
 
     useEffect(() => {
 
-        loadData();
-        loadPostTypes()
-        loadTags()
+        const load = async () => {
+            await loadData();
+            await loadPostTypes()
+            await loadTags()
+        }
+
+        load()
+
+        setIsClient(true)
 
     }, []);
 
@@ -142,7 +148,7 @@ export default function Posts() {
         const emptyState = getEmptyState()
         setState(emptyState)
 
-        if(selectInputRef?.current)  selectInputRef.current.clearValue()
+        if (selectInputRef?.current) selectInputRef.current.clearValue()
         await loadDataWithParams(emptyState)
     }
 
@@ -152,6 +158,23 @@ export default function Posts() {
 
         setState(newState)
         await loadDataWithParams(newState)
+    }
+
+    const onNewClicked = async () => {
+        const _post: PostModel = {
+            id: null,
+            title: '',
+            description: '',
+            content: null,
+            tags: [],
+            type: null,
+            contents: [] = [],
+            createdAt: new Date(),
+            isPublished: false
+          };
+  
+          const p = await postService.Save(_post)
+          if(p?.id)await goTo(p.id)
     }
 
     const onTagSelected = (tags: option[]) => {
@@ -191,13 +214,19 @@ export default function Posts() {
 
                     <div className="mr-2 ml-2">
 
-                        <Select
-                            onChange={onTagSelected}
-                            options={tags}
-                            isMulti
-                            ref={selectInputRef}
-                            className='select-bordered size-xs'
-                        />
+                            {
+                                isClient ?                         <Select
+                                onChange={onTagSelected}
+                                options={tags}
+                                isMulti
+                                ref={selectInputRef}
+                                className='size-xs'
+                            /> : null
+                            }
+
+ 
+
+
 
                     </div>
                 </div>
@@ -205,9 +234,12 @@ export default function Posts() {
 
                 <button onClick={() => onClearClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Clear</button>
                 <div className='ml-1'>
-                <button onClick={() => onSearchClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Search</button>
+                    <button onClick={() => onSearchClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Search</button>
                 </div>
-                
+                <div className='ml-1'>
+                    <button onClick={() => onNewClicked()} className="btn btn-sm sm:btn-sm md:btn-md">New</button>
+                </div>
+
             </div>
             <div>
                 <table className="">

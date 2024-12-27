@@ -18,7 +18,7 @@ export default function RootLayout({
       <body>
       
       <VerticalMenu />
-        <main className=" bg-white text-black overflow-scroll h-auto">
+        <main className=" bg-white text-black overflow-h-scroll h-auto w-auto">
         
           <div className="flex flex-col items-center justify-center">
 

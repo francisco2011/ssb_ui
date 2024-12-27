@@ -392,7 +392,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
     }
 
     return (
-        <div className="z-40 sticky top-3 min-w-52 h-10 px-2 py-2 mb-4 space-x-2 flex items-center my-5 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
+        <div className="z-40 sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
             <div className="grid-rows-2">
                 <div className="flex items-stretch space-x-1 mb-1 ">

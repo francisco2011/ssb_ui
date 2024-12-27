@@ -48,7 +48,9 @@ import { ContentType } from '~/models/ContentType';
 import PostPreview from './PostPreview';
 import ContentEditable from '~/components/ContentEditable';
 
-import {$generateHtmlFromNodes} from '@lexical/html';
+import { $generateHtmlFromNodes } from '@lexical/html';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCancel, faCheck, faEye } from '@fortawesome/free-solid-svg-icons';
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -76,7 +78,7 @@ const editorConfig = {
 
 
 
-export default function Editor({ onsaveCallback, post, onChangePublishState }: { onsaveCallback: any, post: PostModel, onChangePublishState: any }) {
+export default function Editor({ onsaveCallback, post, onChangePublishState }: { onsaveCallback: (post: PostModel) => void, post: PostModel, onChangePublishState: () => void }) {
   const [tags, setTags] = useState<string[]>([])
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
@@ -85,7 +87,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const editor = useRef<LexicalEditor>(null);
-  const [current, setCurrentPost] = useState<PostModel | null>(null)
+  const [current, setCurrentPost] = useState<PostModel>(post)
   const [metadata, setMetadata] = useState<ContentMetada>({
     description: '',
     imgModel: null,
@@ -110,7 +112,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
 
   useEffect(() => {
 
-    if (post && post.content && post.content != '' && editor.current) {
+    if (post?.content && post.content != '' && editor.current) {
       const initialEditorState = editor.current.parseEditorState(post.content)
 
       let imageNodes: ImageNode[] = []
@@ -121,14 +123,14 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
       imageNodes.forEach(c => {
         var cntnt = post.contents.find(d => d && d.name && d.name == c.__imgId)
 
-        if (cntnt && cntnt.url) c.__src = cntnt.url
+        if (cntnt?.url) c.__src = cntnt.url
       })
 
       const prevImg = post.contents.find(c => c.type == "preview");
 
       const metadata: ContentMetada = {
         description: post.description,
-        imgModel: prevImg && prevImg.name && prevImg.url ? { name: prevImg.name, src: prevImg.url } : null,
+        imgModel: prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
         title: post.title,
         type: post.type
       }
@@ -194,7 +196,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
     if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
 
     const json = JSON.stringify(editorState.toJSON());
-    
+
     post.content = json as any
     post.title = metadata.title
     post.description = metadata.description
@@ -219,12 +221,43 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
   const onChangePublicationState = () => {
     if (!post) return
     onChangePublishState()
+    current.isPublished = !current.isPublished
+    setCurrentPost({...current})
   }
 
   return (
     <>
 
-      <main className="flex min-h-screen flex-col items-center justify-center  ">
+      <main className="flex min-h-screen flex-col">
+
+        <div className='flex flex-row justify-end'>
+
+          <div className='m-2'>
+            <button className="btn btn-active btn-ghost"><FontAwesomeIcon
+              icon={faEye}
+              className=" w-4 h-4"
+            />Preview</button>
+          </div>
+
+
+
+          <div className='m-2'>
+            {
+              current?.isPublished ? <button className="btn btn-active btn-success">
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  className=" w-4 h-4"
+                />Published</button>
+                : <button className="btn btn-active btn-warning"> <FontAwesomeIcon
+                  icon={faCancel}
+                  className=" w-4 h-4"
+                />Published</button>
+            }
+          </div>
+
+
+        </div>
+
         <div className="grid grid-cols-[5%_70%_25%]">
 
           <div>
@@ -283,7 +316,10 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
             <div />
 
           </div>
-          <div className='w-64 ml-2 mt-8'>
+
+
+          <div className='w-64 ml-2 mt-4'>
+
             <div className=' sticky top-3'>
               <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} />
             </div>

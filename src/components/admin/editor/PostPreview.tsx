@@ -90,15 +90,6 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
 
                 <div className="text-center">Preview</div>
 
-
-                <div className="label">
-                    <span className="label-text">Background img</span>
-                </div>
-                <div className="mr-2 ml-2">
-                    <UploadImageDialogBody alreadyLoadedImgUrl={state.imgModel} postId={postId} contentType={'preview'} imgClassname="h-46 w-48" onImageLoaded={onSetImg} showDialogAction={false} showAlternativeText={false} onClick={() => { }} />
-                </div>
-
-
                 <div className="label">
                     <span className="label-text">Title</span>
                 </div>
@@ -139,6 +130,13 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
                         placeholder="Add some description">
                     </textarea>
 
+                </div>
+
+                <div className="label">
+                    <span className="label-text">Background img</span>
+                </div>
+                <div className="mr-2 ml-2">
+                    <UploadImageDialogBody alreadyLoadedImgUrl={state.imgModel} postId={postId} contentType={'preview'} imgClassname="h-46 w-48" onImageLoaded={onSetImg} showDialogAction={false} showAlternativeText={false} onClick={() => { }} />
                 </div>
             </div>
 

@@ -14,7 +14,7 @@ type Props = {
 export default function VerticalToolbarPlugin({ onsaveCallback, onCleanCallback, onChangePublicationState }: Props) {
 
     return (
-        <div className="menu bg-base-200 mt-8 mr-1 rounded-box sticky top-3">
+        <div className="menu bg-base-200 mt-4 mr-1 rounded-box sticky top-3">
 
             <div className="m-1 tooltip tooltip-left" data-tip="save">
                 <SaveContentModal onSave={onsaveCallback} />
