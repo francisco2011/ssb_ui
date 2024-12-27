@@ -80,6 +80,8 @@ import PostModel from "~/models/PostModel";
 import LineHeightSelect from "./toolbar/LineHeightSelect";
 import TextColorPickerButton from "./toolbar/colorPicker/TextColorPickerButton";
 import BgColorPickerButton from "./toolbar/colorPicker/BgColorPickerButton";
+import FormatCopyButton from "./toolbar/FormatCopyButton";
+import { getFormattingStates } from "~/components/plugins/shared/getFormattingStates";
 
 
 type Props = {
@@ -287,13 +289,28 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
         [editor, selectedElementKey]
     );
 
+    const copyFormat = useCallback(
+        () => {
+
+            editor.update(() => {
+
+                const selection = $getSelection();
+
+                const format = selection?.getNodes()[0].getFormat()
+
+                const formatObJ = getFormattingStates(format)
+
+                debugger
+            })
+
+        }, [editor]
+    )
+
     const applyQuoteText = useCallback(
         (data: boolean) => {
             editor.update(() => {
 
                 const selection = $getSelection();
-
-
                 if ($isRangeSelection(selection)) {
 
                     const element = getElementNode(selection);
@@ -438,6 +455,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
                     <LineHeightSelect callback={applyStyleText} currentEditor={editor} selectedOption={lineHeight} />
                     <TextColorPickerButton callback={applyStyleText} selectedOption={color} />
                     <BgColorPickerButton callback={applyStyleText} selectedOption={bgColor} />
+                    <FormatCopyButton onClickCallback={copyFormat} />
                 </div>
 
             </div>
