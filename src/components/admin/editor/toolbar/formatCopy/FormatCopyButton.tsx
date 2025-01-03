@@ -1,4 +1,4 @@
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faPaintBrush, faPaintRoller } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function FormatCopyButton({ onClickCallback } : {onClickCallback: () => void}) {
@@ -12,7 +12,7 @@ function FormatCopyButton({ onClickCallback } : {onClickCallback: () => void}) {
         }
       >
         <FontAwesomeIcon
-          icon={faCopy}
+          icon={faPaintRoller}
           className="text-white w-3.5 h-3.5"
         />
       </button>

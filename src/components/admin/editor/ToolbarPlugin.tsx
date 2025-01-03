@@ -80,8 +80,10 @@ import PostModel from "~/models/PostModel";
 import LineHeightSelect from "./toolbar/LineHeightSelect";
 import TextColorPickerButton from "./toolbar/colorPicker/TextColorPickerButton";
 import BgColorPickerButton from "./toolbar/colorPicker/BgColorPickerButton";
-import FormatCopyButton from "./toolbar/FormatCopyButton";
+import FormatCopyButton from "./toolbar/formatCopy/FormatCopyButton";
 import { getFormattingStates } from "~/components/plugins/shared/getFormattingStates";
+import getSelectionFormat from "./toolbar/formatCopy/getSelectionFormat";
+import FormatContainer from "./toolbar/formatCopy/FormatContainer";
 
 
 type Props = {
@@ -119,10 +121,10 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
     const [isLink, setIsLink] = useState<boolean>(false);
     const [color, setColor] = useState<string>(defaultColor);
     const [bgColor, setBgColor] = useState<string>(defaultBgColor);
-
     const [canUndo, setCanUndo] = useState(true);
     const [canRedo, setCanRedo] = useState(true);
 
+    const [format, setFormat] = useState<FormatContainer | null>(null)
 
     const $updateToolbar = useCallback(() => {
         const selection = $getSelection();
@@ -292,16 +294,9 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
     const copyFormat = useCallback(
         () => {
 
-            editor.update(() => {
+            const format = getSelectionFormat(editor, defaultFontSize, defaultFontFamily, defaultLineHeight, defaultColor, defaultBgColor)
 
-                const selection = $getSelection();
-
-                const format = selection?.getNodes()[0].getFormat()
-
-                const formatObJ = getFormattingStates(format)
-
-                debugger
-            })
+            debugger
 
         }, [editor]
     )
