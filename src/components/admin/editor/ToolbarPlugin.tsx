@@ -1,3 +1,5 @@
+
+'use client'
 import React, { Dispatch, useCallback, useContext, useEffect, useRef, useState } from "react";
 import {
     $getSelection,
@@ -84,6 +86,8 @@ import FormatCopyButton from "./toolbar/formatCopy/FormatCopyButton";
 import { getFormattingStates } from "~/components/plugins/shared/getFormattingStates";
 import getSelectionFormat from "./toolbar/formatCopy/getSelectionFormat";
 import FormatContainer from "./toolbar/formatCopy/FormatContainer";
+import { format } from "path";
+import PasteCopiedFormatButton from "./toolbar/formatCopy/PasteCopiedFomartButton";
 
 
 type Props = {
@@ -124,7 +128,56 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
     const [canUndo, setCanUndo] = useState(true);
     const [canRedo, setCanRedo] = useState(true);
 
-    const [format, setFormat] = useState<FormatContainer | null>(null)
+    const [copiedFormat, setCopiedFormat] = useState<FormatContainer | null>(null)
+
+    const copyFormat = useCallback(
+        () => {
+
+            const format = getSelectionFormat(editor, defaultFontSize, defaultFontFamily, defaultLineHeight, defaultColor, defaultBgColor)
+            setCopiedFormat(format)
+
+        }, [editor]
+    )
+
+    const applyFormat = useCallback(
+        () => {
+            editor.update(() => {
+
+                if(!copiedFormat) return
+                const selection = $getSelection();
+                if ($isRangeSelection(selection)) {
+
+                    if(copiedFormat.IsBold) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+                    if(copiedFormat.IsItalic) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
+                    if(copiedFormat.IsStrikethrough) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+                    if(copiedFormat.IsUnderline) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
+                    if(copiedFormat.IsCode) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
+                    
+                    const styles: Record<string, string> = {}
+                    
+
+                    if(copiedFormat.FontSize) styles['font-size'] = copiedFormat.FontSize
+                    if(copiedFormat.FontColor) styles['color'] = copiedFormat.FontColor
+                    if(copiedFormat.BackgroundColor) styles['background-color'] = copiedFormat.BackgroundColor
+                    if(copiedFormat.FontFamily) styles['font-family'] = copiedFormat.FontFamily
+                    if(copiedFormat.LineHeight) styles['line-height'] = copiedFormat.LineHeight
+                    
+                    if(Object.keys(styles).length > 0) $patchStyleText(selection, styles);
+                    
+                    if(copiedFormat.IsQuote) $wrapNodes(selection, () => $createQuoteNode());
+                    
+                    if(copiedFormat.HeadingType) $wrapNodes(selection, () => $createHeadingNode(copiedFormat.HeadingType));
+                    if(copiedFormat.IsListBulletList) editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+                    if(copiedFormat.IsOrderedList)  editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+                    
+                    setCopiedFormat(null)
+                }
+            },
+                { tag: 'historic' }
+            );
+        },
+        [editor, copiedFormat]
+    );
 
     const $updateToolbar = useCallback(() => {
         const selection = $getSelection();
@@ -291,15 +344,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
         [editor, selectedElementKey]
     );
 
-    const copyFormat = useCallback(
-        () => {
 
-            const format = getSelectionFormat(editor, defaultFontSize, defaultFontFamily, defaultLineHeight, defaultColor, defaultBgColor)
-
-            debugger
-
-        }, [editor]
-    )
 
     const applyQuoteText = useCallback(
         (data: boolean) => {
@@ -450,7 +495,8 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
                     <LineHeightSelect callback={applyStyleText} currentEditor={editor} selectedOption={lineHeight} />
                     <TextColorPickerButton callback={applyStyleText} selectedOption={color} />
                     <BgColorPickerButton callback={applyStyleText} selectedOption={bgColor} />
-                    <FormatCopyButton onClickCallback={copyFormat} />
+                    <FormatCopyButton onClickCallback={copyFormat} isActive={copiedFormat != null} />
+                    <PasteCopiedFormatButton onClickCallback={applyFormat}/>
                 </div>
 
             </div>

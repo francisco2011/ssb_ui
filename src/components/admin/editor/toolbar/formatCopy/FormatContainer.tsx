@@ -1,4 +1,8 @@
-export default class FormatContainer{
+import {
+        HeadingTagType
+} from "@lexical/rich-text";
+
+export default class FormatContainer {
         public IsBold: boolean
         public IsItalic: boolean
         public IsStrikethrough: boolean
@@ -10,15 +14,15 @@ export default class FormatContainer{
 
         //public Style: Map<string, string>;
 
-        public FontSize: string 
+        public FontSize: string
         public FontColor: string
-        public BackgroundColor: string 
+        public BackgroundColor: string
         public FontFamily: string
-        public LineHeight: string 
+        public LineHeight: string
 
         public IsQuote: boolean
-        public HeadingType: string;
+        public HeadingType: HeadingTagType;
         public IsListBulletList: boolean
         public IsOrderedList: boolean
-        
+
 }

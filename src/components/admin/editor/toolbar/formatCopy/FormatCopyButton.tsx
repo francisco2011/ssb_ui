@@ -1,12 +1,15 @@
 import { faCopy, faPaintBrush, faPaintRoller } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import clsx from "clsx";
 
-function FormatCopyButton({ onClickCallback } : {onClickCallback: () => void}) {
+function FormatCopyButton({ onClickCallback, isActive } : {onClickCallback: () => void, isActive: boolean}) {
 
     return(
         <button
-        className=
-                "px-1 bg-gray-400 hover:bg-gray-700 transition-colors duration-100 ease-in"
+        className={clsx(
+          "px-1 hover:bg-gray-600 transition-colors duration-100 ease-in",
+          isActive ? "bg-gray-600" : "bg-gray-400"
+        )}
         onClick={() => 
                 onClickCallback()
         }

@@ -34,7 +34,6 @@ export default function getSelectionFormat(editor: LexicalEditor, defaultFontSiz
 
                 const selection = $getSelection();
                 if ($isRangeSelection(selection)) {
-
                         container.IsBold = selection.hasFormat('bold')
                         container.IsItalic = selection.hasFormat('italic')
                         container.IsUnderline = selection.hasFormat('underline')
