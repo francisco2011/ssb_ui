@@ -15,7 +15,7 @@ function FormatCopyButton({ onClickCallback, isActive } : {onClickCallback: () =
         }
       >
         <FontAwesomeIcon
-          icon={faPaintRoller}
+          icon={faCopy}
           className="text-white w-3.5 h-3.5"
         />
       </button>
