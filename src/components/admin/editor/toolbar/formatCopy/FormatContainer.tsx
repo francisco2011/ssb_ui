@@ -8,11 +8,9 @@ export default class FormatContainer {
         public IsStrikethrough: boolean
         public IsUnderline: boolean
         public IsCode: boolean
-        //public IS_SUBSCRIPT: boolean
-        //public IS_SUPERSCRIPT: boolean
+        public IsSubscript: boolean
+        public IsSuperscript: boolean
         //public IS_HIGHLIGHT: boolean
-
-        //public Style: Map<string, string>;
 
         public FontSize: string
         public FontColor: string
@@ -24,5 +22,5 @@ export default class FormatContainer {
         public HeadingType: HeadingTagType;
         public IsListBulletList: boolean
         public IsOrderedList: boolean
-
+        public Alignment: string
 }

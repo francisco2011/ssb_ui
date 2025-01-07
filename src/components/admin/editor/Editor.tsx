@@ -33,7 +33,7 @@ import FloatingLinkEditorPlugin from '~/components/plugins/LinkPlugin/FloatingLi
 import { CAN_USE_DOM } from '~/components/plugins/shared/canUseDOM';
 import DraggableBlockPlugin from '~/components/plugins/DraggableBlockPlugin/DraggableBlockPlugin';
 import LinkPlugin from '~/components/plugins/LinkPlugin/LinkPlugin';
-import VerticalToolbarPlugin from '~/components/admin/editor/VerticalToolbarPlugin';
+import VerticalToolbarPlugin from '~/components/admin/editor/VerticalToolbar';
 import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin'
@@ -231,15 +231,6 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
       <main className="flex min-h-screen flex-col">
 
         <div className='flex flex-row justify-end'>
-
-          <div className='m-2'>
-            <button className="btn btn-active btn-ghost"><FontAwesomeIcon
-              icon={faEye}
-              className=" w-4 h-4"
-            />Preview</button>
-          </div>
-
-
 
           <div className='m-2'>
             {

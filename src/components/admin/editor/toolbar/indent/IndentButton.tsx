@@ -2,7 +2,7 @@ import { faIndent, faItalic, faOutdent } from "@fortawesome/free-solid-svg-icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, LexicalEditor, OUTDENT_CONTENT_COMMAND } from "lexical";
-import ButtonProps from "./props/IButtonProps";
+import ButtonProps from "../props/IButtonProps";
 
 
 

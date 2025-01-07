@@ -29,7 +29,7 @@ import ClickableLinkPlugin from '~/components/plugins/LinkPlugin/ClickableLinkPl
 import FloatingLinkEditorPlugin from '~/components/plugins/LinkPlugin/FloatingLinkEditorPlugin';
 import { CAN_USE_DOM } from '~/components/plugins/shared/canUseDOM';
 import LinkPlugin from '~/components/plugins/LinkPlugin/LinkPlugin';
-import VerticalToolbarPlugin from '~/components/admin/editor/VerticalToolbarPlugin';
+import VerticalToolbarPlugin from '~/components/admin/editor/VerticalToolbar';
 import PostModel from '~/models/PostModel';
 import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';

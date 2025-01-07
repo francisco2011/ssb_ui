@@ -18,6 +18,7 @@ import {
     COMMAND_PRIORITY_LOW,
     NodeKey,
     $getNodeByKey,
+    $isElementNode,
 } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
@@ -55,10 +56,10 @@ import UnderlineButton from "./toolbar/ButtonUnderline";
 import UndoButton from "./toolbar/UndoButton";
 import RedoButton from "./toolbar/RedoButton";
 import StrikethroughButton from "./toolbar/StrikethroughButton";
-import LeftButton from "./toolbar/LeftButton";
-import RightButton from "./toolbar/RightButton";
-import CenterButton from "./toolbar/CenterButton";
-import JustifyButton from "./toolbar/JustifyButton";
+import LeftButton from "./toolbar/align/LeftButton";
+import RightButton from "./toolbar/align/RightButton";
+import CenterButton from "./toolbar/align/CenterButton";
+import JustifyButton from "./toolbar/align/JustifyButton";
 import FontSizeSelect from "./toolbar/FontSizeSelect";
 import FontFamilySelect from "./toolbar/FontFamilySelect";
 import HeadingSelect from "./toolbar/HeadingSelect";
@@ -76,8 +77,8 @@ import { getSelectedNode } from "~/components/plugins/shared/getSelectedNode";
 import FloatingLinkEditorPlugin from "~/components/plugins/LinkPlugin/FloatingLinkEditorPlugin";
 import ClearFormatingButton from "./toolbar/ClearFormatingButton";
 import { clearFormatting } from "./utils/ClearFormating";
-import IndentButton from "./toolbar/IndentButton";
-import OutdentButton from "./toolbar/OutdentButton";
+import IndentButton from "./toolbar/indent/IndentButton";
+import OutdentButton from "./toolbar/indent/OutdentButton";
 import PostModel from "~/models/PostModel";
 import LineHeightSelect from "./toolbar/LineHeightSelect";
 import TextColorPickerButton from "./toolbar/colorPicker/TextColorPickerButton";
@@ -86,8 +87,9 @@ import FormatCopyButton from "./toolbar/formatCopy/FormatCopyButton";
 import { getFormattingStates } from "~/components/plugins/shared/getFormattingStates";
 import getSelectionFormat from "./toolbar/formatCopy/getSelectionFormat";
 import FormatContainer from "./toolbar/formatCopy/FormatContainer";
-import { format } from "path";
 import PasteCopiedFormatButton from "./toolbar/formatCopy/PasteCopiedFomartButton";
+import SuperscriptButton from "./toolbar/script/SuperscriptButton";
+import SubscriptButton from "./toolbar/script/SubscriptButton";
 
 
 type Props = {
@@ -113,6 +115,8 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
     const [isItalic, setIsItalic] = useState(false);
     const [isStrikethrough, setIsStrikethrough] = useState(false);
     const [isUnderline, setIsUnderline] = useState(false);
+    const [isSubscript, setIsSubscript] = useState(false);
+    const [isSuperscript, setIsSuperscript] = useState(false);
     const [codeLanguage, setCodeLanguage] = useState<string>('');
     const [isCode, setIsCode] = useState(false);
     const [fontSize, setFontSize] = useState<string>(defaultFontSize);
@@ -127,6 +131,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
     const [bgColor, setBgColor] = useState<string>(defaultBgColor);
     const [canUndo, setCanUndo] = useState(true);
     const [canRedo, setCanRedo] = useState(true);
+    const [alignment, setAlignment] = useState('')
 
     const [copiedFormat, setCopiedFormat] = useState<FormatContainer | null>(null)
 
@@ -152,6 +157,8 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
                     if(copiedFormat.IsStrikethrough) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
                     if(copiedFormat.IsUnderline) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
                     if(copiedFormat.IsCode) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
+                    if(copiedFormat.IsSubscript) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
+                    if(copiedFormat.IsSuperscript) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
                     
                     const styles: Record<string, string> = {}
                     
@@ -169,7 +176,12 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
                     if(copiedFormat.HeadingType) $wrapNodes(selection, () => $createHeadingNode(copiedFormat.HeadingType));
                     if(copiedFormat.IsListBulletList) editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
                     if(copiedFormat.IsOrderedList)  editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
-                    
+
+                    if(copiedFormat.Alignment == 'center')  editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
+                    if(copiedFormat.Alignment == 'right')  editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
+                    if(copiedFormat.Alignment == 'left')  editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
+                    if(copiedFormat.Alignment == 'justify')  editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
+
                     setCopiedFormat(null)
                 }
             },
@@ -187,6 +199,10 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
             setIsItalic(selection.hasFormat('italic'));
             setIsUnderline(selection.hasFormat('underline'));
             setIsStrikethrough(selection.hasFormat('strikethrough'));
+
+            setIsSubscript(selection.hasFormat('subscript'));
+            setIsSuperscript(selection.hasFormat('superscript'));
+
             setIsCode(selection.hasFormat('code'));
             setFontSize(
                 $getSelectionStyleValueForProperty(
@@ -240,7 +256,8 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
             setIsQuote($isQuoteNode(element))
             setHeadingSize($isHeadingNode(element) ? element.getTag() : '');
             setIsBulletList($isListNode(element) && element.getTag() == 'ul');
-            setIsOrderedList($isListNode(element) && element.getTag() == 'ol')
+            setIsOrderedList($isListNode(element) && element.getTag() == 'ol');
+            setAlignment(element.getFormatType())
 
             if ($isCodeHighlightNode(anchorNode)) {
                 const hType = element.getLanguage()
@@ -461,17 +478,17 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
 
                     <UnderlineButton currentEditor={editor} isActive={isUnderline} />
 
-                    <span className="w-[1px] bg-gray-600 block h-full"></span>
+                    <span className="w-[2px] bg-gray-600 block h-full"></span>
 
-                    <LeftButton currentEditor={editor} isActive={true} />
-                    <RightButton currentEditor={editor} isActive={true} />
-                    <CenterButton currentEditor={editor} isActive={true} />
-                    <JustifyButton currentEditor={editor} isActive={true} />
+                    <LeftButton currentEditor={editor} isActive={alignment == 'left'} />
+                    <RightButton currentEditor={editor} isActive={alignment == 'right'} />
+                    <CenterButton currentEditor={editor} isActive={alignment == 'center'} />
+                    <JustifyButton currentEditor={editor} isActive={alignment == 'justify'} />
 
                     <IndentButton currentEditor={editor} isActive={true} />
                     <OutdentButton currentEditor={editor} isActive={true} />
 
-                    <span className="w-[1px] bg-gray-600 block h-full"></span>
+                    <span className="w-[2px] bg-black block h-full"></span>
 
                     <FontSizeSelect currentEditor={editor} callback={applyStyleText} selectedOption={fontSize} />
                     <FontFamilySelect currentEditor={editor} callback={applyStyleText} selectedOption={fontFamily} />
@@ -497,6 +514,11 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
                     <BgColorPickerButton callback={applyStyleText} selectedOption={bgColor} />
                     <FormatCopyButton onClickCallback={copyFormat} isActive={copiedFormat != null} />
                     <PasteCopiedFormatButton onClickCallback={applyFormat}/>
+
+                    <span className="w-[2px] bg-black block h-full"></span>
+
+                    <SubscriptButton isActive={isSubscript} currentEditor={editor} />
+                    <SuperscriptButton isActive={isSuperscript} currentEditor={editor}/>
                 </div>
 
             </div>

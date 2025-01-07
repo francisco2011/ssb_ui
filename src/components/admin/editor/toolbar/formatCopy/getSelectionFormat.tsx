@@ -1,4 +1,4 @@
-import { $getSelection, $isRangeSelection, BaseSelection, LexicalEditor } from "lexical";
+import { $getSelection, $isElementNode, $isRangeSelection, BaseSelection, LexicalEditor } from "lexical";
 
 import {
         $getSelectionStyleValueForProperty
@@ -13,6 +13,7 @@ import {
         $isListNode,
 } from "@lexical/list";
 import FormatContainer from "./FormatContainer";
+import { getSelectedNode } from "~/components/plugins/shared/getSelectedNode";
 
 const getElementNode = (selection: BaseSelection): any => {
         const anchorNode = selection.anchor.getNode();
@@ -39,6 +40,8 @@ export default function getSelectionFormat(editor: LexicalEditor, defaultFontSiz
                         container.IsUnderline = selection.hasFormat('underline')
                         container.IsStrikethrough = selection.hasFormat('strikethrough')
                         container.IsCode = selection.hasFormat('code')
+                        container.IsSubscript = selection.hasFormat('subscript')
+                        container.IsSuperscript = selection.hasFormat('superscript')
                         container.FontSize = $getSelectionStyleValueForProperty(
                                 selection,
                                 'font-size',
@@ -73,6 +76,7 @@ export default function getSelectionFormat(editor: LexicalEditor, defaultFontSiz
                                 container.HeadingType = $isHeadingNode(element) ? element.getTag() : '';
                                 container.IsListBulletList = $isListNode(element) && element.getTag() == 'ul'
                                 container.IsOrderedList = $isListNode(element) && element.getTag() == 'ol'
+                                container.Alignment = element.getFormatType()
                         }
                 }
         })
