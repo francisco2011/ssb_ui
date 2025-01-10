@@ -90,14 +90,19 @@ import FormatContainer from "./toolbar/formatCopy/FormatContainer";
 import PasteCopiedFormatButton from "./toolbar/formatCopy/PasteCopiedFomartButton";
 import SuperscriptButton from "./toolbar/script/SuperscriptButton";
 import SubscriptButton from "./toolbar/script/SubscriptButton";
+import MaxLengthBar from "~/components/plugins/MaxWidthPlugin/MaxWidthBar";
+import ToolBarProperties from "./ToolbarProperties";
+
 
 
 type Props = {
     setIsLinkEditMode: Dispatch<boolean>,
-    post: PostModel
+    post: PostModel,
+    onPropertiesChange: Dispatch<ToolBarProperties>
+    defaultWidth: string
 }
 
-export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
+export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesChange, defaultWidth }: Props) {
 
     const defaultFontSize = '15px';
     const defaultFontFamily = 'Arial';
@@ -465,10 +470,14 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
         clearFormatting(editor)
     }
 
+    const onMaxWidthChanged = (value: number) => {
+        onPropertiesChange({MaxLengthpx: value + 'px'})
+    }
+
     return (
         <div className="z-40 sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
-            <div className="grid-rows-2">
+            <div className="grid-rows-3">
                 <div className="flex items-stretch space-x-1 mb-1 ">
                     <StrikethroughButton currentEditor={editor} isActive={isStrikethrough} />
 
@@ -519,6 +528,9 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post }: Props) {
 
                     <SubscriptButton isActive={isSubscript} currentEditor={editor} />
                     <SuperscriptButton isActive={isSuperscript} currentEditor={editor}/>
+                </div>
+                <div className="mt-2">
+                <MaxLengthBar maxWidth={700} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>
                 </div>
 
             </div>

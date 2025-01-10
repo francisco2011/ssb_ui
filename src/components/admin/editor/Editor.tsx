@@ -38,7 +38,7 @@ import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin'
 import ContentMetada from '~/models/ContentMetadata';
-import { $nodesOfType, CLEAR_EDITOR_COMMAND } from 'lexical';
+import { $nodesOfType, CLEAR_EDITOR_COMMAND, EditorState } from 'lexical';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import editorTheme from '~/themes/EditorTheme';
 import ToolbarPlugin from './ToolbarPlugin';
@@ -51,6 +51,8 @@ import ContentEditable from '~/components/ContentEditable';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel, faCheck, faEye } from '@fortawesome/free-solid-svg-icons';
+import ToolBarProperties from './ToolbarProperties';
+import { useObserveElementWidth } from './utils/useObserveElementWidth';
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -95,6 +97,11 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
     type: null
   })
 
+  const { width, ref } = useObserveElementWidth<HTMLDivElement>();
+
+  const [maxWidth, setMaxWidth] = useState('700px')
+
+
   const addTag = val => {
     var string_copy = (' ' + val).slice(1);
 
@@ -107,13 +114,32 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
       setFloatingAnchorElem(_floatingAnchorElem);
+
     }
   };
 
   useEffect(() => {
 
     if (post?.content && post.content != '' && editor.current) {
-      const initialEditorState = editor.current.parseEditorState(post.content)
+
+      let initialEditorState: EditorState | null = null 
+
+      if(post.content.startsWith('{"w')){
+
+        var newState = JSON.parse(post.content)
+        var w = newState.width
+        setMaxWidth(w)
+        initialEditorState = editor.current.parseEditorState(newState.editorState)
+
+      }else{
+        initialEditorState = editor.current.parseEditorState(post.content)
+      }
+
+      if(!initialEditorState) return
+
+      //
+
+      
 
       let imageNodes: ImageNode[] = []
       initialEditorState.read(() => {
@@ -195,7 +221,12 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
     // @ts-ignore
     if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
 
-    const json = JSON.stringify(editorState.toJSON());
+    const extendedState = {
+      width: maxWidth,
+      editorState: editorState.toJSON()
+    }
+
+    const json = JSON.stringify(extendedState);
 
     post.content = json as any
     post.title = metadata.title
@@ -218,11 +249,15 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
     //console.log(data)
   }
 
+  const onToolbarProperties = (data: ToolBarProperties) => {
+    if (data.MaxLengthpx) setMaxWidth(data.MaxLengthpx)
+  }
+
   const onChangePublicationState = () => {
     if (!post) return
     onChangePublishState()
     current.isPublished = !current.isPublished
-    setCurrentPost({...current})
+    setCurrentPost({ ...current })
   }
 
   return (
@@ -260,12 +295,13 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
             <LexicalComposer initialConfig={editorConfig}>
 
               <EditorRefPlugin editorRef={editor} />
-              <ToolbarPlugin post={post} setIsLinkEditMode={setIsLinkEditMode} />
+              <ToolbarPlugin post={post} defaultWidth={maxWidth} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} />
               <ClearEditorPlugin />
               <ListPlugin />
               <ImagesPlugin />
               <TagPlugin onNewCallback={(c) => addTag(c)} />
               <LinkPlugin hasLinkAttributes={false} />
+              <AutoFocusPlugin />
               <EmojisPlugin />
               <CodeHighlightPlugin />
               <LexicalAutoLinkPlugin />
@@ -273,7 +309,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
               <OnChangePlugin onChange={onChange} />
 
               <div className='editor-container'>
-
+              <div style={{ height: '700px', width: maxWidth }} ref={ref}>
 
                 {floatingAnchorElem && !isSmallWidthViewport && (
                   <>
@@ -288,10 +324,13 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
                 <RichTextPlugin
                   contentEditable={
                     <div className="editor-scroller">
-                      <div className="editor" ref={onRef}>
-                        <ContentEditable placeholder={''} />
+                      
+                        <div className="editor" ref={onRef}>
+                          <ContentEditable placeholder={''} />
+                        </div>
                       </div>
-                    </div>
+
+                   
                   }
                   ErrorBoundary={LexicalErrorBoundary}
                 />
@@ -302,7 +341,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
                   treeActive ? <TreeViewPlugin /> : null
                 }
               </div>
-
+              </div>
             </LexicalComposer>
             <div />
 
