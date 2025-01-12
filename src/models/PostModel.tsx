@@ -13,4 +13,5 @@ export default interface PostModel{
     type: PostTypeModel | null
     contents: ContentModel[];
     _htmlContent?: any
+    _contentWidth?: any
 }

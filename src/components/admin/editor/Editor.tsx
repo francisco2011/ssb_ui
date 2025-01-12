@@ -99,7 +99,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
 
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
-  const [maxWidth, setMaxWidth] = useState('700px')
+  const [contentWidthpx, setContentWidthpx] = useState('690px')
 
 
   const addTag = val => {
@@ -128,7 +128,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
 
         var newState = JSON.parse(post.content)
         var w = newState.width
-        setMaxWidth(w)
+        setContentWidthpx(w)
         initialEditorState = editor.current.parseEditorState(newState.editorState)
 
       }else{
@@ -222,7 +222,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
     if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
 
     const extendedState = {
-      width: maxWidth,
+      width: contentWidthpx,
       editorState: editorState.toJSON()
     }
 
@@ -250,7 +250,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
   }
 
   const onToolbarProperties = (data: ToolBarProperties) => {
-    if (data.MaxLengthpx) setMaxWidth(data.MaxLengthpx)
+    if (data.MaxLengthpx) setContentWidthpx(data.MaxLengthpx)
   }
 
   const onChangePublicationState = () => {
@@ -258,6 +258,14 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
     onChangePublishState()
     current.isPublished = !current.isPublished
     setCurrentPost({ ...current })
+  }
+
+  const addOffsetContentWidthpx = (val) => {
+    if(typeof val == typeof '' && val.indexOf('px') != -1){
+      val = val.replace('px', '')
+    }
+
+    return  (Number(val) + 35) + 'px'
   }
 
   return (
@@ -295,7 +303,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
             <LexicalComposer initialConfig={editorConfig}>
 
               <EditorRefPlugin editorRef={editor} />
-              <ToolbarPlugin post={post} defaultWidth={maxWidth} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} />
+              <ToolbarPlugin post={post} defaultWidth={contentWidthpx} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} />
               <ClearEditorPlugin />
               <ListPlugin />
               <ImagesPlugin />
@@ -309,7 +317,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
               <OnChangePlugin onChange={onChange} />
 
               <div className='editor-container'>
-              <div style={{ height: '700px', width: maxWidth }} ref={ref}>
+              <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
 
                 {floatingAnchorElem && !isSmallWidthViewport && (
                   <>

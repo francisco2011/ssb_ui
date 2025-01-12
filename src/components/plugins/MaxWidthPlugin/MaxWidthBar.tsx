@@ -5,18 +5,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function MaxWidthBar({ maxWidth, defaultWidth, onMaxChanged }: { maxWidth: number, defaultWidth: string, onMaxChanged: (val: number) => void }) {
     const [selectedLength, setSelectedLength] = useState(maxWidth);
+    const [selectedLengthLabel, setSelectedLengthLabel] = useState(maxWidth  + "px")
 
+    //
+    const leftPadding = '20px'
 
     useEffect(() => {
         
-        debugger
         const dv = Number(defaultWidth.replace("px", '')) / 10
-        
         setSelectedLength(dv)
+        setSelectedLengthLabel((dv * 10) + "px")
 
       }, [defaultWidth]);
 
-    const clazz = "h-8 w-[" + maxWidth + "px] bg-gray-200 rounded-sm grid grid-rows-2 grid-flow-col pl-[20px]"
+    const clazz = "h-8 w-[" + maxWidth + "px] bg-gray-200 rounded-sm grid grid-rows-2 grid-flow-col pl-["+ leftPadding + "]"
 
     const steps = maxWidth / 10
     const mSteps = maxWidth / 100
@@ -37,10 +39,12 @@ export default function MaxWidthBar({ maxWidth, defaultWidth, onMaxChanged }: { 
 
     const onMaxLengthSelected = (val) => {
 
-        const sl = ( val * 10 ) + "px"
+        const maxValue = val * 10
+        const sl = maxValue + "px"
 
-        setSelectedLength(sl)
-        onMaxChanged((val * 10) + 30)
+        setSelectedLength(maxValue)
+        setSelectedLengthLabel(sl)
+        onMaxChanged((maxValue))
     }
 
     return (
@@ -48,7 +52,7 @@ export default function MaxWidthBar({ maxWidth, defaultWidth, onMaxChanged }: { 
 
             <div className="text-end text-xs">
                 {
-                    (selectedLength) 
+                    (selectedLengthLabel) 
                 }
             </div>
 

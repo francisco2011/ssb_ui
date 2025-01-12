@@ -516,15 +516,23 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <LanguageSelect currentEditor={editor} callback={applyCodeLanguage} selectedOption={codeLanguage} />
                     <InsertLinkButton onClickCallback={insertLink} isActive={isLink} />
                     <ClearFormatingButton onClickCallback={onClearFormatting} />
+                    <span className="w-[2px] bg-black block h-full">|</span>
                     <UndoButton isActive={canUndo} currentEditor={editor} />
                     <RedoButton isActive={canRedo} currentEditor={editor} />
+                    <span className="w-[2px] bg-black block h-full">|</span>
                     <LineHeightSelect callback={applyStyleText} currentEditor={editor} selectedOption={lineHeight} />
+                    
+                    <span className="w-[2px] bg-black block h-full">|</span>
+                    
                     <TextColorPickerButton callback={applyStyleText} selectedOption={color} />
                     <BgColorPickerButton callback={applyStyleText} selectedOption={bgColor} />
+                    
+                    <span className="w-[2px] bg-black block h-full">|</span>
+
                     <FormatCopyButton onClickCallback={copyFormat} isActive={copiedFormat != null} />
                     <PasteCopiedFormatButton onClickCallback={applyFormat}/>
 
-                    <span className="w-[2px] bg-black block h-full"></span>
+                    <span className="w-[2px] bg-black block h-full">|</span>
 
                     <SubscriptButton isActive={isSubscript} currentEditor={editor} />
                     <SuperscriptButton isActive={isSuperscript} currentEditor={editor}/>

@@ -41,7 +41,7 @@ export default function CodeSnippetCard({ post, onTagClickCallback }: Props) {
                         </div>
                         <div >
 
-                            <div dangerouslySetInnerHTML={{ __html: post._htmlContent }} >
+                            <div style={{width: post._contentWidth}} dangerouslySetInnerHTML={{ __html: post._htmlContent }} >
 
                             </div>
 

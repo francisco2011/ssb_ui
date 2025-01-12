@@ -6,6 +6,7 @@ import EditorCodePreviewTheme from "~/themes/EditorCodePreviewTheme";
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { $generateHtmlFromNodes } from "@lexical/html";
 import PostModelResponse from "~/models/PostModelResponse";
+import { EditorState } from "lexical";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -47,7 +48,21 @@ export default async function PostServiceCodeSnippetTransformSA(limit: number, o
 
     posts.posts.forEach(c => {
 
-      const editorState = editor.parseEditorState(c.content ?? '')
+      if(c.content){
+        let editorState: EditorState | null = null 
+        let width = ''
+
+        if(c.content.startsWith('{"w')){
+      
+          var newState = JSON.parse(c.content)
+          width = newState.width
+          
+          editorState = editor.parseEditorState(newState.editorState)
+  
+        }else{
+          editorState = editor.parseEditorState(c.content)
+        }
+
       editor.setEditorState(editorState);
 
       const cleanup = setupDom();
@@ -56,10 +71,14 @@ export default async function PostServiceCodeSnippetTransformSA(limit: number, o
 
         _html = $generateHtmlFromNodes(editor, null);
         c._htmlContent = _html
+        c._contentWidth = width
 
       });
 
       cleanup()
+
+      }
+      
     })
 
     return posts
