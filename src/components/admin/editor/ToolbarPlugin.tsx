@@ -92,6 +92,8 @@ import SuperscriptButton from "./toolbar/script/SuperscriptButton";
 import SubscriptButton from "./toolbar/script/SubscriptButton";
 import MaxLengthBar from "~/components/plugins/MaxWidthPlugin/MaxWidthBar";
 import ToolBarProperties from "./ToolbarProperties";
+import EmojiPickerButton from "./toolbar/emoji/EmojiPickerButton";
+import { $createEmojiNode } from "~/components/plugins/EmojisPlugin/EmojiNode";
 
 
 
@@ -388,6 +390,23 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
         [editor]
     );
 
+    const insertEmoji = useCallback(
+        (emoji: string) => {
+            editor.update(() => {
+
+                const selection = $getSelection();
+                if ($isRangeSelection(selection)) {
+
+
+                    var newNode = $createEmojiNode('',emoji)
+                    selection?.insertNodes([newNode])
+
+                }
+            });
+        },
+        [editor]
+    )
+
     const getElementNode = (selection: any): any => {
         const anchorNode = selection.anchor.getNode();
         const element =
@@ -536,9 +555,13 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
                     <SubscriptButton isActive={isSubscript} currentEditor={editor} />
                     <SuperscriptButton isActive={isSuperscript} currentEditor={editor}/>
+                    <span className="w-[2px] bg-black block h-full">|</span>
+                    <EmojiPickerButton onClickCallback={insertEmoji} />
                 </div>
                 <div className="mt-2">
                 <MaxLengthBar maxWidth={700} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>
+
+                
                 </div>
 
             </div>
