@@ -50,16 +50,27 @@ export default function ReadonlyEditor({ content, contents, editorTheme, shellCl
   useEffect(() => {
     
     if(content && editor.current){
-        const initialEditorState = editor.current.parseEditorState(content)
+
+      let editorState: EditorState | null = null 
+        let width = ''
+
+        if(content.startsWith('{"w')){
+      
+          var newState = JSON.parse(content)
+          width = newState.width
+          
+          editorState = editor.current.parseEditorState(newState.editorState)
+  
+        }else{
+          editorState = editor.current.parseEditorState(c.content)
+        }
 
         let imageNodes: ImageNode[] =[]
-        initialEditorState.read(() => {
+        editorState.read(() => {
             imageNodes = $nodesOfType(ImageNode);
         })
 
-        
-
-        imageNodes.forEach(c => {
+        imageNodes.filter(c => c.__imgId).forEach(c => {
           var cntnt = contents.find(d => d.name == c.__imgId)
 
           if(cntnt) c.__src = cntnt.url
@@ -68,10 +79,10 @@ export default function ReadonlyEditor({ content, contents, editorTheme, shellCl
         queueMicrotask(() => {
 
           if(editor?.current){
-            editor.current.setEditorState(initialEditorState)
+            editor.current.setEditorState(editorState)
             editor.current.setEditable(false)
 
-            initialEditorState.read(() => {
+            editorState.read(() => {
               if(editor.current){
                 var html = $generateHtmlFromNodes(editor.current)
                 onHtmlGenerated(html)
