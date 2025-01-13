@@ -94,6 +94,7 @@ import MaxLengthBar from "~/components/plugins/MaxWidthPlugin/MaxWidthBar";
 import ToolBarProperties from "./ToolbarProperties";
 import EmojiPickerButton from "./toolbar/emoji/EmojiPickerButton";
 import { $createEmojiNode } from "~/components/plugins/EmojisPlugin/EmojiNode";
+import GifPickerButton from "./toolbar/gif/GifPickerButton";
 
 
 
@@ -557,6 +558,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <SuperscriptButton isActive={isSuperscript} currentEditor={editor}/>
                     <span className="w-[2px] bg-black block h-full">|</span>
                     <EmojiPickerButton onClickCallback={insertEmoji} />
+                    <GifPickerButton onClickCallback={() => {}} />
                 </div>
                 <div className="mt-2">
                 <MaxLengthBar maxWidth={700} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>
