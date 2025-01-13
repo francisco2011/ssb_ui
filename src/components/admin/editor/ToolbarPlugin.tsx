@@ -71,10 +71,10 @@ import LanguageSelect from "./toolbar/CodeSelect";
 import { $createCodeNode, $isCodeHighlightNode, $isCodeNode } from "@lexical/code";
 import CodeButton from "./toolbar/CodeButton";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
-import { sanitizeUrl } from "~/components/plugins/shared/url";
+import { sanitizeUrl } from "~/components/admin/editor/plugins/shared/url";
 import InsertLinkButton from "./toolbar/InsertLinkButton";
-import { getSelectedNode } from "~/components/plugins/shared/getSelectedNode";
-import FloatingLinkEditorPlugin from "~/components/plugins/LinkPlugin/FloatingLinkEditorPlugin";
+import { getSelectedNode } from "~/components/admin/editor/plugins/shared/getSelectedNode";
+import FloatingLinkEditorPlugin from "~/components/admin/editor/plugins/LinkPlugin/FloatingLinkEditorPlugin";
 import ClearFormatingButton from "./toolbar/ClearFormatingButton";
 import { clearFormatting } from "./utils/ClearFormating";
 import IndentButton from "./toolbar/indent/IndentButton";
@@ -84,18 +84,19 @@ import LineHeightSelect from "./toolbar/LineHeightSelect";
 import TextColorPickerButton from "./toolbar/colorPicker/TextColorPickerButton";
 import BgColorPickerButton from "./toolbar/colorPicker/BgColorPickerButton";
 import FormatCopyButton from "./toolbar/formatCopy/FormatCopyButton";
-import { getFormattingStates } from "~/components/plugins/shared/getFormattingStates";
+import { getFormattingStates } from "~/components/admin/editor/plugins/shared/getFormattingStates";
 import getSelectionFormat from "./toolbar/formatCopy/getSelectionFormat";
 import FormatContainer from "./toolbar/formatCopy/FormatContainer";
 import PasteCopiedFormatButton from "./toolbar/formatCopy/PasteCopiedFomartButton";
 import SuperscriptButton from "./toolbar/script/SuperscriptButton";
 import SubscriptButton from "./toolbar/script/SubscriptButton";
-import MaxLengthBar from "~/components/plugins/MaxWidthPlugin/MaxWidthBar";
+import MaxLengthBar from "~/components/admin/editor/plugins/MaxWidthPlugin/MaxWidthBar";
 import ToolBarProperties from "./ToolbarProperties";
 import EmojiPickerButton from "./toolbar/emoji/EmojiPickerButton";
-import { $createEmojiNode } from "~/components/plugins/EmojisPlugin/EmojiNode";
+import { $createEmojiNode } from "~/components/admin/editor/plugins/EmojisPlugin/EmojiNode";
 import GifPickerButton from "./toolbar/gif/GifPickerButton";
-import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "~/components/plugins/imagePlugin/ImagesPlugin";
+import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
+import HorizontalRuleButton from "./toolbar/HorizontalRuleButton";
 
 
 
@@ -512,17 +513,19 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
                     <UnderlineButton currentEditor={editor} isActive={isUnderline} />
 
-                    <span className="w-[2px] bg-gray-600 block h-full"></span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
 
                     <LeftButton currentEditor={editor} isActive={alignment == 'left'} />
                     <RightButton currentEditor={editor} isActive={alignment == 'right'} />
                     <CenterButton currentEditor={editor} isActive={alignment == 'center'} />
                     <JustifyButton currentEditor={editor} isActive={alignment == 'justify'} />
 
+                    <span className="w-[2px] bg-black block h-full">'</span>
+
                     <IndentButton currentEditor={editor} isActive={true} />
                     <OutdentButton currentEditor={editor} isActive={true} />
 
-                    <span className="w-[2px] bg-black block h-full"></span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
 
                     <FontSizeSelect currentEditor={editor} callback={applyStyleText} selectedOption={fontSize} />
                     <FontFamilySelect currentEditor={editor} callback={applyStyleText} selectedOption={fontFamily} />
@@ -541,32 +544,33 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <LanguageSelect currentEditor={editor} callback={applyCodeLanguage} selectedOption={codeLanguage} />
                     <InsertLinkButton onClickCallback={insertLink} isActive={isLink} />
                     <ClearFormatingButton onClickCallback={onClearFormatting} />
-                    <span className="w-[2px] bg-black block h-full">|</span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
                     <UndoButton isActive={canUndo} currentEditor={editor} />
                     <RedoButton isActive={canRedo} currentEditor={editor} />
-                    <span className="w-[2px] bg-black block h-full">|</span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
                     <LineHeightSelect callback={applyStyleText} currentEditor={editor} selectedOption={lineHeight} />
                     
-                    <span className="w-[2px] bg-black block h-full">|</span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
                     
                     <TextColorPickerButton callback={applyStyleText} selectedOption={color} />
                     <BgColorPickerButton callback={applyStyleText} selectedOption={bgColor} />
                     
-                    <span className="w-[2px] bg-black block h-full">|</span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
 
                     <FormatCopyButton onClickCallback={copyFormat} isActive={copiedFormat != null} />
                     <PasteCopiedFormatButton onClickCallback={applyFormat}/>
 
-                    <span className="w-[2px] bg-black block h-full">|</span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
 
                     <SubscriptButton isActive={isSubscript} currentEditor={editor} />
                     <SuperscriptButton isActive={isSuperscript} currentEditor={editor}/>
-                    <span className="w-[2px] bg-black block h-full">|</span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
                     <EmojiPickerButton onClickCallback={insertEmoji} />
                     <GifPickerButton onClickCallback={insertGif} />
+                    <HorizontalRuleButton  currentEditor={editor}/>
                 </div>
                 <div className="mt-2">
-                <MaxLengthBar maxWidth={700} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>
+                <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>
 
                 
                 </div>

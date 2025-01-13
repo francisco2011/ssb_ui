@@ -1,8 +1,8 @@
-import { UploadImageDialogBody } from "~/components/plugins/imagePlugin/UploadImageDialog";
+import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
 import { useEffect, useState } from "react";
 import PostTypeService from "~/services/PostTypeService";
 import PostTypeModel from "~/models/PostTypeModel";
-import { InsertImagePayload } from "~/components/plugins/imagePlugin/ImagesPlugin";
+import { InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import ContentMetadaModel from "~/models/ContentMetadata";
 import PostModel from "~/models/PostModel";
 import { ContentType } from "~/models/ContentType";

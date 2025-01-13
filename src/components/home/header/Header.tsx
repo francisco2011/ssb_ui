@@ -10,9 +10,9 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { HashtagNode } from "@lexical/hashtag";
 
-import { ImageNode } from "~/components/plugins/imagePlugin/ImageNode";
-import { TagNode } from '~/components/plugins/tagsPlugin/TagNode';
-import { EmojiNode } from '~/components/plugins/EmojisPlugin/EmojiNode';
+import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
+import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
+import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 const jsdom = require("jsdom");

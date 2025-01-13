@@ -2,7 +2,7 @@ import { faCopy, faFaceSmile, faGift, faPaintBrush, faPaintRoller } from "@forta
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import GifPicker, { TenorImage } from 'gif-picker-react';
-import { InsertImagePayload } from "~/components/plugins/imagePlugin/ImagesPlugin";
+import { InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 
 function GifPickerButton({ onClickCallback }: { onClickCallback: (data: InsertImagePayload) => void }) {
 
@@ -11,7 +11,7 @@ function GifPickerButton({ onClickCallback }: { onClickCallback: (data: InsertIm
     const onSelected = (data: TenorImage) => {
 
         setIsOpen(!isOpen)
-        onClickCallback({ altText: data.description, src: data.url, captionsEnabled: true})
+        onClickCallback({ altText: data.description, src: data.url, captionsEnabled: false, showCaption: false})
     }
 
     return (

@@ -58,7 +58,7 @@ import {Suspense, useCallback, useEffect, useRef, useState} from 'react';
 //import LinkPlugin from '../plugins/LinkPlugin';
 //import MentionsPlugin from '../plugins/MentionsPlugin';
 //import TreeViewPlugin from '../plugins/TreeViewPlugin';
-import ContentEditable from '../../ContentEditable';
+import ContentEditable from '../../../../ContentEditable';
 
 //import {EmojiNode} from './EmojiNode';
 //import {KeywordNode} from './KeywordNode';

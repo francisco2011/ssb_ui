@@ -13,7 +13,7 @@ import {
         $isListNode,
 } from "@lexical/list";
 import FormatContainer from "./FormatContainer";
-import { getSelectedNode } from "~/components/plugins/shared/getSelectedNode";
+import { getSelectedNode } from "~/components/admin/editor/plugins/shared/getSelectedNode";
 
 const getElementNode = (selection: BaseSelection): any => {
         const anchorNode = selection.anchor.getNode();

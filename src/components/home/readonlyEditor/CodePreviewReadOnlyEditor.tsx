@@ -6,7 +6,7 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import React, { createRef, forwardRef, useEffect, useRef, useState } from 'react';
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
-import ClickableLinkPlugin from '~/components/plugins/LinkPlugin/ClickableLinkPlugin';
+import ClickableLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/ClickableLinkPlugin';
 import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import { LexicalEditor } from 'lexical';
 

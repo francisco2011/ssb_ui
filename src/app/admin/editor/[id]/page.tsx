@@ -14,21 +14,21 @@ import { HashtagNode } from "@lexical/hashtag";
 import React, { createRef, forwardRef, useEffect, useRef, useState } from 'react';
 
 
-import { ImageNode } from "~/components/plugins/imagePlugin/ImageNode";
-import ImagesPlugin from "~/components/plugins/imagePlugin/ImagesPlugin";
+import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
+import ImagesPlugin from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import TagSelector from '~/components/admin/tagSelector/TagSelector';
-import { TagNode } from '~/components/plugins/tagsPlugin/TagNode';
-import TagPlugin from '~/components/plugins/tagsPlugin/TagPlugin';
-import { EmojiNode } from '~/components/plugins/EmojisPlugin/EmojiNode';
-import EmojisPlugin from '~/components/plugins/EmojisPlugin/EmojisPlugin';
+import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
+import TagPlugin from '~/components/admin/editor/plugins/tagsPlugin/TagPlugin';
+import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
+import EmojisPlugin from '~/components/admin/editor/plugins/EmojisPlugin/EmojisPlugin';
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from "@lexical/link";
-import CodeHighlightPlugin from '~/components/plugins/CodeHighlight/CodeHighlightPlugin';
-import LexicalAutoLinkPlugin from '~/components/plugins/LinkPlugin/AutoLinkPlugin';
-import ClickableLinkPlugin from '~/components/plugins/LinkPlugin/ClickableLinkPlugin';
-import FloatingLinkEditorPlugin from '~/components/plugins/LinkPlugin/FloatingLinkEditorPlugin';
-import { CAN_USE_DOM } from '~/components/plugins/shared/canUseDOM';
-import LinkPlugin from '~/components/plugins/LinkPlugin/LinkPlugin';
+import CodeHighlightPlugin from '~/components/admin/editor/plugins/CodeHighlight/CodeHighlightPlugin';
+import LexicalAutoLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/AutoLinkPlugin';
+import ClickableLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/ClickableLinkPlugin';
+import FloatingLinkEditorPlugin from '~/components/admin/editor/plugins/LinkPlugin/FloatingLinkEditorPlugin';
+import { CAN_USE_DOM } from '~/components/admin/editor/plugins/shared/canUseDOM';
+import LinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/LinkPlugin';
 import VerticalToolbarPlugin from '~/components/admin/editor/VerticalToolbar';
 import PostModel from '~/models/PostModel';
 import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';

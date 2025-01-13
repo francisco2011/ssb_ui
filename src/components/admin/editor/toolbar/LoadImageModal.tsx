@@ -4,8 +4,8 @@ import clsx from "clsx";
 import { FORMAT_TEXT_COMMAND, LexicalEditor } from "lexical";
 import ButtonProps from "./props/IButtonProps";
 
-import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../../../plugins/imagePlugin/ImagesPlugin";
-import { UploadImageDialogBody } from "~/components/plugins/imagePlugin/UploadImageDialog";
+import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../plugins/imagePlugin/ImagesPlugin";
+import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
 import { ContentType } from "~/models/ContentType";
 import { useEffect, useState } from "react";
 

@@ -3,7 +3,7 @@ import SelectProps from './props/ISelectProps';
 import SelectBase from '~/components/SelectBase';
 
 const defaultHeadingOptions: any = [
-  ['', 'Normal'],
+  ['', 'Paragraph'],
   ['h1', 'h1'],
   ['h2', 'h2'],
   ['h3', 'h3'],

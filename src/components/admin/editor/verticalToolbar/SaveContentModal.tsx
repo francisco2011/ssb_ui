@@ -1,7 +1,7 @@
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { InsertImagePayload } from "../../../plugins/imagePlugin/ImagesPlugin";
-import { UploadImageDialogBody } from "~/components/plugins/imagePlugin/UploadImageDialog";
+import { InsertImagePayload } from "../plugins/imagePlugin/ImagesPlugin";
+import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
 import { useEffect, useState } from "react";
 import ContentMetada from "~/models/ContentMetadata";
 import PostTypeService from "~/services/PostTypeService";

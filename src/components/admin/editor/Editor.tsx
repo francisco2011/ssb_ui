@@ -16,23 +16,22 @@ import { HashtagNode } from "@lexical/hashtag";
 import React, { createRef, forwardRef, useEffect, useRef, useState } from 'react';
 
 
-import { ImageNode } from "~/components/plugins/imagePlugin/ImageNode";
-import ImagesPlugin from "~/components/plugins/imagePlugin/ImagesPlugin";
+import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
+import ImagesPlugin from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import TagSelector from '~/components/admin/tagSelector/TagSelector';
-import { TagNode } from '~/components/plugins/tagsPlugin/TagNode';
-import TagPlugin from '~/components/plugins/tagsPlugin/TagPlugin';
-import { EmojiNode } from '~/components/plugins/EmojisPlugin/EmojiNode';
-import EmojisPlugin from '~/components/plugins/EmojisPlugin/EmojisPlugin';
+import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
+import TagPlugin from '~/components/admin/editor/plugins/tagsPlugin/TagPlugin';
+import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from "@lexical/link";
-import CodeHighlightPlugin from '~/components/plugins/CodeHighlight/CodeHighlightPlugin';
+import CodeHighlightPlugin from '~/components/admin/editor/plugins/CodeHighlight/CodeHighlightPlugin';
 import { AutoLinkPlugin } from '@lexical/react/LexicalAutoLinkPlugin';
-import LexicalAutoLinkPlugin from '~/components/plugins/LinkPlugin/AutoLinkPlugin';
-import ClickableLinkPlugin from '~/components/plugins/LinkPlugin/ClickableLinkPlugin';
-import FloatingLinkEditorPlugin from '~/components/plugins/LinkPlugin/FloatingLinkEditorPlugin';
-import { CAN_USE_DOM } from '~/components/plugins/shared/canUseDOM';
-import DraggableBlockPlugin from '~/components/plugins/DraggableBlockPlugin/DraggableBlockPlugin';
-import LinkPlugin from '~/components/plugins/LinkPlugin/LinkPlugin';
+import LexicalAutoLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/AutoLinkPlugin';
+import ClickableLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/ClickableLinkPlugin';
+import FloatingLinkEditorPlugin from '~/components/admin/editor/plugins/LinkPlugin/FloatingLinkEditorPlugin';
+import { CAN_USE_DOM } from '~/components/admin/editor/plugins/shared/canUseDOM';
+import DraggableBlockPlugin from '~/components/admin/editor/plugins/DraggableBlockPlugin/DraggableBlockPlugin';
+import LinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/LinkPlugin';
 import VerticalToolbarPlugin from '~/components/admin/editor/VerticalToolbar';
 import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
@@ -53,6 +52,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel, faCheck, faEye } from '@fortawesome/free-solid-svg-icons';
 import ToolBarProperties from './ToolbarProperties';
 import { useObserveElementWidth } from './utils/useObserveElementWidth';
+import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
+import {HorizontalRulePlugin} from '@lexical/react/LexicalHorizontalRulePlugin'
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -67,7 +68,8 @@ const editorConfig = {
     CodeHighlightNode,
     HashtagNode,
     AutoLinkNode,
-    LinkNode
+    LinkNode,
+    HorizontalRuleNode
   ],
   // Handling of errors during update
   onError(error: Error) {
@@ -99,7 +101,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
 
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
-  const [contentWidthpx, setContentWidthpx] = useState('690px')
+  const [contentWidthpx, setContentWidthpx] = useState('900px')
 
 
   const addTag = val => {
@@ -292,7 +294,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
 
         </div>
 
-        <div className="grid grid-cols-[5%_70%_25%]">
+        <div className="grid grid-cols-[5%_70%_25%] w-[1200]">
 
           <div>
             <VerticalToolbarPlugin onChangePublicationState={onChangePublicationState} onsaveCallback={onsave} onCleanCallback={clearAll} />
@@ -310,11 +312,11 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
               <TagPlugin onNewCallback={(c) => addTag(c)} />
               <LinkPlugin hasLinkAttributes={false} />
               <AutoFocusPlugin />
-              <EmojisPlugin />
               <CodeHighlightPlugin />
               <LexicalAutoLinkPlugin />
               <ClickableLinkPlugin />
               <OnChangePlugin onChange={onChange} />
+              <HorizontalRulePlugin/>
 
               <div className='editor-container'>
               <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
