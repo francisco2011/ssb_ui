@@ -99,6 +99,12 @@ export function UploadImageDialogBody({
                 data-test-id="image-modal-file-upload"
             />
 
+            <TextInput
+                        placeholder="External source"
+                        onChange={setSrc}
+                        value={src}
+                    />
+
             {
                 showAlternativeText ?
                     <TextInput
