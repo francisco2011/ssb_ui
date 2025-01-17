@@ -62,11 +62,12 @@ export default async function Header(): Promise<JSX.Element> {
         theme: HeroEditorTheme
     });
 
-    const editorState = editor.parseEditorState(content?? '')
-    editor.setEditorState(editorState);
+    
 
     let _html:any = null 
     editor.update(() => {
+        const editorState = editor.parseEditorState(content?? '')
+         editor.setEditorState(editorState);
         const cleanup = setupDom();
         _html = $generateHtmlFromNodes(editor, null);
         cleanup()

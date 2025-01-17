@@ -535,8 +535,6 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <OrderedListButton currentEditor={editor} isActive={isOrderedList} />
                     <QuoteButton callback={applyQuoteText} currentEditor={editor} selectedOption={isQuote} />
 
-                    <LoadImageModal isActive={false} currentEditor={editor} _className={""} _postId={post.id} contentType={"imgBody"} />
-
                 </div>
 
                 <div className="flex items-stretch space-x-1">
@@ -565,6 +563,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <SubscriptButton isActive={isSubscript} currentEditor={editor} />
                     <SuperscriptButton isActive={isSuperscript} currentEditor={editor}/>
                     <span className="w-[2px] bg-black block h-full">'</span>
+                    <LoadImageModal isActive={false} currentEditor={editor} _className={""} _postId={post.id} contentType={"imgBody"} />
                     <EmojiPickerButton onClickCallback={insertEmoji} />
                     <GifPickerButton onClickCallback={insertGif} />
                     <HorizontalRuleButton  currentEditor={editor}/>
