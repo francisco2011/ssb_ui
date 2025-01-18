@@ -72,7 +72,7 @@ import type {
     SerializedLexicalNode
   >;
   
-  export class InlineImageNode extends DecoratorNode<JSX.Element> {
+  export class InlineImageNode extends DecoratorNode<Element> {
     __src: string;
     __altText: string;
     __width: 'inherit' | number;
@@ -233,8 +233,11 @@ import type {
     // View
   
     createDOM(config: EditorConfig): HTMLElement {
+      if(!config.theme.inlineImage) console.warn("must set config.theme.inlineImage variable")
+
       const span = document.createElement('span');
       const className = `${config.theme.inlineImage} position-${this.__position}`;
+
       if (className !== undefined) {
         span.className = className;
       }
@@ -242,6 +245,7 @@ import type {
     }
   
     updateDOM(prevNode: this, dom: HTMLElement, config: EditorConfig): false {
+      if(!config.theme.inlineImage) console.warn("must set config.theme.inlineImage variable")
       const position = this.__position;
       if (position !== prevNode.__position) {
         const className = `${config.theme.inlineImage} position-${position}`;
@@ -252,7 +256,7 @@ import type {
       return false;
     }
   
-    decorate(): JSX.Element {
+    decorate(): Element {
       return (
         <Suspense fallback={null}>
           <InlineImageComponent

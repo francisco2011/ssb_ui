@@ -8,6 +8,7 @@ import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../plugins/imagePlugin
 import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
 import { ContentType } from "~/models/ContentType";
 import { useEffect, useState } from "react";
+import { INSERT_INLINE_IMAGE_COMMAND, InsertInlineImagePayload } from "../plugins/imagePlugin/InlineImagePlugin";
 
 const CAN_USE_DOM: boolean =
     typeof window !== 'undefined' &&
@@ -35,6 +36,11 @@ function InsertImageDialog({
         onClose();
     };
 
+    const onClickLoadInline = (payload: InsertInlineImagePayload) => {
+        activeEditor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload);
+        onClose();
+    };
+
     useEffect(() => {
 
         if(_postId){
@@ -45,7 +51,7 @@ function InsertImageDialog({
 
     return (
         <>
-            <UploadImageDialogBody alreadyLoadedImgUrl={null} contentType={contentType} postId={postId} onImageLoaded={() => { } } onClick={onClick} showDialogAction={true} showAlternativeText={true} imgClassname={imgClassName} />
+            <UploadImageDialogBody alreadyLoadedImgUrl={null} onClickLoadInline={onClickLoadInline} contentType={contentType} postId={postId} onImageLoaded={() => { } } onClick={onClick} showDialogAction={true} showAlternativeText={true} imgClassname={imgClassName} />
         </>
     );
 }

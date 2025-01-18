@@ -28,6 +28,7 @@ const editorTheme = {
       ul: 'PlaygroundEditorTheme__ul',
     },
     image: "editor-image",
+    inlineImage: "editor-image",
     link: "font-medium text-blue-600 dark:text-blue-500 hover:underline",
     text: {
       bold: "font-bold",

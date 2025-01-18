@@ -44,6 +44,7 @@ import ToolbarPlugin from '~/components/admin/editor/ToolbarPlugin';
 import TreeViewPlugin from '~/components/admin/editor/TreeViewPlugin';
 import { useParams, useSearchParams } from 'next/navigation';
 import Editor from '~/components/admin/editor/Editor';
+import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/InlineImageNode';
 
 
 const editorConfig = {
@@ -53,6 +54,7 @@ const editorConfig = {
     ListNode,
     ListItemNode,
     ImageNode,
+    InlineImageNode,
     TagNode,
     EmojiNode,
     CodeNode,

@@ -35,18 +35,14 @@ import {
 import * as React from 'react';
 import {Suspense, useCallback, useEffect, useRef, useState} from 'react';
 
-//import useModal from '../../hooks/useModal';
-//import LinkPlugin from '../../plugins/LinkPlugin';
-//import Button from '../../ui/Button';
-//import ContentEditable from '../../ui/ContentEditable';
-//import {DialogActions} from '../../ui/Dialog';
-//import Select from '../../ui/Select';
-//import TextInput from '../../ui/TextInput';
 import {$isInlineImageNode, InlineImageNode} from './InlineImageNode';
-import Select from 'node_modules/react-select/dist/declarations/src/Select';
 import TextInput from '~/components/TextInput';
 import { DialogActions } from '~/components/Dialog';
 import Button from '~/components/Button';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+
+import useModal from '~/components/useModal';
+import ContentEditable from '~/components/ContentEditable';
 
 const imageCache = new Set();
 
@@ -145,7 +141,7 @@ export function UpdateInlineImageDialog({
         />
       </div>
 
-      <Select
+      <select
         style={{marginBottom: '1em', width: '208px'}}
         value={position}
         label="Position"
@@ -155,7 +151,7 @@ export function UpdateInlineImageDialog({
         <option value="left">Left</option>
         <option value="right">Right</option>
         <option value="full">Full Width</option>
-      </Select>
+      </select>
 
       <div className="Input__wrapper">
         <input
@@ -167,10 +163,10 @@ export function UpdateInlineImageDialog({
         <label htmlFor="caption">Show Caption</label>
       </div>
 
-      <DialogActions>
+      <DialogActions children={undefined}>
         <Button
           data-test-id="image-modal-file-upload-btn"
-          onClick={() => handleOnConfirm()}>
+          onClick={() => handleOnConfirm()} children={undefined}>
           Confirm
         </Button>
       </DialogActions>

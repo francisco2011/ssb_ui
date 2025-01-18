@@ -8,9 +8,11 @@ import ContentService from "~/services/ContentService";
 import { ContentType } from "~/models/ContentType";
 import ContentModel from "~/models/ContentModel";
 import ImgModel from "~/models/ImgModel";
+import { InsertInlineImagePayload } from "./InlineImagePlugin";
 
 export function UploadImageDialogBody({
     onClick,
+    onClickLoadInline,
     showDialogAction,
     showAlternativeText,
     onImageLoaded,
@@ -20,6 +22,7 @@ export function UploadImageDialogBody({
     alreadyLoadedImgUrl
 }: {
     onClick: (payload: InsertImagePayload) => void;
+    onClickLoadInline: (payload: InsertInlineImagePayload) => void;
     showDialogAction: boolean,
     showAlternativeText: boolean,
     onImageLoaded: (payload: InsertImagePayload) => void | null;
@@ -31,6 +34,12 @@ export function UploadImageDialogBody({
     const [src, setSrc] = useState('');
     const [imgId, setImgId] = useState('');
     const [altText, setAltText] = useState('');
+    const [loadInline, setLoadInline] = useState(false)
+
+
+    const handleChange = () => {
+        setLoadInline(!loadInline);
+      };
     
     var _postId = postId;
 
@@ -115,14 +124,19 @@ export function UploadImageDialogBody({
                     /> : null
             }
 
-
+            <label>
+                Load inline
+                <input type="checkbox" checked={loadInline}  onChange={handleChange}  />
+            
+            </label>
+            
 
             {
                 showDialogAction ? <DialogActions>
                     <Button
                         data-test-id="image-modal-file-upload-btn"
                         disabled={isDisabled}
-                        onClick={() => onClick({ altText, src, imgId })}
+                        onClick={() => loadInline ? onClickLoadInline({ altText, src }) : onClick({ altText, src, imgId })}
                     >
                         Confirm
                     </Button>

@@ -700,52 +700,52 @@ pre::-webkit-scrollbar-thumb {
   cursor: nw-resize;
 }
 
-.editor-shell span.inline-editor-image {
+.editor-shell span.editor-image {
   cursor: default;
   display: inline-block;
   position: relative;
   z-index: 1;
 }
 
-.editor-shell .inline-editor-image img {
+.editor-shell .editor-image img {
   max-width: 100%;
   cursor: default;
 }
 
-.editor-shell .inline-editor-image img.focused {
+.editor-shell .editor-image img.focused {
   outline: 2px solid rgb(60, 132, 244);
 }
 
-.editor-shell .inline-editor-image img.focused.draggable {
+.editor-shell .editor-image img.focused.draggable {
   cursor: grab;
 }
 
-.editor-shell .inline-editor-image img.focused.draggable:active {
+.editor-shell .editor-image img.focused.draggable:active {
   cursor: grabbing;
 }
 
-.editor-shell .inline-editor-image .image-caption-container .tree-view-output {
+.editor-shell .editor-image .image-caption-container .tree-view-output {
   margin: 0;
   border-radius: 0;
 }
 
-.editor-shell .inline-editor-image.position-full {
+.editor-shell .editor-image.position-full {
   margin: 1em 0 1em 0;
 }
 
-.editor-shell .inline-editor-image.position-left {
+.editor-shell .editor-image.position-left {
   float: left;
   width: 50%;
   margin: 1em 1em 0 0;
 }
 
-.editor-shell .inline-editor-image.position-right {
+.editor-shell .editor-image.position-right {
   float: right;
   width: 50%;
   margin: 1em 0 0 1em;
 }
 
-.editor-shell .inline-editor-image .image-edit-button {
+.editor-shell .editor-image .image-edit-button {
   display: block;
   position: absolute;
   top: 12px;
@@ -761,11 +761,16 @@ pre::-webkit-scrollbar-thumb {
   user-select: none;
 }
 
-.editor-shell .inline-editor-image .image-edit-button:hover {
+.editor-shell .editor-image .image-edit-button:hover {
   background-color: rgba(60, 132, 244, 0.5);
 }
 
-.editor-shell .inline-editor-image .image-caption-container {
+
+.editor-shell .editor-image .image-edit-button:hover {
+  background-color: rgba(60, 132, 244, 0.5);
+}
+
+.editor-shell .editor-image .image-caption-container {
   display: block;
   background-color: #f4f4f4;
   min-width: 100%;

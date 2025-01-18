@@ -15,6 +15,7 @@ import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
 import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from "@lexical/link";
+import { EditorState, LexicalEditor } from "lexical";
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
@@ -22,19 +23,19 @@ export default async function Header(): Promise<JSX.Element> {
 
     function setupDom() {
         const dom = new JSDOM();
-      
+
         const _window = global.window;
         const _document = global.document;
-      
+
         // @ts-expect-error
         global.window = dom.window;
         global.document = dom.window.document;
-      
+
         return () => {
-          global.window = _window;
-          global.document = _document;
+            global.window = _window;
+            global.document = _document;
         };
-      }
+    }
 
     let html = ''
 
@@ -62,18 +63,39 @@ export default async function Header(): Promise<JSX.Element> {
         theme: HeroEditorTheme
     });
 
-    
 
-    let _html:any = null 
+
+    let _html: any = null
     editor.update(() => {
-        const editorState = editor.parseEditorState(content?? '')
-         editor.setEditorState(editorState);
-        const cleanup = setupDom();
-        _html = $generateHtmlFromNodes(editor, null);
-        cleanup()
-      });
 
-    
+        var editorState: EditorState | null = null
+
+        if(!content) return
+
+        if (content.startsWith('{"w')) {
+
+            var newState = JSON.parse(content)
+
+            editorState = editor.parseEditorState(newState.editorState)
+
+        } else {
+            editorState = editor.parseEditorState(content)
+        }
+
+        // const editorState = editor.parseEditorState(content?? '')
+
+        if (editorState) {
+            editor.setEditorState(editorState);
+            const cleanup = setupDom();
+            _html = $generateHtmlFromNodes(editor, null);
+            cleanup()
+        }
+
+
+
+    });
+
+
 
     html = _html
 

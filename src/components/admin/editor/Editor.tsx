@@ -54,6 +54,8 @@ import ToolBarProperties from './ToolbarProperties';
 import { useObserveElementWidth } from './utils/useObserveElementWidth';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import {HorizontalRulePlugin} from '@lexical/react/LexicalHorizontalRulePlugin'
+import { InlineImageNode } from './plugins/imagePlugin/InlineImageNode';
+import InlineImagePlugin from './plugins/imagePlugin/InlineImagePlugin';
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -69,7 +71,8 @@ const editorConfig = {
     HashtagNode,
     AutoLinkNode,
     LinkNode,
-    HorizontalRuleNode
+    HorizontalRuleNode,
+    InlineImageNode
   ],
   // Handling of errors during update
   onError(error: Error) {
@@ -309,6 +312,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
               <ClearEditorPlugin />
               <ListPlugin />
               <ImagesPlugin />
+              <InlineImagePlugin/>
               <TagPlugin onNewCallback={(c) => addTag(c)} />
               <LinkPlugin hasLinkAttributes={false} />
               <AutoFocusPlugin />

@@ -5,9 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type {Position} from '../../nodes/InlineImageNode/InlineImageNode';
-
-import '../../nodes/InlineImageNode/InlineImageNode.css';
+import './InlineImageNode.css';
 
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {$wrapNodeInElement, mergeRegister} from '@lexical/utils';
@@ -33,18 +31,15 @@ import {
 } from 'lexical';
 import * as React from 'react';
 import {useEffect, useRef, useState} from 'react';
+import { $createInlineImageNode, $isInlineImageNode, InlineImageNode, InlineImagePayload } from './InlineImageNode';
 
-import {
-  $createInlineImageNode,
-  $isInlineImageNode,
-  InlineImageNode,
-  InlineImagePayload,
-} from '../../nodes/InlineImageNode/InlineImageNode';
-import Button from '../../ui/Button';
-import {DialogActions} from '../../ui/Dialog';
-import FileInput from '../../ui/FileInput';
-import Select from '../../ui/Select';
-import TextInput from '../../ui/TextInput';
+//import {
+//  $createInlineImageNode,
+//  $isInlineImageNode,
+//  InlineImageNode,
+//  InlineImagePayload,
+//} from '../../nodes/InlineImageNode/InlineImageNode';
+
 
 export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
 
@@ -102,10 +97,13 @@ export default function InlineImagePlugin(): JSX.Element | null {
 
 const TRANSPARENT_IMAGE =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-const img = document.createElement('img');
-img.src = TRANSPARENT_IMAGE;
+
 
 function $onDragStart(event: DragEvent): boolean {
+
+  const img = document.createElement('img');
+  img.src = TRANSPARENT_IMAGE;
+
   const node = $getImageNodeInSelection();
   if (!node) {
     return false;
