@@ -43,8 +43,6 @@ import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 
 import useModal from '~/components/useModal';
 import ContentEditable from '~/components/ContentEditable';
-import ImageResizer from '~/components/ImageResizer';
-import $isImageNode from './IsImageNode';
 
 const imageCache = new Set();
 
@@ -69,7 +67,6 @@ function LazyImage({
   width,
   height,
   position,
-  maxWidth
 }: {
   altText: string;
   className: string | null;
@@ -78,7 +75,6 @@ function LazyImage({
   src: string;
   width: 'inherit' | number;
   position: Position;
-  maxWidth:  number;
 }): JSX.Element {
   useSuspenseImage(src);
   return (
@@ -92,14 +88,11 @@ function LazyImage({
         display: 'block',
         height,
         width,
-        maxWidth
       }}
       draggable="false"
     />
   );
 }
-
-
 
 export function UpdateInlineImageDialog({
   activeEditor,
@@ -190,7 +183,6 @@ export default function InlineImageComponent({
   showCaption,
   caption,
   position,
-  maxWidth
 }: {
   altText: string;
   caption: LexicalEditor;
@@ -200,7 +192,6 @@ export default function InlineImageComponent({
   src: string;
   width: 'inherit' | number;
   position: Position;
-  maxWidth: number;
 }): JSX.Element {
   const [modal, showModal] = useModal();
   const imageRef = useRef<null | HTMLImageElement>(null);
@@ -211,8 +202,6 @@ export default function InlineImageComponent({
   const [selection, setSelection] = useState<BaseSelection | null>(null);
   const activeEditorRef = useRef<LexicalEditor | null>(null);
   const isEditable = useLexicalEditable();
-
-  const [isResizing, setIsResizing] = useState<boolean>(false);
 
   const $onDelete = useCallback(
     (payload: KeyboardEvent) => {
@@ -362,39 +351,6 @@ export default function InlineImageComponent({
     setSelected,
   ]);
 
-  /////////////////////////// RE SIZE /////////////////////////////
-
-  const setShowCaption = () => {
-      editor.update(() => {
-        const node = $getNodeByKey(nodeKey);
-        if ($isImageNode(node)) {
-          node.setShowCaption(true);
-        }
-      });
-    };
-  
-    const onResizeEnd = (
-      nextWidth: 'inherit' | number,
-      nextHeight: 'inherit' | number,
-    ) => {
-      // Delay hiding the resize bars for click case
-      setTimeout(() => {
-        setIsResizing(false);
-      }, 200);
-  
-      editor.update(() => {
-        const node = $getNodeByKey(nodeKey);
-        if ($isImageNode(node)) {
-          node.setWidthAndHeight(nextWidth, nextHeight);
-        }
-      });
-    };
-  
-    const onResizeStart = () => {
-      setIsResizing(true);
-    };
-
-  /////////////////////////////////////////////////////////////////
   const draggable = isSelected && $isNodeSelection(selection);
   const isFocused = isSelected && isEditable;
   return (
@@ -429,7 +385,6 @@ export default function InlineImageComponent({
             width={width}
             height={height}
             position={position}
-            maxWidth={maxWidth}
           />
         </span>
         {showCaption && (
@@ -450,19 +405,6 @@ export default function InlineImageComponent({
             </LexicalNestedComposer>
           </span>
         )}
-        {$isNodeSelection(selection) && isFocused && (
-                  <ImageResizer
-                    showCaption={showCaption}
-                    setShowCaption={setShowCaption}
-                    editor={editor}
-                    buttonRef={buttonRef}
-                    imageRef={imageRef}
-                    maxWidth={maxWidth} 
-                    onResizeStart={onResizeStart}
-                    onResizeEnd={onResizeEnd}
-                    captionsEnabled={false}// {!isLoadError && captionsEnabled}
-                  />
-                )}
       </>
       {modal}
     </Suspense>
