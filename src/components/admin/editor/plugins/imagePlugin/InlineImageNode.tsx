@@ -42,12 +42,15 @@ import type {
     src: string;
     width?: number;
     position?: Position;
+    imgId?: string;
+    isSplitHalves?: boolean
   }
   
   export interface UpdateInlineImagePayload {
     altText?: string;
     showCaption?: boolean;
     position?: Position;
+    isSplitInHalves?: boolean
   }
   
   function $convertInlineImageElement(domNode: Node): null | DOMConversionOutput {
@@ -68,6 +71,8 @@ import type {
       src: string;
       width?: number;
       position?: Position;
+      imgId?: string;
+      isSplitHalves?: boolean
     },
     SerializedLexicalNode
   >;
@@ -80,6 +85,8 @@ import type {
     __showCaption: boolean;
     __caption: LexicalEditor;
     __position: Position;
+    __imgId: string | undefined;
+    __isSplitHalves: boolean | undefined;
   
     static getType(): string {
       return 'inline-image';
@@ -95,13 +102,15 @@ import type {
         node.__showCaption,
         node.__caption,
         node.__key,
+        node.__imgId,
+        node.__isSplitHalves
       );
     }
   
     static importJSON(
       serializedNode: SerializedInlineImageNode,
     ): InlineImageNode {
-      const {altText, height, width, src, showCaption, position} = serializedNode;
+      const {altText, height, width, src, showCaption, position, imgId, isSplitHalves} = serializedNode;
       return $createInlineImageNode({
         altText,
         height,
@@ -109,6 +118,8 @@ import type {
         showCaption,
         src,
         width,
+        imgId,
+        isSplitHalves
       }).updateFromJSON(serializedNode);
     }
   
@@ -143,6 +154,8 @@ import type {
       showCaption?: boolean,
       caption?: LexicalEditor,
       key?: NodeKey,
+      imgId?: string,
+      isSplitHalves?: boolean
     ) {
       super(key);
       this.__src = src;
@@ -152,6 +165,8 @@ import type {
       this.__showCaption = showCaption || false;
       this.__caption = caption || createEditor();
       this.__position = position;
+      this.__imgId = imgId
+      this.__isSplitHalves = isSplitHalves
     }
   
     exportDOM(): DOMExportOutput {
@@ -173,6 +188,8 @@ import type {
         showCaption: this.__showCaption,
         src: this.getSrc(),
         width: this.__width === 'inherit' ? 0 : this.__width,
+        imgId: this.__imgId,
+        isSplitHalves: this.__isSplitHalves
       };
     }
   
@@ -216,9 +233,13 @@ import type {
       writable.__position = position;
     }
   
+    getIsSplitInHalves(): boolean{
+      return this.__isSplitHalves === undefined || this.__isSplitHalves;
+    }
+
     update(payload: UpdateInlineImagePayload): void {
       const writable = this.getWritable();
-      const {altText, showCaption, position} = payload;
+      const {altText, showCaption, position, isSplitInHalves} = payload;
       if (altText !== undefined) {
         writable.__altText = altText;
       }
@@ -228,6 +249,10 @@ import type {
       if (position !== undefined) {
         writable.__position = position;
       }
+
+      if(isSplitInHalves !== undefined){
+        writable.__isSplitHalves = isSplitInHalves
+      }
     }
   
     // View
@@ -236,7 +261,8 @@ import type {
       if(!config.theme.inlineImage) console.warn("must set config.theme.inlineImage variable")
 
       const span = document.createElement('span');
-      const className = `${config.theme.inlineImage} position-${this.__position}`;
+
+      const className = `${config.theme.inlineImage} position-${this.__position} ${this.__isSplitHalves === undefined || this.__isSplitHalves ? 'half' : ''}`;
 
       if (className !== undefined) {
         span.className = className;
@@ -247,8 +273,9 @@ import type {
     updateDOM(prevNode: this, dom: HTMLElement, config: EditorConfig): false {
       if(!config.theme.inlineImage) console.warn("must set config.theme.inlineImage variable")
       const position = this.__position;
-      if (position !== prevNode.__position) {
-        const className = `${config.theme.inlineImage} position-${position}`;
+      const splitInHalves = this.__isSplitHalves;
+      if (position !== prevNode.__position || splitInHalves != prevNode.__isSplitHalves) {
+        const className = `${config.theme.inlineImage} position-${position} ${this.__isSplitHalves === undefined || this.__isSplitHalves ? 'half' : ''}`;
         if (className !== undefined) {
           dom.className = className;
         }
@@ -268,6 +295,7 @@ import type {
             showCaption={this.__showCaption}
             caption={this.__caption}
             position={this.__position}
+            isSplitHalves={this.__isSplitHalves}
           />
         </Suspense>
       );
@@ -283,6 +311,8 @@ import type {
     showCaption,
     caption,
     key,
+    imgId,
+    isSplitHalves
   }: InlineImagePayload): InlineImageNode {
     return $applyNodeReplacement(
       new InlineImageNode(
@@ -294,6 +324,8 @@ import type {
         showCaption,
         caption,
         key,
+        imgId,
+        isSplitHalves
       ),
     );
   }

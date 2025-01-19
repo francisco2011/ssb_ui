@@ -20,6 +20,7 @@ import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import { $nodesOfType, EditorState, LexicalEditor } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
+import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/InlineImageNode';
 
 
 export default function ReadonlyEditor({ content, contents, editorTheme, shellClassName, contentClassName, onHtmlGenerated  }) {
@@ -31,6 +32,7 @@ export default function ReadonlyEditor({ content, contents, editorTheme, shellCl
       ListNode,
       ListItemNode,
       ImageNode,
+      InlineImageNode,
       TagNode,
       EmojiNode,
       CodeNode,

@@ -6,7 +6,6 @@ import ButtonProps from "./props/IButtonProps";
 
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../plugins/imagePlugin/ImagesPlugin";
 import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
-import { ContentType } from "~/models/ContentType";
 import { useEffect, useState } from "react";
 import { INSERT_INLINE_IMAGE_COMMAND, InsertInlineImagePayload } from "../plugins/imagePlugin/InlineImagePlugin";
 

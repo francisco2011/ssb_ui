@@ -97,6 +97,7 @@ import { $createEmojiNode } from "~/components/admin/editor/plugins/EmojisPlugin
 import GifPickerButton from "./toolbar/gif/GifPickerButton";
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import HorizontalRuleButton from "./toolbar/HorizontalRuleButton";
+import { INSERT_INLINE_IMAGE_COMMAND } from "./plugins/imagePlugin/InlineImagePlugin";
 
 
 
@@ -318,7 +319,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
     const insertGif = useCallback((payload: InsertImagePayload) => {
         
-        editor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
+        editor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload);
         
     }, [editor])
 

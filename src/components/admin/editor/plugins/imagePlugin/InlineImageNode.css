@@ -96,20 +96,26 @@
   .editor-shell .editor-image.position-full {
     margin: 1em 0 1em 0;
   }
-  
+
   .editor-shell .editor-image.position-left {
     float: left;
-    width: 50%;
     margin: 1em 1em 0 0;
   }
   
   .editor-shell .editor-image.position-right {
     float: right;
-    width: 50%;
     margin: 1em 0 0 1em;
   }
 
-  .inline-editor-image .image-edit-button {
+  .editor-shell .editor-image.position-left.half {
+    width: 50%;
+  }
+  
+  .editor-shell .editor-image.position-right.half {
+    width: 50%;
+  }
+
+  .editor-shell .editor-image .image-edit-button {
     display: block;
     position: absolute;
     top: 12px;
@@ -125,7 +131,11 @@
     user-select: none;
   }
   
-  .inline-editor-image .image-edit-button:hover {
+  .editor-shell .editor-image .image-edit-button:hover {
     background-color: rgba(60, 132, 244, 0.5);
   }
   
+  
+  .editor-shell .editor-image .image-edit-button:hover {
+    background-color: rgba(60, 132, 244, 0.5);
+  }

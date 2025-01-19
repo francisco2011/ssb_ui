@@ -117,6 +117,7 @@ function LazyImage({
         height,
         maxWidth,
         width,
+        display: 'block',
       }}
       onError={onError}
       draggable="false"

@@ -117,6 +117,11 @@ export function UpdateInlineImageDialog({
   const [altText, setAltText] = useState(node.getAltText());
   const [showCaption, setShowCaption] = useState(node.getShowCaption());
   const [position, setPosition] = useState<Position>(node.getPosition());
+  const [isSplitInHalves, setIsSplitInHalves] = useState(node.getIsSplitInHalves())
+
+  const handleIsSplitInHalves = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsSplitInHalves(e.target.checked);
+  };
 
   const handleShowCaptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setShowCaption(e.target.checked);
@@ -127,7 +132,7 @@ export function UpdateInlineImageDialog({
   };
 
   const handleOnConfirm = () => {
-    const payload = {altText, position, showCaption};
+    const payload = {altText, position, showCaption, isSplitInHalves};
     if (node) {
       activeEditor.update(() => {
         node.update(payload);
@@ -168,6 +173,16 @@ export function UpdateInlineImageDialog({
           onChange={handleShowCaptionChange}
         />
         <label htmlFor="caption">Show Caption</label>
+      </div>
+
+      <div className="Input__wrapper">
+        <input
+          id="caption"
+          type="checkbox"
+          checked={isSplitInHalves}
+          onChange={handleIsSplitInHalves}
+        />
+        <label htmlFor="caption">Split in Halves</label>
       </div>
 
       <DialogActions children={undefined}>
@@ -384,7 +399,7 @@ export default function InlineImageComponent({
   
       editor.update(() => {
         const node = $getNodeByKey(nodeKey);
-        if ($isImageNode(node)) {
+        if ($isInlineImageNode(node)) {
           node.setWidthAndHeight(nextWidth, nextHeight);
         }
       });
