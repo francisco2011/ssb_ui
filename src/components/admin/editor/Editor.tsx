@@ -12,6 +12,7 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { HashtagNode } from "@lexical/hashtag";
+import {TablePlugin} from '@lexical/react/LexicalTablePlugin';
 
 import React, { createRef, forwardRef, useEffect, useRef, useState } from 'react';
 
@@ -56,6 +57,10 @@ import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import {HorizontalRulePlugin} from '@lexical/react/LexicalHorizontalRulePlugin'
 import { InlineImageNode } from './plugins/imagePlugin/InlineImageNode';
 import InlineImagePlugin from './plugins/imagePlugin/InlineImagePlugin';
+import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import TableCellResizerPlugin from './plugins/TableCellResizer';
+import TableActionMenuPlugin from './plugins/TableActionMenu';
+import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -72,7 +77,10 @@ const editorConfig = {
     AutoLinkNode,
     LinkNode,
     HorizontalRuleNode,
-    InlineImageNode
+    InlineImageNode,
+    TableNode,
+    TableCellNode,
+    TableRowNode
   ],
   // Handling of errors during update
   onError(error: Error) {
@@ -321,7 +329,9 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
               <ClickableLinkPlugin />
               <OnChangePlugin onChange={onChange} />
               <HorizontalRulePlugin/>
-
+              <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
+              <TableCellResizerPlugin/>
+              
               <div className='editor-container'>
               <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
 
@@ -333,6 +343,12 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
                       isLinkEditMode={isLinkEditMode}
                       setIsLinkEditMode={setIsLinkEditMode}
                     />
+                    <TableActionMenuPlugin 
+                      anchorElem={floatingAnchorElem}
+                      cellMerge={true}/>
+
+                    <TableHoverActionsPlugin 
+                      anchorElem={floatingAnchorElem}/>
                   </>
                 )}
                 <RichTextPlugin

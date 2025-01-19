@@ -73,6 +73,22 @@ const editorTheme = {
       url: "text-[#9a6e3a]",
       variable: "text-[#e90] dark:text-blue-400",
     },
+    table: 'PlaygroundEditorTheme__table',
+    tableAlignment: {
+      center: 'PlaygroundEditorTheme__tableAlignmentCenter',
+      right: 'PlaygroundEditorTheme__tableAlignmentRight',
+    },
+    tableCell: 'PlaygroundEditorTheme__tableCell',
+    tableCellActionButton: 'PlaygroundEditorTheme__tableCellActionButton',
+    tableCellActionButtonContainer:
+      'PlaygroundEditorTheme__tableCellActionButtonContainer',
+    tableCellHeader: 'PlaygroundEditorTheme__tableCellHeader',
+    tableCellResizer: 'PlaygroundEditorTheme__tableCellResizer',
+    tableCellSelected: 'PlaygroundEditorTheme__tableCellSelected',
+    tableRowStriping: 'PlaygroundEditorTheme__tableRowStriping',
+    tableScrollableWrapper: 'PlaygroundEditorTheme__tableScrollableWrapper',
+    tableSelected: 'PlaygroundEditorTheme__tableSelected',
+    tableSelection: 'PlaygroundEditorTheme__tableSelection',
   };
   
   export default editorTheme;

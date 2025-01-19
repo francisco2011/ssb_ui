@@ -98,6 +98,7 @@ import GifPickerButton from "./toolbar/gif/GifPickerButton";
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import HorizontalRuleButton from "./toolbar/HorizontalRuleButton";
 import { INSERT_INLINE_IMAGE_COMMAND } from "./plugins/imagePlugin/InlineImagePlugin";
+import InsertTableButton from "./toolbar/InsertTableButtons";
 
 
 
@@ -568,6 +569,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <EmojiPickerButton onClickCallback={insertEmoji} />
                     <GifPickerButton onClickCallback={insertGif} />
                     <HorizontalRuleButton  currentEditor={editor}/>
+                    <InsertTableButton currentEditor={editor}/>
                 </div>
                 <div className="mt-2">
                 <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>

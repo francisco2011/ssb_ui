@@ -177,12 +177,12 @@ export function UpdateInlineImageDialog({
 
       <div className="Input__wrapper">
         <input
-          id="caption"
+          id="halves"
           type="checkbox"
           checked={isSplitInHalves}
           onChange={handleIsSplitInHalves}
         />
-        <label htmlFor="caption">Split in Halves</label>
+        <label htmlFor="halves">Split in Halves</label>
       </div>
 
       <DialogActions children={undefined}>

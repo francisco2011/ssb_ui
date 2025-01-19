@@ -19,7 +19,8 @@ export function UploadImageDialogBody({
     imgClassname,
     postId,
     contentType,
-    alreadyLoadedImgUrl
+    alreadyLoadedImgUrl,
+    allowLoadInline
 }: {
     onClick: (payload: InsertImagePayload) => void;
     onClickLoadInline: (payload: InsertInlineImagePayload) => void;
@@ -29,29 +30,30 @@ export function UploadImageDialogBody({
     imgClassname: string,
     postId: number,
     contentType: string,
-    alreadyLoadedImgUrl: ImgModel | null
+    alreadyLoadedImgUrl: ImgModel | null,
+    allowLoadInline: boolean | undefined
 }) {
     const [src, setSrc] = useState('');
     const [imgId, setImgId] = useState('');
     const [altText, setAltText] = useState('');
-    const [loadInline, setLoadInline] = useState(false)
+    const [loadInline, setLoadInline] = useState(true)
 
 
     const handleChange = () => {
         setLoadInline(!loadInline);
-      };
-    
+    };
+
     var _postId = postId;
 
     useEffect(() => {
         _postId = postId
 
-        if(alreadyLoadedImgUrl && alreadyLoadedImgUrl.src && alreadyLoadedImgUrl.name){
+        if (alreadyLoadedImgUrl && alreadyLoadedImgUrl.src && alreadyLoadedImgUrl.name) {
             setSrc(alreadyLoadedImgUrl.src)
             setImgId(alreadyLoadedImgUrl.name)
         }
 
-      }, [postId]);
+    }, [postId]);
 
     const isDisabled = src === '';
 
@@ -77,7 +79,7 @@ export function UploadImageDialogBody({
             if (result.url) setSrc(result.url)
             if (result.name) setImgId(result.name)
 
-            if(onImageLoaded && result.url && result.name) onImageLoaded({ altText: '', src: result.url, imgId: result.name })
+            if (onImageLoaded && result.url && result.name) onImageLoaded({ altText: '', src: result.url, imgId: result.name })
         }
 
         //    if (file) reader.readAsDataURL(file);
@@ -109,10 +111,10 @@ export function UploadImageDialogBody({
             />
 
             <TextInput
-                        placeholder="External source"
-                        onChange={setSrc}
-                        value={src}
-                    />
+                placeholder="External source"
+                onChange={setSrc}
+                value={src}
+            />
 
             {
                 showAlternativeText ?
@@ -124,12 +126,18 @@ export function UploadImageDialogBody({
                     /> : null
             }
 
-            <label>
-                Load inline
-                <input type="checkbox" checked={loadInline}  onChange={handleChange}  />
-            
-            </label>
-            
+            {
+                allowLoadInline ?
+                    <div className="form-control">
+                        <label className="cursor-pointer label">
+                            <input type="checkbox"  checked={loadInline} onChange={handleChange}  className="checkbox" />
+                            <span className="label-text">Load inline</span>
+                        </label>
+                    </div>
+                    : null
+            }
+
+
 
             {
                 showDialogAction ? <DialogActions>

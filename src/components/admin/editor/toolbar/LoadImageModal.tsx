@@ -50,7 +50,7 @@ function InsertImageDialog({
 
     return (
         <>
-            <UploadImageDialogBody alreadyLoadedImgUrl={null} onClickLoadInline={onClickLoadInline} contentType={contentType} postId={postId} onImageLoaded={() => { } } onClick={onClick} showDialogAction={true} showAlternativeText={true} imgClassname={imgClassName} />
+            <UploadImageDialogBody allowLoadInline={true} alreadyLoadedImgUrl={null} onClickLoadInline={onClickLoadInline} contentType={contentType} postId={postId} onImageLoaded={() => { } } onClick={onClick} showDialogAction={true} showAlternativeText={true} imgClassname={imgClassName} />
         </>
     );
 }

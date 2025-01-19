@@ -1,6 +1,7 @@
 @import 'fonts.css';
 @import 'lists.css';
 @import './prism/dracula.css';
+@import 'table.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
