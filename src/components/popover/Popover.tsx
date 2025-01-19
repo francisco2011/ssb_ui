@@ -1,5 +1,6 @@
-// taken from https://medium.com/@iambharathpadhu/mastering-popovers-building-an-accessible-popover-component-in-react-with-just-html-a6e95c0be2fb
+// inspired from https://medium.com/@iambharathpadhu/mastering-popovers-building-an-accessible-popover-component-in-react-with-just-html-a6e95c0be2fb
 //updated for TS
+//added the option to use ESC button
 
 import React, { useState, useRef, useEffect, Reference, RefObject } from 'react';
 import './Popover.css';
@@ -24,9 +25,17 @@ const Popover = ({ children, content, buttonClass }) => {
       }
     };
 
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+          setIsVisible(false)
+      }
+    }
+
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, []);
 

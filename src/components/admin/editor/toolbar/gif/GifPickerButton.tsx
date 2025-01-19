@@ -1,41 +1,32 @@
 import { faCopy, faFaceSmile, faGift, faPaintBrush, faPaintRoller } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import GifPicker, { TenorImage } from 'gif-picker-react';
 import { InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
+import Popover from "~/components/popover/Popover";
 
 function GifPickerButton({ onClickCallback }: { onClickCallback: (data: InsertImagePayload) => void }) {
 
-    const [isOpen, setIsOpen] = useState(false)
-
     const onSelected = (data: TenorImage) => {
-
-        setIsOpen(!isOpen)
         onClickCallback({ altText: data.description, src: data.url, captionsEnabled: false, showCaption: false})
     }
+
+
 
     return (
         <>
             <div>
-                <button
-                    className={
-                        "px-1 hover:bg-gray-600 transition-colors duration-100 ease-in bg-gray-400"
 
-                    }
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                    <FontAwesomeIcon
-                        icon={faGift}
-                        className="text-white w-3.5 h-3.5" />
-                </button>
+            <Popover buttonClass={"px-1 bg-gray-400 hover:bg-gray-700 transition-colors duration-100 ease-in"}
+                        content={ <GifPicker  
+                                    onGifClick={onSelected} 
+                                    tenorApiKey={"AIzaSyBck_LbIlITJQTkQ9EDoYE2TJJ2gZ-nmXg"}   />}>
+                        <FontAwesomeIcon
+                            icon={faGift}
+                            className="text-white w-3.5 h-3.5" />
+                    </Popover>
 
-                    {
-                        isOpen ? <div style={{ zIndex: 1002, position: "fixed", right: '30%', bottom: '38%' }}>
-                            <GifPicker  onGifClick={onSelected} tenorApiKey={"AIzaSyBck_LbIlITJQTkQ9EDoYE2TJJ2gZ-nmXg"}   />
-                        </div> : null
-                    }
 
-                    
 
                 
             </div>
