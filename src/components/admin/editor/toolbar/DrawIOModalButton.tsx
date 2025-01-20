@@ -27,7 +27,7 @@ function DrawIOModalButton({activeEditor}:{ activeEditor: LexicalEditor}) {
           }
         onClick={() => {
                         showModal('Draw IO', (onClose) => (
-                          <EmbededDrawIOComponent onClose={onClose} onData={onData}/>
+                          <EmbededDrawIOComponent src={null} onClose={onClose} onData={onData}/>
                           
                         ));
                       }}

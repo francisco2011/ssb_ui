@@ -115,10 +115,35 @@
     width: 50%;
   }
 
-  .editor-shell .editor-image .image-edit-button {
+  .editor-shell .editor-image .image-config-button {
     display: block;
     position: absolute;
     top: 12px;
+    right: 12px;
+    padding: 6px 8px;
+    margin: 0 auto;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    min-width: 60px;
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .editor-shell .editor-image .image-config-button:hover {
+    background-color: rgba(60, 132, 244, 0.5);
+  }
+  
+  
+  .editor-shell .editor-image .image-config-button:hover {
+    background-color: rgba(60, 132, 244, 0.5);
+  }
+
+  .editor-shell .editor-image .image-edit-button {
+    display: block;
+    position: absolute;
+    top: 50px;
     right: 12px;
     padding: 6px 8px;
     margin: 0 auto;

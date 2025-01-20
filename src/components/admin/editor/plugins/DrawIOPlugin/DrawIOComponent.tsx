@@ -30,6 +30,7 @@ import Button from '~/components/Button';
 import useModal from '~/components/useModal';
 import ImageResizer from '~/components/ImageResizer';
 import { JSX } from 'react/jsx-runtime';
+import EmbededDrawIOComponent from './EmbededDrawIOComponent';
 
 const imageCache = new Set();
 
@@ -353,20 +354,31 @@ export default function DrawIOComponent({
       <>
         <span draggable={draggable}>
           {isEditable && (
-            <button
-              className="image-edit-button"
-              ref={buttonRef}
-              onClick={() => {
-                showModal('Update', (onClose) => (
-                  <UpdateDrawIOImageDialog
-                    activeEditor={editor}
-                    nodeKey={nodeKey}
-                    onClose={onClose}
-                  />
-                ));
-              }}>
-              Edit
-            </button>
+            <><button
+                          className="image-config-button"
+                          ref={buttonRef}
+                          onClick={() => {
+                              showModal('Update', (onClose) => (
+                                  <UpdateDrawIOImageDialog
+                                      activeEditor={editor}
+                                      nodeKey={nodeKey}
+                                      onClose={onClose} />
+                              ));
+                          } }>
+                          Config
+                      </button><button
+                          className="image-edit-button"
+                          ref={buttonRef}
+                          onClick={() => {
+                              showModal('Draw IO', (onClose) => (
+                                  <EmbededDrawIOComponent
+                                      onData={()=> {}}
+                                      src={src}
+                                      onClose={onClose} />
+                              ));
+                          } }>
+                              Edit
+                          </button></>
           )}
           <LazyImage
             className={

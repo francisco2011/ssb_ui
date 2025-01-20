@@ -5,7 +5,7 @@ import { JSX } from "react/jsx-runtime";
 import DrawIOResponse from "./DrawIOResponse";
 
 
-export default function EmbededDrawIOComponent({ onData, onClose }: {onData: ( response: DrawIOResponse | null) => void, onClose: () => void }):  JSX.Element {
+export default function EmbededDrawIOComponent({ src, onData, onClose }: { src: string | null,  onData: ( response: DrawIOResponse | null) => void, onClose: () => void }):  JSX.Element {
   
   const iframeRef = useRef();
 
@@ -26,8 +26,10 @@ export default function EmbededDrawIOComponent({ onData, onClose }: {onData: ( r
               //source.drawIoWindow.postMessage(JSON.stringify
               //  {action: 'load', xmlpng: source.getAttribute('src')}), '*');
               
+              debugger
+
               iframeRef.current.contentWindow.postMessage(JSON.stringify
-                  ({action: 'load', xml: ''}), '*');
+                  ({action: 'load', xml: src??''}), '*');
 
             }
             // Received if the user clicks save
