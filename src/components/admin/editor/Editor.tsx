@@ -61,6 +61,8 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import TableCellResizerPlugin from './plugins/TableCellResizer';
 import TableActionMenuPlugin from './plugins/TableActionMenu';
 import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
+import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIONode';
+import DrawIOPlugin from './plugins/DrawIOPlugin';
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -80,7 +82,8 @@ const editorConfig = {
     InlineImageNode,
     TableNode,
     TableCellNode,
-    TableRowNode
+    TableRowNode,
+    DrawIOImageNode
   ],
   // Handling of errors during update
   onError(error: Error) {
@@ -331,7 +334,8 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
               <HorizontalRulePlugin/>
               <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
               <TableCellResizerPlugin/>
-              
+              <DrawIOPlugin/>
+
               <div className='editor-container'>
               <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
 

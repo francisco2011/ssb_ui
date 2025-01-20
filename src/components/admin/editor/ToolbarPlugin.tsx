@@ -99,6 +99,7 @@ import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "~/components/admin/edi
 import HorizontalRuleButton from "./toolbar/HorizontalRuleButton";
 import { INSERT_INLINE_IMAGE_COMMAND } from "./plugins/imagePlugin/InlineImagePlugin";
 import InsertTableButton from "./toolbar/InsertTableButtons";
+import DrawIOModalButton from "./toolbar/DrawIOModalButton";
 
 
 
@@ -570,6 +571,8 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <GifPickerButton onClickCallback={insertGif} />
                     <HorizontalRuleButton  currentEditor={editor}/>
                     <InsertTableButton currentEditor={editor}/>
+
+                    <DrawIOModalButton activeEditor={editor}/>
                 </div>
                 <div className="mt-2">
                 <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>
