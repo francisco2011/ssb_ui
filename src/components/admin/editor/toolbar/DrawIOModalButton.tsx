@@ -1,20 +1,17 @@
-import { faDiagramProject, faLink } from "@fortawesome/free-solid-svg-icons";
+import { faDiagramProject } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useModal from "~/components/useModal";
 import EmbededDrawIOComponent from "../plugins/DrawIOPlugin/EmbededDrawIOComponent";
 import DrawIOResponse from "../plugins/DrawIOPlugin/DrawIOResponse";
-import { LexicalEditor } from "lexical";
 import {useCallback} from 'react'
-import { INSERT_DRAW_IO_IMAGE_COMMAND } from "../plugins/DrawIOPlugin";
 
-function DrawIOModalButton({activeEditor}:{ activeEditor: LexicalEditor}) {
+function DrawIOModalButton({ onContentCallback}:{ onContentCallback: (response: DrawIOResponse) => void}) {
 
     const [modal, showModal] = useModal();
 
     const onData =  useCallback((data: DrawIOResponse | null) => {
         if(data){
-            activeEditor.dispatchCommand(INSERT_DRAW_IO_IMAGE_COMMAND, {src: data.Content, position: 'full'});
-            
+            onContentCallback(data)
         }
     }, [])
 

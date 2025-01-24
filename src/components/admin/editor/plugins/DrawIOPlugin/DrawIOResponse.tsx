@@ -1,4 +1,5 @@
 export default interface DrawIOResponse{
-    Content: string
+    Content: File
     Format: string
+    ContentType: string
 }

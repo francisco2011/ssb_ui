@@ -100,6 +100,10 @@ import HorizontalRuleButton from "./toolbar/HorizontalRuleButton";
 import { INSERT_INLINE_IMAGE_COMMAND } from "./plugins/imagePlugin/InlineImagePlugin";
 import InsertTableButton from "./toolbar/InsertTableButtons";
 import DrawIOModalButton from "./toolbar/DrawIOModalButton";
+import ContentService from "~/services/ContentService";
+import ContentModel from "~/models/ContentModel";
+import DrawIOResponse from "./plugins/DrawIOPlugin/DrawIOResponse";
+import { INSERT_DRAW_IO_IMAGE_COMMAND } from "./plugins/DrawIOPlugin";
 
 
 
@@ -503,6 +507,36 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
         onPropertiesChange({MaxLengthpx: value + 'px'})
     }
 
+    //////////////DRAWIO/////////////////
+
+    
+	
+ const service = new ContentService()
+
+    const loadImage = async (file: File | null) : Promise<ContentModel | null> => {
+
+        if (file && post.id) {
+            const result = await service.UploadFile(file, post.id, 'imgBody')
+            return result
+        }
+
+        return null
+
+    };
+
+
+    const onDrawIO =  useCallback( async (data: DrawIOResponse | null) =>  {
+        if(data){
+            const img = await loadImage(data.Content)
+            if(img && img.url){
+
+                editor.dispatchCommand(INSERT_DRAW_IO_IMAGE_COMMAND, {src: img.url, position: 'full'});
+            }
+        }
+    }, [editor, post])
+
+    ////////////////////////////////////
+
     return (
         <div className="z-40 sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
@@ -572,7 +606,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <HorizontalRuleButton  currentEditor={editor}/>
                     <InsertTableButton currentEditor={editor}/>
 
-                    <DrawIOModalButton activeEditor={editor}/>
+                    <DrawIOModalButton onContentCallback={onDrawIO}/>
                 </div>
                 <div className="mt-2">
                 <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>
