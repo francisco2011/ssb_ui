@@ -61,8 +61,9 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import TableCellResizerPlugin from './plugins/TableCellResizer';
 import TableActionMenuPlugin from './plugins/TableActionMenu';
 import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
-import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIONode';
+import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIOImageNode';
 import DrawIOPlugin from './plugins/DrawIOPlugin';
+import ContentStorageHelper from './plugins/Common/ContentStorageHelper';
 
 const editorConfig = {
   namespace: 'Main Editor',

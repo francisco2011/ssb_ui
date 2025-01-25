@@ -6,8 +6,14 @@ import {useEffect, useRef} from "react"
 import { JSX } from "react/jsx-runtime";
 import DrawIOResponse from "./DrawIOResponse";
 
+export type DrawIOImageContext = 
+  {
+    src?: string;
+    id?: string
+  }
+ ;
 
-export default function EmbededDrawIOComponent({ src, onData, onClose }: { src: string| null,  onData: ( response: DrawIOResponse | null) => void, onClose: () => void }):  JSX.Element {
+export default function EmbededDrawIOComponent({ imageContext, onData, onClose }: { imageContext: DrawIOImageContext| null,  onData: ( response: DrawIOResponse | null) => void, onClose: () => void }):  JSX.Element {
   
   const iframeRef = useRef();
 
@@ -71,9 +77,9 @@ const createDataUri = async (doc) =>
 
                 let strSrc = ''
 
-                if(src){
+                if(imageContext?.src){
 
-                  const response = await fetch(src);
+                  const response = await fetch(imageContext.src);
                   const content = await response.blob();
 
                   strSrc = await createDataUri(content)
@@ -82,9 +88,6 @@ const createDataUri = async (doc) =>
                 iframeRef.current.contentWindow.postMessage(JSON.stringify
                   ({action: 'load', xmlpng: strSrc}), '*');
               }
-
-              
-
             }
             // Received if the user clicks save
             else if (msg.event == 'save')
@@ -112,7 +115,7 @@ const createDataUri = async (doc) =>
 
                 //onData({ Content: msg.data, Format: msg.format})
                 //onData({ Content: file, Format: msg.format, ContentType: "image/svg+xml"})
-                onData({ Content: file, Format: msg.format, ContentType: "image/png"})
+                onData({ Content: file, Format: msg.format, ContentType: "image/png", ImageContext: imageContext})
               } 
 
               onClose()

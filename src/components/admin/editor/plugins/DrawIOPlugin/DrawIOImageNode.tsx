@@ -36,6 +36,7 @@ import DrawIOComponent from './DrawIOComponent';
     position?: Position;
     imgId?: string;
     isSplitHalves?: boolean
+    file?: File
   }
   
   export interface UpdateDrawIOImagePayload {
@@ -153,6 +154,11 @@ import DrawIOComponent from './DrawIOComponent';
     getSrc(): string {
       return this.__src;
     }
+
+    setSrc(src: string){
+        const writable = this.getWritable();
+        writable.__src = src
+    }
   
     setWidthAndHeight(
       width: 'inherit' | number,
@@ -226,24 +232,28 @@ import DrawIOComponent from './DrawIOComponent';
             height={this.__height}
             nodeKey={this.getKey()}
             position={this.__position}
-            isSplitHalves={this.__isSplitHalves}
-          />
+            imgId={this.__imgId} 
+                   
+             />
         </Suspense>
       );
     }
   }
   
   export function $createNode({
-    height,
     src,
+    position,
     width,
+    height,
     key,
     imgId,
-    isSplitHalves
-  }: DrawIOImageNode): DrawIOImageNode {
+    isSplitHalves,
+    
+  }: DrawIOImagePayload): DrawIOImageNode {
     return $applyNodeReplacement(
       new DrawIOImageNode(
         src,
+        position,
         width,
         height,
         key,

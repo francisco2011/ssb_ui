@@ -103,7 +103,7 @@ import DrawIOModalButton from "./toolbar/DrawIOModalButton";
 import ContentService from "~/services/ContentService";
 import ContentModel from "~/models/ContentModel";
 import DrawIOResponse from "./plugins/DrawIOPlugin/DrawIOResponse";
-import { INSERT_DRAW_IO_IMAGE_COMMAND } from "./plugins/DrawIOPlugin";
+import { INSERT_DRAW_IO_IMAGE_COMMAND, INSERT_STORE_DRAW_IO_IMAGE_COMMAND } from "./plugins/DrawIOPlugin";
 
 
 
@@ -507,10 +507,8 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
         onPropertiesChange({MaxLengthpx: value + 'px'})
     }
 
-    //////////////DRAWIO/////////////////
+ /////////////////////DRAWIO/////////////////
 
-    
-	
  const service = new ContentService()
 
     const loadImage = async (file: File | null) : Promise<ContentModel | null> => {
@@ -526,12 +524,13 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
 
     const onDrawIO =  useCallback( async (data: DrawIOResponse | null) =>  {
-        if(data){
+        if(data && data.Content){
             const img = await loadImage(data.Content)
-            if(img && img.url){
+            if(img && img.url && img.name){
 
-                editor.dispatchCommand(INSERT_DRAW_IO_IMAGE_COMMAND, {src: img.url, position: 'full'});
+                editor.dispatchCommand(INSERT_DRAW_IO_IMAGE_COMMAND, {src: img.url, position: 'full', imgId: img.name});
             }
+
         }
     }, [editor, post])
 
@@ -605,8 +604,8 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <GifPickerButton onClickCallback={insertGif} />
                     <HorizontalRuleButton  currentEditor={editor}/>
                     <InsertTableButton currentEditor={editor}/>
-
                     <DrawIOModalButton onContentCallback={onDrawIO}/>
+                
                 </div>
                 <div className="mt-2">
                 <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>

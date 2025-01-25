@@ -1,8 +1,8 @@
 //Base on: InlineImageComponent
-import {$isDrawIOImageNode, type DrawIOImageNode, type Position} from './DrawIONode';
+import {$isDrawIOImageNode, type DrawIOImageNode, type Position} from './DrawIOImageNode';
 import type {BaseSelection, LexicalEditor, NodeKey} from 'lexical';
 
-import './DrawIONode.css';
+import './DrawIOImageNode.css';
 
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {useLexicalEditable} from '@lexical/react/useLexicalEditable';
@@ -31,6 +31,10 @@ import useModal from '~/components/useModal';
 import ImageResizer from '~/components/ImageResizer';
 import { JSX } from 'react/jsx-runtime';
 import EmbededDrawIOComponent from './EmbededDrawIOComponent';
+import ContentService from '~/services/ContentService';
+import ContentModel from '~/models/ContentModel';
+import DrawIOResponse from './DrawIOResponse';
+import { UPDATE_DRAW_IO_IMAGE_COMMAND } from '.';
 
 const imageCache = new Set();
 
@@ -55,7 +59,6 @@ function LazyImage({
   width,
   height,
   position,
-  maxWidth
 }: {
   altText: string;
   className: string | null;
@@ -64,7 +67,6 @@ function LazyImage({
   src: string;
   width: 'inherit' | number;
   position: Position;
-  maxWidth:  number;
 }): JSX.Element {
   useSuspenseImage(src);
   return (
@@ -77,8 +79,7 @@ function LazyImage({
       style={{
         display: 'block',
         height,
-        width,
-        maxWidth
+        width
       }}
       draggable="false"
     />
@@ -161,14 +162,14 @@ export default function DrawIOComponent({
   width,
   height,
   position,
-  maxWidth
+  imgId
 }: {
   height: 'inherit' | number;
   nodeKey: NodeKey;
   src: string;
   width: 'inherit' | number;
   position: Position;
-  maxWidth: number;
+  imgId?: string 
 }): JSX.Element {
   const [modal, showModal] = useModal();
   const imageRef = useRef<null | HTMLImageElement>(null);
@@ -347,6 +348,36 @@ export default function DrawIOComponent({
     };
 
   /////////////////////////////////////////////////////////////////
+
+  ////////////////////TERRIBLE TERRIBLE IDEA///////////////////////
+
+   const service = new ContentService()
+  
+      const loadImage = async (file: File | null) : Promise<ContentModel | null> => {
+  
+          if (file) {
+              const result = await service.UpdateFileContent(file, 0, 'imgBody')
+              return result
+          }
+  
+          return null
+  
+      };
+
+
+  const onDrawIOUpdate =  useCallback( async (data: DrawIOResponse | null) =>  {
+      if(data){
+          const img = await loadImage(data.Content)
+          if(img && img.url){
+
+              editor.dispatchCommand(UPDATE_DRAW_IO_IMAGE_COMMAND, {src: img.url, imgId: data?.ImageContext?.id});
+          }
+      }
+  }, [editor])
+
+
+  ////////////////////////////////////////////////////////////////
+
   const draggable = isSelected && $isNodeSelection(selection);
   const isFocused = isSelected && isEditable;
   return (
@@ -372,8 +403,8 @@ export default function DrawIOComponent({
                           onClick={() => {
                               showModal('Draw IO', (onClose) => (
                                   <EmbededDrawIOComponent
-                                      onData={()=> {}}
-                                      src={src}
+                                      onData={onDrawIOUpdate}
+                                      imageContext={ { src: src, id: imgId }}
                                       onClose={onClose} />
                               ));
                           } }>
@@ -392,7 +423,6 @@ export default function DrawIOComponent({
             width={width}
             height={height}
             position={position}
-            maxWidth={maxWidth}
           />
         </span>
         
@@ -403,7 +433,6 @@ export default function DrawIOComponent({
                     editor={editor}
                     buttonRef={buttonRef}
                     imageRef={imageRef}
-                    maxWidth={maxWidth} 
                     onResizeStart={onResizeStart}
                     onResizeEnd={onResizeEnd}
                     captionsEnabled={false}

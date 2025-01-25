@@ -22,6 +22,26 @@ export default class ContentService {
         return data;
     }
 
+    async UpdateFileContent(file: any, postId: number, fileName: string ): Promise<ContentModel> {
+        var url = 'http://localhost:5079/post/' + postId + '/content/' + fileName;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch(url, {
+            method: "PUT",
+            body: formData,
+        });
+        const data = await response.json();
+
+        if (data.error) {
+            console.error(data.error)
+            throw new Error("Error while loading data")
+        }
+
+        return data;
+    }
+
     async GetDownloadUrl(fileName: string): Promise<ContentModel> {
         var url = "http://localhost:5079/content/" + fileName;
 

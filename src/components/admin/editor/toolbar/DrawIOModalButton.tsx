@@ -24,7 +24,7 @@ function DrawIOModalButton({ onContentCallback}:{ onContentCallback: (response: 
           }
         onClick={() => {
                         showModal('Draw IO', (onClose) => (
-                          <EmbededDrawIOComponent src={null} onClose={onClose} onData={onData}/>
+                          <EmbededDrawIOComponent imageContext={null} onClose={onClose} onData={onData}/>
                           
                         ));
                       }}

@@ -5,17 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import './DrawIONode.css';
+import './DrawIOImageNode.css';
 
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {$wrapNodeInElement, mergeRegister} from '@lexical/utils';
 import {
   $createParagraphNode,
   $createRangeSelection,
+  $getNodeByKey,
   $getSelection,
   $insertNodes,
   $isNodeSelection,
   $isRootOrShadowRoot,
+  $nodesOfType,
   $setSelection,
   COMMAND_PRIORITY_EDITOR,
   COMMAND_PRIORITY_HIGH,
@@ -29,15 +31,17 @@ import {
   LexicalCommand,
   LexicalEditor,
 } from 'lexical';
-import * as React from 'react';
 import {useEffect, useRef, useState} from 'react';
 import { JSX } from 'react/jsx-runtime';
-import { $createNode, $isDrawIOImageNode, DrawIOImageNode, DrawIOImagePayload } from './DrawIONode';
+import { $createNode, $isDrawIOImageNode, DrawIOImageNode, DrawIOImagePayload } from './DrawIOImageNode';
 
-export type InsertDrawIOImagePayload = Readonly<DrawIOImagePayload>;
+export type ReadOnlyDrawIOImagePayload = Readonly<DrawIOImagePayload>;
 
 export const INSERT_DRAW_IO_IMAGE_COMMAND: LexicalCommand<DrawIOImagePayload> =
   createCommand('INSERT_DRAW_IO_IMAGE_COMMAND');
+
+  export const UPDATE_DRAW_IO_IMAGE_COMMAND: LexicalCommand<DrawIOImagePayload> =
+  createCommand('UPDATE_DRAW_IO_IMAGE_COMMAND');
 
 export default function DrawIOPlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
@@ -48,14 +52,36 @@ export default function DrawIOPlugin(): JSX.Element | null {
     }
 
     return mergeRegister(
-      editor.registerCommand<InsertDrawIOImagePayload>(
+      editor.registerCommand<ReadOnlyDrawIOImagePayload>(
         INSERT_DRAW_IO_IMAGE_COMMAND,
-        (payload) => {
+         (payload) => {
+
           const imageNode = $createNode(payload);
           $insertNodes([imageNode]);
           if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
             $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
           }
+
+          return true;
+        },
+        COMMAND_PRIORITY_EDITOR,
+      ),
+      editor.registerCommand<ReadOnlyDrawIOImagePayload>(
+        UPDATE_DRAW_IO_IMAGE_COMMAND,
+        (payload) => {
+
+          editor.update(() => {
+            const listNodes = $nodesOfType(DrawIOImageNode);
+
+            const node = listNodes.find(c => c.__imgId == payload.imgId)
+
+            if(node && payload.src){
+              node.setSrc(payload.src)
+            }
+            
+        })
+
+        
 
           return true;
         },
@@ -167,7 +193,7 @@ function $getImageNodeInSelection(): DrawIOImageNode | null {
   return $isDrawIOImageNode(node) ? node : null;
 }
 
-function getDragImageData(event: DragEvent): null | InsertInlineImagePayload {
+function getDragImageData(event: DragEvent): null | DrawIOImagePayload {
   const dragData = event.dataTransfer?.getData('application/x-lexical-drag');
   if (!dragData) {
     return null;
