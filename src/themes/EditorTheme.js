@@ -89,6 +89,8 @@ const editorTheme = {
     tableScrollableWrapper: 'PlaygroundEditorTheme__tableScrollableWrapper',
     tableSelected: 'PlaygroundEditorTheme__tableSelected',
     tableSelection: 'PlaygroundEditorTheme__tableSelection',
+    layoutContainer: 'PlaygroundEditorTheme__layoutContainer',
+    layoutItem: 'PlaygroundEditorTheme__layoutItem',
   };
   
   export default editorTheme;

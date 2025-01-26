@@ -64,6 +64,9 @@ import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
 import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIOImageNode';
 import DrawIOPlugin from './plugins/DrawIOPlugin';
 import ContentStorageHelper from './plugins/Common/ContentStorageHelper';
+import { LayoutPlugin } from './plugins/LayoutPlugin';
+import { LayoutContainerNode } from './plugins/LayoutPlugin/LayoutContainerNode';
+import { LayoutItemNode } from './plugins/LayoutPlugin/LayoutItemNode';
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -84,7 +87,9 @@ const editorConfig = {
     TableNode,
     TableCellNode,
     TableRowNode,
-    DrawIOImageNode
+    DrawIOImageNode,
+    LayoutContainerNode,
+    LayoutItemNode
   ],
   // Handling of errors during update
   onError(error: Error) {
@@ -336,6 +341,7 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
               <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
               <TableCellResizerPlugin/>
               <DrawIOPlugin/>
+              <LayoutPlugin/>
 
               <div className='editor-container'>
               <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>

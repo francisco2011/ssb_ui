@@ -66,7 +66,7 @@ import HeadingSelect from "./toolbar/HeadingSelect";
 import BulletListButton from "./toolbar/bulletListButton";
 import OrderedListButton from "./toolbar/OrderedListButton";
 import QuoteButton from "./toolbar/QuoteButton";
-import LoadImageModal from "./toolbar/LoadImageModal";
+import InsertImageModal from "./toolbar/InsertImageModal";
 import LanguageSelect from "./toolbar/CodeSelect";
 import { $createCodeNode, $isCodeHighlightNode, $isCodeNode } from "@lexical/code";
 import CodeButton from "./toolbar/CodeButton";
@@ -103,8 +103,8 @@ import DrawIOModalButton from "./toolbar/DrawIOModalButton";
 import ContentService from "~/services/ContentService";
 import ContentModel from "~/models/ContentModel";
 import DrawIOResponse from "./plugins/DrawIOPlugin/DrawIOResponse";
-import { INSERT_DRAW_IO_IMAGE_COMMAND, INSERT_STORE_DRAW_IO_IMAGE_COMMAND } from "./plugins/DrawIOPlugin";
-
+import { INSERT_DRAW_IO_IMAGE_COMMAND } from "./plugins/DrawIOPlugin";
+import InsertColumnLayoutModal from "./toolbar/InsertColumnLayaoutModal";
 
 
 type Props = {
@@ -599,11 +599,12 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <SubscriptButton isActive={isSubscript} currentEditor={editor} />
                     <SuperscriptButton isActive={isSuperscript} currentEditor={editor}/>
                     <span className="w-[2px] bg-black block h-full">'</span>
-                    <LoadImageModal isActive={false} currentEditor={editor} _className={""} _postId={post.id} contentType={"imgBody"} />
+                    <InsertImageModal isActive={false} currentEditor={editor} _className={""} _postId={post.id} contentType={"imgBody"} />
                     <EmojiPickerButton onClickCallback={insertEmoji} />
                     <GifPickerButton onClickCallback={insertGif} />
                     <HorizontalRuleButton  currentEditor={editor}/>
                     <InsertTableButton currentEditor={editor}/>
+                    <InsertColumnLayoutModal currentEditor={editor}/>
                     <DrawIOModalButton onContentCallback={onDrawIO}/>
                 
                 </div>

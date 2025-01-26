@@ -2,6 +2,7 @@
 @import 'lists.css';
 @import './prism/dracula.css';
 @import 'table.css';
+@import 'columnLayout.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

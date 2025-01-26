@@ -14,7 +14,7 @@ const CAN_USE_DOM: boolean =
     typeof window.document !== 'undefined' &&
     typeof window.document.createElement !== 'undefined';
 
-function InsertImageDialog({
+function ImageDialog({
     activeEditor,
     onClose,
     contentType,
@@ -55,7 +55,7 @@ function InsertImageDialog({
     );
 }
 
-function LoadImageModal({ isActive, currentEditor, contentType, _postId, _className }) {
+function InsertImageModal({ isActive, currentEditor, contentType, _postId, _className }) {
 
     const [postId, setPostId] = useState<number>(0)
 
@@ -94,7 +94,7 @@ function LoadImageModal({ isActive, currentEditor, contentType, _postId, _classN
             <dialog id="my_modal_1" className="modal">
                 <div className="modal-box">
 
-                    <InsertImageDialog
+                    <ImageDialog
                         activeEditor={currentEditor}
                         onClose={closeModal}
                         contentType = {contentType}
@@ -108,4 +108,4 @@ function LoadImageModal({ isActive, currentEditor, contentType, _postId, _classN
 
 }
 
-export default LoadImageModal;
+export default InsertImageModal;
