@@ -3,9 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { InsertImagePayload } from "../plugins/imagePlugin/ImagesPlugin";
 import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
 import { useEffect, useState } from "react";
-import ContentMetada from "~/models/ContentMetadata";
 import PostTypeService from "~/services/PostTypeService";
-import { never } from "zod";
 import PostTypeModel from "~/models/PostTypeModel";
 
 const CAN_USE_DOM: boolean =
@@ -131,11 +129,6 @@ function SaveContentModal({ onSave }) {
         <><button
             className=""
             onClick={() => {
-                //if (CAN_USE_DOM) {
-
-                    //const modal: any = CAN_USE_DOM && document ? document.getElementById('save_modal') : null
-                    //if (modal) modal.showModal()
-                //}
 
                     onSave()
             }}

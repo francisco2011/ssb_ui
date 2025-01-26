@@ -1,12 +1,6 @@
 'use client'
 
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { HashtagNode } from "@lexical/hashtag";
@@ -15,37 +9,23 @@ import React, { createRef, forwardRef, useEffect, useRef, useState } from 'react
 
 
 import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
-import ImagesPlugin from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
-import TagSelector from '~/components/admin/tagSelector/TagSelector';
 import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
-import TagPlugin from '~/components/admin/editor/plugins/tagsPlugin/TagPlugin';
 import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
-import EmojisPlugin from '~/components/admin/editor/plugins/EmojisPlugin/EmojisPlugin';
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from "@lexical/link";
-import CodeHighlightPlugin from '~/components/admin/editor/plugins/CodeHighlight/CodeHighlightPlugin';
-import LexicalAutoLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/AutoLinkPlugin';
-import ClickableLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/ClickableLinkPlugin';
-import FloatingLinkEditorPlugin from '~/components/admin/editor/plugins/LinkPlugin/FloatingLinkEditorPlugin';
-import { CAN_USE_DOM } from '~/components/admin/editor/plugins/shared/canUseDOM';
-import LinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/LinkPlugin';
-import VerticalToolbarPlugin from '~/components/admin/editor/VerticalToolbar';
 import PostModel from '~/models/PostModel';
-import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';
-import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
-import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin'
 import PostService from '~/services/PostService';
-import ContentMetada from '~/models/ContentMetadata';
-import { $nodesOfType, CLEAR_EDITOR_COMMAND } from 'lexical';
-import {OnChangePlugin} from '@lexical/react/LexicalOnChangePlugin';
-import { ContentType } from '~/models/ContentType';
 import editorTheme from '~/themes/EditorTheme';
-import ToolbarPlugin from '~/components/admin/editor/ToolbarPlugin';
-import TreeViewPlugin from '~/components/admin/editor/TreeViewPlugin';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Editor from '~/components/admin/editor/Editor';
 import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/InlineImageNode';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCancel, faCheck, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 
+import ContentMetada from '~/models/ContentMetadata';
+import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
+import TagSelector from "~/components/admin/tagSelector/TagSelector";
+import PostPreview from "~/components/admin/editor/PostPreview";
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -71,25 +51,31 @@ const editorConfig = {
   theme: editorTheme,
 };
 
-
-
 export default function PostEditor() {
 
   const params = useParams<{ id: string; }>()
   const service = new PostService();
 
-  const [post, setPost] = useState<PostModel | null> (null)
+  const [isClearAll, setIsClearAll] = useState<boolean>(false);
+  const [tags, setTags] = useState<string[]>([])
+  const [post, setPost] = useState<PostModel | null>(null)
+    const [metadata, setMetadata] = useState<ContentMetada>({
+      description: '',
+      imgModel: null,
+      title: '',
+      type: null
+    })
 
   useEffect(() => {
-    
+
     const getPost = async () => {
 
-      if(params?.id && params.id != 'none'){
+      if (params?.id && params.id != 'none') {
         const p = await service.Get(params.id)
-        
+
         setPost(p)
-  
-      }else{
+
+      } else {
         let _post: PostModel = {
           id: null,
           title: '',
@@ -107,29 +93,101 @@ export default function PostEditor() {
       }
     }
     getPost()
-    
+
   }, []);
 
 
 
   const onsaveCallback = async (post: PostModel) => {
-    
+
     const result = await service.Save(post)
-    setPost({...post, id: result.id})
+    setPost({ ...post, id: result.id })
   }
 
   const onChangePublishState = async () => {
 
-    if(post && post.id)     await service.changePublishState(post.id)
+    if (post && post.id) await service.changePublishState(post.id)
 
   }
+
+   const clearAll = () => {
+      //if (!editor?.current) return;
+      //editor.current.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+      //setIsClearAll(!isClearAll)
+    }
+
+    const addTag = val => {
+      var string_copy = (' ' + val).slice(1);
+  
+      if (tags.indexOf(string_copy) == -1) {
+        setTags([...tags, string_copy])
+  
+      }
+    }
+
+
+
   return (
     <>
 
-{ post ?
-  <Editor onChangePublishState={onChangePublishState} post={post} onsaveCallback={onsaveCallback}></Editor> : null
-} 
-    
+
+      {post ?
+
+        <><div className='flex flex-row justify-end'>
+
+          <div className='m-2'>
+            {post?.isPublished ? <button className="btn btn-active btn-success">
+              <FontAwesomeIcon
+                icon={faNewspaper}
+                className=" w-4 h-4" />Main</button>
+              : <button className="btn btn-active "> <FontAwesomeIcon
+                icon={faNewspaper}
+                className=" w-4 h-4" />Main</button>}
+          </div>
+
+          <div className='m-2'>
+            {post?.isPublished ? <button className="btn btn-active btn-success">
+              <FontAwesomeIcon
+                icon={faCheck}
+                className=" w-4 h-4" />Published</button>
+              : <button className="btn btn-active btn-warning"> <FontAwesomeIcon
+                icon={faCancel}
+                className=" w-4 h-4" />Published</button>}
+          </div>
+
+
+        </div>
+
+          <main className="flex min-h-screen flex-col">
+
+
+            <div className="grid grid-cols-[5%_70%_25%] w-[1200]">
+
+              <div>
+                <VerticalToolbar onChangePublicationState={onChangePublishState} onsaveCallback={() => {}} onCleanCallback={clearAll} />
+              </div>
+
+              <Editor post={post} onsaveCallback={onsaveCallback}></Editor>
+
+              <div className='w-64 ml-2 mt-4'>
+
+                <div className=' sticky top-3'>
+                  <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} />
+                </div>
+
+
+                <div className=' sticky top-32'>
+                  <PostPreview post={post} onChange={setMetadata} />
+                </div>
+
+              </div>
+            </div>
+
+          </main></>
+
+        : null
+      }
+
 
     </>
   );

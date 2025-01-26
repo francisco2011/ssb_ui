@@ -5,7 +5,6 @@ import PostTypeModel from "~/models/PostTypeModel";
 import { InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import ContentMetadaModel from "~/models/ContentMetadata";
 import PostModel from "~/models/PostModel";
-import { ContentType } from "~/models/ContentType";
 
 export default function PostPreview({ onChange, post }: { onChange: any, post: PostModel | null }): JSX.Element {
 

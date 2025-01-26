@@ -12,9 +12,9 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { HashtagNode } from "@lexical/hashtag";
-import {TablePlugin} from '@lexical/react/LexicalTablePlugin';
+import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 
-import React, { createRef, forwardRef, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 
 import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
@@ -26,7 +26,6 @@ import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiN
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import CodeHighlightPlugin from '~/components/admin/editor/plugins/CodeHighlight/CodeHighlightPlugin';
-import { AutoLinkPlugin } from '@lexical/react/LexicalAutoLinkPlugin';
 import LexicalAutoLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/AutoLinkPlugin';
 import ClickableLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/ClickableLinkPlugin';
 import FloatingLinkEditorPlugin from '~/components/admin/editor/plugins/LinkPlugin/FloatingLinkEditorPlugin';
@@ -45,16 +44,11 @@ import ToolbarPlugin from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
 import PostModel from '~/models/PostModel';
 import { ContentType } from '~/models/ContentType';
-import PostPreview from './PostPreview';
 import ContentEditable from '~/components/ContentEditable';
-
-import { $generateHtmlFromNodes } from '@lexical/html';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCancel, faCheck, faEye } from '@fortawesome/free-solid-svg-icons';
 import ToolBarProperties from './ToolbarProperties';
 import { useObserveElementWidth } from './utils/useObserveElementWidth';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
-import {HorizontalRulePlugin} from '@lexical/react/LexicalHorizontalRulePlugin'
+import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin'
 import { InlineImageNode } from './plugins/imagePlugin/InlineImageNode';
 import InlineImagePlugin from './plugins/imagePlugin/InlineImagePlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
@@ -63,7 +57,6 @@ import TableActionMenuPlugin from './plugins/TableActionMenu';
 import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
 import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIOImageNode';
 import DrawIOPlugin from './plugins/DrawIOPlugin';
-import ContentStorageHelper from './plugins/Common/ContentStorageHelper';
 import { LayoutPlugin } from './plugins/LayoutPlugin';
 import { LayoutContainerNode } from './plugins/LayoutPlugin/LayoutContainerNode';
 import { LayoutItemNode } from './plugins/LayoutPlugin/LayoutItemNode';
@@ -100,9 +93,7 @@ const editorConfig = {
 
 };
 
-
-
-export default function Editor({ onsaveCallback, post, onChangePublishState }: { onsaveCallback: (post: PostModel) => void, post: PostModel, onChangePublishState: () => void }) {
+export default function Editor({ onsaveCallback, post }: { onsaveCallback: (post: PostModel) => void, post: PostModel }) {
   const [tags, setTags] = useState<string[]>([])
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
@@ -144,24 +135,20 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
 
     if (post?.content && post.content != '' && editor.current) {
 
-      let initialEditorState: EditorState | null = null 
+      let initialEditorState: EditorState | null = null
 
-      if(post.content.startsWith('{"w')){
+      if (post.content.startsWith('{"w')) {
 
         var newState = JSON.parse(post.content)
         var w = newState.width
         setContentWidthpx(w)
         initialEditorState = editor.current.parseEditorState(newState.editorState)
 
-      }else{
+      } else {
         initialEditorState = editor.current.parseEditorState(post.content)
       }
 
-      if(!initialEditorState) return
-
-      //
-
-      
+      if (!initialEditorState) return
 
       let imageNodes: ImageNode[] = []
       initialEditorState.read(() => {
@@ -275,134 +262,91 @@ export default function Editor({ onsaveCallback, post, onChangePublishState }: {
     if (data.MaxLengthpx) setContentWidthpx(data.MaxLengthpx)
   }
 
-  const onChangePublicationState = () => {
-    if (!post) return
-    onChangePublishState()
-    current.isPublished = !current.isPublished
-    setCurrentPost({ ...current })
-  }
+
 
   const addOffsetContentWidthpx = (val) => {
-    if(typeof val == typeof '' && val.indexOf('px') != -1){
+    if (typeof val == typeof '' && val.indexOf('px') != -1) {
       val = val.replace('px', '')
     }
 
-    return  (Number(val) + 35) + 'px'
+    return (Number(val) + 35) + 'px'
   }
 
   return (
     <>
 
-      <main className="flex min-h-screen flex-col">
-
-        <div className='flex flex-row justify-end'>
-
-          <div className='m-2'>
-            {
-              current?.isPublished ? <button className="btn btn-active btn-success">
-                <FontAwesomeIcon
-                  icon={faCheck}
-                  className=" w-4 h-4"
-                />Published</button>
-                : <button className="btn btn-active btn-warning"> <FontAwesomeIcon
-                  icon={faCancel}
-                  className=" w-4 h-4"
-                />Published</button>
-            }
-          </div>
 
 
-        </div>
+      <div className="editor-shell">
 
-        <div className="grid grid-cols-[5%_70%_25%] w-[1200]">
+        <LexicalComposer initialConfig={editorConfig}>
 
-          <div>
-            <VerticalToolbarPlugin onChangePublicationState={onChangePublicationState} onsaveCallback={onsave} onCleanCallback={clearAll} />
-          </div>
+          <EditorRefPlugin editorRef={editor} />
+          <ToolbarPlugin post={post} defaultWidth={contentWidthpx} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} />
+          <ClearEditorPlugin />
+          <ListPlugin />
+          <ImagesPlugin />
+          <InlineImagePlugin />
+          <TagPlugin onNewCallback={(c) => addTag(c)} />
+          <LinkPlugin hasLinkAttributes={false} />
+          <AutoFocusPlugin />
+          <CodeHighlightPlugin />
+          <LexicalAutoLinkPlugin />
+          <ClickableLinkPlugin />
+          <OnChangePlugin onChange={onChange} />
+          <HorizontalRulePlugin />
+          <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
+          <TableCellResizerPlugin />
+          <DrawIOPlugin />
+          <LayoutPlugin />
 
-          <div className="editor-shell">
+          <div className='editor-container'>
+            <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
 
-            <LexicalComposer initialConfig={editorConfig}>
+              {floatingAnchorElem && !isSmallWidthViewport && (
+                <>
+                  <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
+                  <FloatingLinkEditorPlugin
+                    anchorElem={floatingAnchorElem}
+                    isLinkEditMode={isLinkEditMode}
+                    setIsLinkEditMode={setIsLinkEditMode}
+                  />
+                  <TableActionMenuPlugin
+                    anchorElem={floatingAnchorElem}
+                    cellMerge={true} />
 
-              <EditorRefPlugin editorRef={editor} />
-              <ToolbarPlugin post={post} defaultWidth={contentWidthpx} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} />
-              <ClearEditorPlugin />
-              <ListPlugin />
-              <ImagesPlugin />
-              <InlineImagePlugin/>
-              <TagPlugin onNewCallback={(c) => addTag(c)} />
-              <LinkPlugin hasLinkAttributes={false} />
-              <AutoFocusPlugin />
-              <CodeHighlightPlugin />
-              <LexicalAutoLinkPlugin />
-              <ClickableLinkPlugin />
-              <OnChangePlugin onChange={onChange} />
-              <HorizontalRulePlugin/>
-              <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
-              <TableCellResizerPlugin/>
-              <DrawIOPlugin/>
-              <LayoutPlugin/>
+                  <TableHoverActionsPlugin
+                    anchorElem={floatingAnchorElem} />
+                </>
+              )}
+              <RichTextPlugin
+                contentEditable={
+                  <div className="editor-scroller">
 
-              <div className='editor-container'>
-              <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
+                    <div className="editor" ref={onRef}>
+                      <ContentEditable placeholder={''} />
+                    </div>
+                  </div>
 
-                {floatingAnchorElem && !isSmallWidthViewport && (
-                  <>
-                    <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
-                    <FloatingLinkEditorPlugin
-                      anchorElem={floatingAnchorElem}
-                      isLinkEditMode={isLinkEditMode}
-                      setIsLinkEditMode={setIsLinkEditMode}
-                    />
-                    <TableActionMenuPlugin 
-                      anchorElem={floatingAnchorElem}
-                      cellMerge={true}/>
 
-                    <TableHoverActionsPlugin 
-                      anchorElem={floatingAnchorElem}/>
-                  </>
-                )}
-                <RichTextPlugin
-                  contentEditable={
-                    <div className="editor-scroller">
-                      
-                        <div className="editor" ref={onRef}>
-                          <ContentEditable placeholder={''} />
-                        </div>
-                      </div>
-
-                   
-                  }
-                  ErrorBoundary={LexicalErrorBoundary}
-                />
-                <HistoryPlugin />
-                <AutoFocusPlugin />
-
-                {
-                  treeActive ? <TreeViewPlugin /> : null
                 }
-              </div>
-              </div>
-            </LexicalComposer>
-            <div />
+                ErrorBoundary={LexicalErrorBoundary}
+              />
+              <HistoryPlugin />
+              <AutoFocusPlugin />
 
-          </div>
-
-
-          <div className='w-64 ml-2 mt-4'>
-
-            <div className=' sticky top-3'>
-              <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} />
+              {
+                treeActive ? <TreeViewPlugin /> : null
+              }
             </div>
-
-
-            <div className=' sticky top-32'>
-              <PostPreview post={post} onChange={setMetadata} />
-            </div>
-
           </div>
-        </div>
-      </main>
+        </LexicalComposer>
+        <div />
+
+      </div>
+
+
+
     </>
   );
 }
