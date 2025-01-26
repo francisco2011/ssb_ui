@@ -1,11 +1,11 @@
 
 import { LexicalEditor } from 'lexical';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { INSERT_LAYOUT_COMMAND } from './index';
 import { faPlus, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '~/components/Button';
-import { number } from 'zod';
+import { JSX } from 'react/jsx-runtime';
 
 //reference from the original
 //const LAYOUTS = [
@@ -36,10 +36,10 @@ export default function InsertLayoutDialog({
 
 
     useEffect(() => {
-        
-        setColumns({id: 1, width: 48},{id: 2, width: 48})
 
-      }, []);
+        setColumns([{ id: 1, width: 48 }, { id: 2, width: 48 }])
+
+    }, []);
 
     const buildLayout = (): string => {
 
@@ -49,16 +49,16 @@ export default function InsertLayoutDialog({
 
     const onClick = () => {
 
-        const layout = buildLayout() 
+        const layout = buildLayout()
         activeEditor.dispatchCommand(INSERT_LAYOUT_COMMAND, layout);
         onClose();
     };
 
     const calcMaxWidth = (ignoreId?: Number) => {
 
-        let array = [...columns]; 
+        let array = [...columns];
 
-        if(ignoreId){
+        if (ignoreId) {
             array = array.filter(c => c.id != ignoreId)
         }
 
@@ -75,74 +75,65 @@ export default function InsertLayoutDialog({
     }
 
     const deleteColum = (col: columnModel) => {
-        var array = [...columns]; 
+        var array = [...columns];
         setColumns(array.filter(c => c.id != col.id));
     }
 
     const updateCol = (e) => {
-       
-        if(!e.target.name) return
-        if(!e.target.value) return
+
+        if (!e.target.name) return
+        if (!e.target.value) return
 
 
         const val = Number(e.target.value)
         const id = Number(e.target.name)
 
-        if(val < 0) return
-        if(val > calcMaxWidth(id)) return
+        if (val < 0) return
+        if (val > calcMaxWidth(id)) return
 
-        
-        
-        var array = [...columns]; 
+        var array = [...columns];
         array.find(c => c.id == id).width = val
         setColumns(array)
     }
 
 
 
-return (
-    <>
-        <h2>
-            Column width in percentaje 
-        </h2>
-        <button
-            className={
-                "px-1 hover:bg-gray-600 transition-colors duration-100 ease-in bg-gray-400"
+    return (
+        <>
+            <h2 className="text-xl font-extrabold dark:text-white my-2">
+                Column width in percentaje
+            </h2>
+            <button
+                className={"px-1 hover:bg-gray-600 transition-colors duration-100 ease-in bg-gray-400"}
+                onClick={addColum}
+            >
+                <FontAwesomeIcon icon={faPlus} className="text-white w-3.5 h-3.5" />
+            </button>
 
-            }
-            onClick={addColum}
-        >
-            <FontAwesomeIcon icon={faPlus} className="text-white w-3.5 h-3.5" />
-        </button>
+            <div className={"flex flex-row"}>
+                {
+                    columns.map(c =>
+                        <div key={c.id} className={"mx-1 my-3"}>
+                            <input type="number" name={c.id} className={"w-10"} onChange={updateCol} value={c.width}></input>
+                            <button
+                                className={
+                                    "px-1 hover:bg-gray-600 transition-colors duration-100 ease-in bg-gray-400"
 
-        <div className={"flex flex-row"}>
-            {
-                columns.map(c => 
-                    <div key={c.id} className={"mx-1 my-3"}>
-                        <input type="number" name={c.id} className={"w-10"} onChange={updateCol} value={c.width}></input>
-                        <button
-                            className={
-                                "px-1 hover:bg-gray-600 transition-colors duration-100 ease-in bg-gray-400"
+                                }
+                                onClick={() => deleteColum(c)}
+                            >
+                                <FontAwesomeIcon icon={faRemove} className="text-white w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    )
+                }
 
-                            }
-                            onClick={() => deleteColum(c)}
-                        >
-                            <FontAwesomeIcon icon={faRemove} className="text-white w-3.5 h-3.5" />
-                        </button>
-                    </div>
-                )
-            }
+            </div>
 
-        </div>
-
-        <Button onClick={onClick}>Insert</Button>
+            <button className="btn" onClick={onClick}>Insert</button>
 
 
 
-    </>
-);
-}
-
-function useEffect(arg0: () => void, arg1: never[]) {
-    throw new Error('Function not implemented.');
+        </>
+    );
 }

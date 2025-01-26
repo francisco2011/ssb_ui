@@ -2,13 +2,20 @@
 //updated for TS
 //added the option to use ESC button
 
-import React, { useState, useRef, useEffect, Reference, RefObject } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle} from 'react';
 import './Popover.css';
 
-const Popover = ({ children, content, buttonClass }) => {
+//const Popover = forwardRef(({ children, content, buttonClass, ref }) => {
+  const Popover = forwardRef((props, ref ) => {
   const [isVisible, setIsVisible] = useState(false); // Manages the visibility state of the popover
   const popoverRef = useRef<HTMLDivElement>(null); // Reference to the popover element
   const triggerRef = useRef<HTMLButtonElement>(null); // Reference to the button element that triggers the popover
+
+  useImperativeHandle(ref, () => ({
+    close: () => {
+      toggleVisibility()
+    }
+  }));
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -44,12 +51,12 @@ const Popover = ({ children, content, buttonClass }) => {
       <button
         ref={triggerRef}
         onClick={toggleVisibility}
-        className={buttonClass}
+        className={props.buttonClass}
         aria-haspopup="true"
         aria-expanded={isVisible}
         aria-controls="popover-content"
       >
-        {children}
+        {props.children}
       </button>
       {isVisible && (
         <div
@@ -59,11 +66,11 @@ const Popover = ({ children, content, buttonClass }) => {
           role="dialog"
           aria-modal="true"
         >
-          {content}
+          {props.content}
         </div>
       )}
     </div>
   );
-};
+});
 
 export default Popover;

@@ -7,14 +7,6 @@ import { useEffect, useState } from "react";
 import { JSX } from "react/jsx-runtime";
 import InsertLayoutDialog from "../plugins/LayoutPlugin/InsertLayoutDialog";
 
-const LAYOUTS = [
-    {label: '2 columns (equal width)', value: '1fr 1fr'},
-    {label: '2 columns (25% - 75%)', value: '1fr 3fr'},
-    {label: '3 columns (equal width)', value: '1fr 1fr 1fr'},
-    {label: '3 columns (25% - 50% - 25%)', value: '1fr 2fr 1fr'},
-    {label: '4 columns (equal width)', value: '1fr 1fr 1fr 1fr'},
-  ];
-
 const CAN_USE_DOM: boolean =
     typeof window !== 'undefined' &&
     typeof window.document !== 'undefined' &&
@@ -31,7 +23,7 @@ function Dialog({
 
     return (
         <>
-            <InsertLayoutDialog activeEditor={activeEditor} onClose={onClose}/>
+            <InsertLayoutDialog activeEditor={activeEditor} onClose={onClose} />
         </>
     );
 }
@@ -45,11 +37,11 @@ function InsertColumnLayoutModal({ currentEditor }) {
 
     return (
         <><button
-            className={ "px-1 bg-gray-400 hover:bg-gray-600 transition-colors duration-100 ease-in"}
+            className={"px-1 bg-gray-400 hover:bg-gray-600 transition-colors duration-100 ease-in"}
             onClick={() => {
                 if (CAN_USE_DOM) {
 
-                    const modal : any = CAN_USE_DOM && document ? document.getElementById('my_modal_layout') : null
+                    const modal: any = CAN_USE_DOM && document ? document.getElementById('my_modal_layout') : null
                     if (modal) modal.showModal()
                 }
             }}
