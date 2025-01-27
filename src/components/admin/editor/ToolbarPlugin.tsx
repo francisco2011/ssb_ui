@@ -105,16 +105,18 @@ import ContentModel from "~/models/ContentModel";
 import DrawIOResponse from "./plugins/DrawIOPlugin/DrawIOResponse";
 import { INSERT_DRAW_IO_IMAGE_COMMAND } from "./plugins/DrawIOPlugin";
 import InsertColumnLayoutModal from "./toolbar/InsertColumnLayaoutModal";
+import ClearEditorButton from "./toolbar/ClearEditorButton";
 
 
 type Props = {
     setIsLinkEditMode: Dispatch<boolean>,
     post: PostModel,
     onPropertiesChange: Dispatch<ToolBarProperties>
-    defaultWidth: string
+    defaultWidth: string,
+    onEditorClearCallback: () => void
 }
 
-export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesChange, defaultWidth }: Props) {
+export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesChange, defaultWidth, onEditorClearCallback }: Props) {
 
     const defaultFontSize = '15px';
     const defaultFontFamily = 'Arial';
@@ -541,6 +543,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
             <div className="grid-rows-3">
                 <div className="flex items-stretch space-x-1 mb-1 ">
+                    <ClearEditorButton currentEditor={editor}  onClickCallback={onEditorClearCallback} />
                     <StrikethroughButton currentEditor={editor} isActive={isStrikethrough} />
 
                     <BoldButton currentEditor={editor} isActive={isBold} />
@@ -577,7 +580,6 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <CodeButton isActive={isCode} currentEditor={editor} />
                     <LanguageSelect currentEditor={editor} callback={applyCodeLanguage} selectedOption={codeLanguage} />
                     <InsertLinkButton onClickCallback={insertLink} isActive={isLink} />
-                    <ClearFormatingButton onClickCallback={onClearFormatting} />
                     <span className="w-[2px] bg-black block h-full">'</span>
                     <UndoButton isActive={canUndo} currentEditor={editor} />
                     <RedoButton isActive={canRedo} currentEditor={editor} />
@@ -593,7 +595,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
                     <FormatCopyButton onClickCallback={copyFormat} isActive={copiedFormat != null} />
                     <PasteCopiedFormatButton onClickCallback={applyFormat}/>
-
+                    <ClearFormatingButton onClickCallback={onClearFormatting} />
                     <span className="w-[2px] bg-black block h-full">'</span>
 
                     <SubscriptButton isActive={isSubscript} currentEditor={editor} />

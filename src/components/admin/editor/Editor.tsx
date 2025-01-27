@@ -102,7 +102,9 @@ export type ContentState = {
 }
 
 type props = {
-  post: PostModel
+  content: string,
+  post: PostModel,
+  onContentDeletedCallback: () => void
 }
 
 const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
@@ -114,15 +116,6 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   //const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const editor = useRef<LexicalEditor>(null);
-
-  //@ts-ignore
-  const [current, setCurrentPost] = useState<PostModel>(props.post)
-  const [metadata, setMetadata] = useState<ContentMetada>({
-    description: '',
-    imgModel: null,
-    title: '',
-    type: null
-  })
 
 useImperativeHandle(ownRef, () => ({
     getState: () : ContentState | null => {
@@ -139,7 +132,6 @@ useImperativeHandle(ownRef, () => ({
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
   const [contentWidthpx, setContentWidthpx] = useState('900px')
-
 
   const addTag = val => {
     var string_copy = (' ' + val).slice(1);
@@ -159,19 +151,19 @@ useImperativeHandle(ownRef, () => ({
 
   useEffect(() => {
     
-    if (props.post?.content && props.post.content != '' && editor.current) {
+    if (props.content && props.content != '' && editor.current) {
 
       let initialEditorState: EditorState | null = null
 
-      if (props.post.content.startsWith('{"w')) {
+      if (props.content.startsWith('{"w')) {
 
-        var newState = JSON.parse(props.post.content)
+        var newState = JSON.parse(props.content)
         var w = newState.width
         setContentWidthpx(w)
         initialEditorState = editor.current.parseEditorState(newState.editorState)
 
       } else {
-        initialEditorState = editor.current.parseEditorState(props.post.content)
+        initialEditorState = editor.current.parseEditorState(props.content)
       }
 
       if (!initialEditorState) return
@@ -186,17 +178,6 @@ useImperativeHandle(ownRef, () => ({
 
         if (cntnt?.url) c.__src = cntnt.url
       })
-
-      const prevImg = props.post.contents.find(c => c.type == "preview");
-
-      const metadata: ContentMetada = {
-        description: props.post.description,
-        imgModel: prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
-        title: props.post.title,
-        type: props.post.type
-      }
-      setMetadata(metadata)
-      setCurrentPost(props.post)
 
       queueMicrotask(() => {
         if (editor?.current) {
@@ -293,7 +274,7 @@ useImperativeHandle(ownRef, () => ({
         <LexicalComposer initialConfig={editorConfig}>
 
           <EditorRefPlugin editorRef={editor} />
-          <ToolbarPlugin post={props.post} defaultWidth={contentWidthpx} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} />
+          <ToolbarPlugin post={props.post} defaultWidth={contentWidthpx} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} onEditorClearCallback={props.onContentDeletedCallback} />
           <ClearEditorPlugin />
           <ListPlugin />
           <ImagesPlugin />

@@ -19,13 +19,12 @@ import editorTheme from '~/themes/EditorTheme';
 import { useParams } from 'next/navigation';
 import Editor, { ContentState } from '~/components/admin/editor/Editor';
 import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/InlineImageNode';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCancel, faCheck, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 
 import ContentMetada from '~/models/ContentMetadata';
 import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
 import TagSelector from "~/components/admin/tagSelector/TagSelector";
 import PostPreview from "~/components/admin/editor/PostPreview";
+import { Metadata } from "next";
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -56,17 +55,17 @@ export default function PostEditor() {
   const params = useParams<{ id: string; }>()
   const service = new PostService();
 
-  //const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const [tags, setTags] = useState<string[]>([])
   const [post, setPost] = useState<PostModel | null>(null)
-    const [metadata, setMetadata] = useState<ContentMetada>({
-      description: '',
-      imgModel: null,
-      title: '',
-      type: null
-    })
+  const [metadata, setMetadata] = useState<ContentMetada>({
+    isPublished: false,
+    imgModel: null,
+    title: '',
+    type: null
+  })
   const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const editorRef = useRef(null);
+  const descriptionEditorRef = useRef(null)
 
   useEffect(() => {
 
@@ -76,6 +75,14 @@ export default function PostEditor() {
         const p = await service.Get(params.id)
 
         setPost(p)
+
+        const metadata: ContentMetada = {
+          isPublished: p.isPublished,
+          imgModel: null,// prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
+          title: p.title,
+          type: p.type
+        }
+        setMetadata(metadata)
 
       } else {
         let _post: PostModel = {
@@ -98,60 +105,57 @@ export default function PostEditor() {
 
   }, []);
 
-  const onChangePublishState = async () => {
+  const updateMetadata = async (_metadata: ContentMetada) => {
 
-    if (post && post.id) await service.changePublishState(post.id)
+    var isPublishedStateSame = metadata.isPublished == _metadata.isPublished
+    setMetadata(metadata)
+
+    if(!isPublishedStateSame && post?.id){
+      await service.changePublishState(post?.id)
+    }
 
   }
 
-   const clearAll = () => {
-      if (!editorRef?.current) return;
+  const clearAll = () => {
+    setIsClearAll(true)
+  }
 
-      //@ts-ignore
-      editorRef.current.clearAll()
-      setIsClearAll(true)
+  const addTag = val => {
+    var string_copy = (' ' + val).slice(1);
+
+    if (tags.indexOf(string_copy) == -1) {
+      setTags([...tags, string_copy])
+
     }
-
-    const addTag = val => {
-      var string_copy = (' ' + val).slice(1);
-  
-      if (tags.indexOf(string_copy) == -1) {
-        setTags([...tags, string_copy])
-  
-      }
-    }
+  }
 
 
 
-    const onsave = async () => {
-        if (!post) return
-        if (!editorRef?.current) return;
-        
-        //@ts-ignore
-        const editorState = editorRef.current.getState() as ContentState | null;
-    
-        debugger
-        if(!editorState) return 
+  const onsave = async () => {
+    if (!post) return
+    if (!editorRef?.current) return;
 
-        // @ts-ignore
-        if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
-    
-        
-        post.content = editorState.Content
-        post.contents
-        post.title = metadata.title
-        post.description = metadata.description
-        post.type = metadata.type
-    
-        const result = await service.Save(post)
-        setPost({ ...post, id: result.id })
+    //@ts-ignore
+    const editorState = editorRef.current.getState() as ContentState | null;
+    //@ts-ignore
+    const descriptionEditorState = descriptionEditorRef.current.getState() as ContentState | null;
 
-        //setCurrentPost(props.post)
-        //props.onsaveCallback(props.post)
-      }
-    
+    if (!editorState) return
+
+    // @ts-ignore
+    if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
 
 
+    post.content = editorState.Content
+    post.contents = editorState.Imgs
+    post.title = metadata.title
+    post.description = descriptionEditorState?.Content??''
+    post.type = metadata.type
+
+    const result = await service.Save(post)
+    setPost({ ...post, id: result.id })
+
+  }
 
   return (
     <>
@@ -159,41 +163,32 @@ export default function PostEditor() {
 
       {post ?
 
-        <><div className='flex flex-row justify-end'>
-
-          <div className='m-2'>
-            {post?.isPublished ? <button className="btn btn-active btn-success">
-              <FontAwesomeIcon
-                icon={faNewspaper}
-                className=" w-4 h-4" />Main</button>
-              : <button className="btn btn-active "> <FontAwesomeIcon
-                icon={faNewspaper}
-                className=" w-4 h-4" />Main</button>}
-          </div>
-
-          <div className='m-2'>
-            {post?.isPublished ? <button className="btn btn-active btn-success">
-              <FontAwesomeIcon
-                icon={faCheck}
-                className=" w-4 h-4" />Published</button>
-              : <button className="btn btn-active btn-warning"> <FontAwesomeIcon
-                icon={faCancel}
-                className=" w-4 h-4" />Published</button>}
-          </div>
-
-
-        </div>
+        <>
 
           <main className="flex min-h-screen flex-col">
-
 
             <div className="grid grid-cols-[5%_70%_25%] w-[1200]">
 
               <div>
-                <VerticalToolbar onChangePublicationState={onChangePublishState} onsaveCallback={onsave} onCleanCallback={clearAll} />
+                <VerticalToolbar onsaveCallback={onsave} />
               </div>
 
-              <Editor ref={editorRef}   post={post}></Editor>
+              <div>
+
+                <div className="collapse bg-base-200 my-5" >
+                  <input type="checkbox" />
+                  <div className="collapse-title text-xl font-medium">Edit Description</div>
+                  <div className="collapse-content">
+                    <Editor ref={descriptionEditorRef} content={post.description ?? ''} post={post} onContentDeletedCallback={() => {}}></Editor>
+                  </div>
+                </div>
+                <div>
+                  <Editor ref={editorRef} content={post.content ?? ''} post={post} onContentDeletedCallback={clearAll}></Editor>
+                </div>
+
+              </div>
+
+
 
               <div className='w-64 ml-2 mt-4'>
 
@@ -203,7 +198,7 @@ export default function PostEditor() {
 
 
                 <div className=' sticky top-32'>
-                  <PostPreview post={post} onChange={setMetadata} />
+                  <PostPreview post={post} onChange={updateMetadata} />
                 </div>
 
               </div>

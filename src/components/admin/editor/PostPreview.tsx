@@ -11,10 +11,10 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     const [postTypes, setPostTypes] = useState<PostTypeModel[]>([])
 
     const [state, setState] = useState<ContentMetadaModel>({
-        description: '',
         title: '',
         imgModel: null,
-        type: null
+        type: null,
+        isPublished: false
     })
 
     const [postId, setPostId] = useState<number>(0)
@@ -48,23 +48,18 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
 
             var img = post.contents.find(c => c.type == "preview")
             setState({
-                description: post.description,
                 imgModel: img && img.name && img.url ? { name: img.name, src: img.url } : null,
                 title: post.title,
-                type: post.type
+                type: post.type,
+                isPublished: post.isPublished
             })
 
             setPostId(post.id)
         }
-        
+
 
     }, [post]);
 
-    function handleDescriptionChange(e) {
-        //setDescription(e.target.value);
-        setState({ ...state, description: e.target.value })
-        onChange(state)
-    }
 
     function handleTitleChange(e) {
         //setTitle(e.target.value);
@@ -76,11 +71,18 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
         const st = postTypes.find(c => c.name == e.target.value)
         if (st) {
             //setSelectedPostType(st)
-            
+
             const newState = { ...state, type: st }
-            setState({...newState})
+            setState({ ...newState })
             onChange(newState)
         }
+    }
+
+    function onPublishedChange(e) {
+        const newState = { ...state, isPublished: e.currentTarget.value == '1' }
+        setState({ ...newState })
+        debugger
+        onChange(newState)
     }
 
     return (
@@ -119,15 +121,20 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
                 </div>
 
                 <div className="label">
-                    <span className="label-text">Description</span>
+                    <span className="label-text">Published</span>
                 </div>
 
                 <div className="mr-2 ml-2">
-                    <textarea value={state.description}
-                        onChange={(e) => handleDescriptionChange(e)}
-                        className="textarea textarea-xs textarea-bordered text-black w-full"
-                        placeholder="Add some description">
-                    </textarea>
+
+                    <label>
+                        <input type="radio" checked={state.isPublished === true} value={1} onChange={onPublishedChange} />
+                        YES
+                    </label>
+
+                    <label>
+                        <input type="radio" checked={state.isPublished === false} value={0} onChange={onPublishedChange} />
+                        NO
+                    </label>
 
                 </div>
 
@@ -135,7 +142,7 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
                     <span className="label-text">Background img</span>
                 </div>
                 <div className="mr-2 ml-2">
-                    <UploadImageDialogBody  alreadyLoadedImgUrl={state.imgModel} postId={postId} contentType={'preview'} imgClassname="h-46 w-48" onImageLoaded={onSetImg} showDialogAction={false} showAlternativeText={false}  onClick={() => { }} />
+                    <UploadImageDialogBody alreadyLoadedImgUrl={state.imgModel} postId={postId} contentType={'preview'} imgClassname="h-46 w-48" onImageLoaded={onSetImg} showDialogAction={false} showAlternativeText={false} onClick={() => { }} />
                 </div>
             </div>
 

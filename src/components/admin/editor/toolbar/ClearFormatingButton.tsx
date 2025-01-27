@@ -1,4 +1,4 @@
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEraser, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type LinkButtonProps = {
@@ -14,7 +14,7 @@ function ClearFormatingButton({ onClickCallback }: LinkButtonProps) {
           }
         onClick={() => onClickCallback()}
       >
-        <FontAwesomeIcon icon={faTrash}  className="text-white w-3.5 h-3.5" />
+        <FontAwesomeIcon icon={faEraser}  className="text-white w-3.5 h-3.5" />
       </button>
     );
 

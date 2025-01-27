@@ -246,8 +246,7 @@ export default function Posts() {
                     <thead>
                         <tr>
                             <th className="w-16">ID</th>
-                            <th className="w-32">Title</th>
-                            <th className="w-96">Description</th>
+                            <th className="w-48">Title</th>
                             <th className="w-48">Type</th>
                             <th className="w-32">Date</th>
                             <th className="w-96">Tags</th>

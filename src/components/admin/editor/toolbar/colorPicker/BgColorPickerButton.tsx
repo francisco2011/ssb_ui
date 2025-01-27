@@ -1,6 +1,5 @@
 import { faA, faAlignLeft, faAlignRight, faBrush, faCode, faItalic } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import clsx from "clsx";
 import Popover from "~/components/popover/Popover";
 import ColorPicker from "./ColorPicker";
 import { useCallback } from "react";
