@@ -14,7 +14,7 @@ import { ListItemNode, ListNode } from "@lexical/list";
 import { HashtagNode } from "@lexical/hashtag";
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 
 import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
@@ -60,6 +60,7 @@ import DrawIOPlugin from './plugins/DrawIOPlugin';
 import { LayoutPlugin } from './plugins/LayoutPlugin';
 import { LayoutContainerNode } from './plugins/LayoutPlugin/LayoutContainerNode';
 import { LayoutItemNode } from './plugins/LayoutPlugin/LayoutItemNode';
+import ContentModel from '~/models/ContentModel';
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -93,22 +94,47 @@ const editorConfig = {
 
 };
 
-export default function Editor({ onsaveCallback, post }: { onsaveCallback: (post: PostModel) => void, post: PostModel }) {
+export type ContentState = {
+  
+  Content: string,
+  Imgs: ContentModel[]
+
+}
+
+type props = {
+  post: PostModel
+}
+
+const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   const [tags, setTags] = useState<string[]>([])
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
   const [isSmallWidthViewport, setIsSmallWidthViewport] =
     useState<boolean>(false);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
-  const [isClearAll, setIsClearAll] = useState<boolean>(false);
+  //const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const editor = useRef<LexicalEditor>(null);
-  const [current, setCurrentPost] = useState<PostModel>(post)
+
+  //@ts-ignore
+  const [current, setCurrentPost] = useState<PostModel>(props.post)
   const [metadata, setMetadata] = useState<ContentMetada>({
     description: '',
     imgModel: null,
     title: '',
     type: null
   })
+
+useImperativeHandle(ownRef, () => ({
+    getState: () : ContentState | null => {
+      return getActualState()
+    },
+
+    clearAll: () => {
+      if (!editor?.current) return;
+      editor.current.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+      //setIsClearAll(!isClearAll)
+    }
+  }));
 
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
@@ -132,20 +158,20 @@ export default function Editor({ onsaveCallback, post }: { onsaveCallback: (post
   };
 
   useEffect(() => {
-
-    if (post?.content && post.content != '' && editor.current) {
+    
+    if (props.post?.content && props.post.content != '' && editor.current) {
 
       let initialEditorState: EditorState | null = null
 
-      if (post.content.startsWith('{"w')) {
+      if (props.post.content.startsWith('{"w')) {
 
-        var newState = JSON.parse(post.content)
+        var newState = JSON.parse(props.post.content)
         var w = newState.width
         setContentWidthpx(w)
         initialEditorState = editor.current.parseEditorState(newState.editorState)
 
       } else {
-        initialEditorState = editor.current.parseEditorState(post.content)
+        initialEditorState = editor.current.parseEditorState(props.post.content)
       }
 
       if (!initialEditorState) return
@@ -156,32 +182,30 @@ export default function Editor({ onsaveCallback, post }: { onsaveCallback: (post
       })
 
       imageNodes.forEach(c => {
-        var cntnt = post.contents.find(d => d && d.name && d.name == c.__imgId)
+        var cntnt = props.post.contents.find(d => d && d.name && d.name == c.__imgId)
 
         if (cntnt?.url) c.__src = cntnt.url
       })
 
-      const prevImg = post.contents.find(c => c.type == "preview");
+      const prevImg = props.post.contents.find(c => c.type == "preview");
 
       const metadata: ContentMetada = {
-        description: post.description,
+        description: props.post.description,
         imgModel: prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
-        title: post.title,
-        type: post.type
+        title: props.post.title,
+        type: props.post.type
       }
       setMetadata(metadata)
-      setCurrentPost(post)
+      setCurrentPost(props.post)
 
       queueMicrotask(() => {
         if (editor?.current) {
           editor.current.setEditorState(initialEditorState)
         }
       });
-
-
     }
 
-  }, [post]);
+  }, [props.post]);
 
   useEffect(() => {
     const updateViewPortWidth = () => {
@@ -201,21 +225,17 @@ export default function Editor({ onsaveCallback, post }: { onsaveCallback: (post
   }, [isSmallWidthViewport]);
 
 
-
-  //const onsave = async (metadata: ContentMetada) => {
-  const onsave = async () => {
-
-    if (!post) return
-    if (tags) post.tags = tags
-    if (!editor?.current) return;
+  const getActualState = () : ContentState | null => {
+    if (!editor?.current) return null;
+    
     const editorState = editor.current.getEditorState();
-
-    //find all Image Nodes
 
     let imageNodes: ImageNode[] = []
     editorState.read(() => {
       imageNodes = $nodesOfType(ImageNode);
     })
+
+    const imgs: ContentModel[] = []
 
     imageNodes.filter(c => c.__imgId).forEach(c => {
       if (c.__imgId && typeof c.__imgId === typeof '') {
@@ -223,12 +243,10 @@ export default function Editor({ onsaveCallback, post }: { onsaveCallback: (post
         const contentType = ContentType.imgBody
 
         // @ts-ignore
-        post.contents.push({ name: c.__imgId, type: contentType })
+        imgs.push({ name: c.__imgId, type: contentType })
       }
     })
 
-    // @ts-ignore
-    if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
 
     const extendedState = {
       width: contentWidthpx,
@@ -237,20 +255,13 @@ export default function Editor({ onsaveCallback, post }: { onsaveCallback: (post
 
     const json = JSON.stringify(extendedState);
 
-    post.content = json as any
-    post.title = metadata.title
-    post.description = metadata.description
-    post.type = metadata.type
 
-    setCurrentPost(post)
-    onsaveCallback(post)
+    return {
+      Content: json,
+      Imgs: imgs
+    }
   }
 
-  const clearAll = () => {
-    if (!editor?.current) return;
-    editor.current.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-    setIsClearAll(!isClearAll)
-  }
 
   const treeActive = false
 
@@ -282,7 +293,7 @@ export default function Editor({ onsaveCallback, post }: { onsaveCallback: (post
         <LexicalComposer initialConfig={editorConfig}>
 
           <EditorRefPlugin editorRef={editor} />
-          <ToolbarPlugin post={post} defaultWidth={contentWidthpx} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} />
+          <ToolbarPlugin post={props.post} defaultWidth={contentWidthpx} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} />
           <ClearEditorPlugin />
           <ListPlugin />
           <ImagesPlugin />
@@ -349,4 +360,6 @@ export default function Editor({ onsaveCallback, post }: { onsaveCallback: (post
 
     </>
   );
-}
+})
+
+export default Editor;

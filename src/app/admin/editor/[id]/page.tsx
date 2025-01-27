@@ -17,7 +17,7 @@ import PostModel from '~/models/PostModel';
 import PostService from '~/services/PostService';
 import editorTheme from '~/themes/EditorTheme';
 import { useParams } from 'next/navigation';
-import Editor from '~/components/admin/editor/Editor';
+import Editor, { ContentState } from '~/components/admin/editor/Editor';
 import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/InlineImageNode';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCancel, faCheck, faNewspaper } from "@fortawesome/free-solid-svg-icons";
@@ -56,7 +56,7 @@ export default function PostEditor() {
   const params = useParams<{ id: string; }>()
   const service = new PostService();
 
-  const [isClearAll, setIsClearAll] = useState<boolean>(false);
+  //const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const [tags, setTags] = useState<string[]>([])
   const [post, setPost] = useState<PostModel | null>(null)
     const [metadata, setMetadata] = useState<ContentMetada>({
@@ -65,6 +65,8 @@ export default function PostEditor() {
       title: '',
       type: null
     })
+  const [isClearAll, setIsClearAll] = useState<boolean>(false);
+  const editorRef = useRef(null);
 
   useEffect(() => {
 
@@ -96,14 +98,6 @@ export default function PostEditor() {
 
   }, []);
 
-
-
-  const onsaveCallback = async (post: PostModel) => {
-
-    const result = await service.Save(post)
-    setPost({ ...post, id: result.id })
-  }
-
   const onChangePublishState = async () => {
 
     if (post && post.id) await service.changePublishState(post.id)
@@ -111,9 +105,11 @@ export default function PostEditor() {
   }
 
    const clearAll = () => {
-      //if (!editor?.current) return;
-      //editor.current.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-      //setIsClearAll(!isClearAll)
+      if (!editorRef?.current) return;
+
+      //@ts-ignore
+      editorRef.current.clearAll()
+      setIsClearAll(true)
     }
 
     const addTag = val => {
@@ -124,6 +120,36 @@ export default function PostEditor() {
   
       }
     }
+
+
+
+    const onsave = async () => {
+        if (!post) return
+        if (!editorRef?.current) return;
+        
+        //@ts-ignore
+        const editorState = editorRef.current.getState() as ContentState | null;
+    
+        debugger
+        if(!editorState) return 
+
+        // @ts-ignore
+        if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
+    
+        
+        post.content = editorState.Content
+        post.contents
+        post.title = metadata.title
+        post.description = metadata.description
+        post.type = metadata.type
+    
+        const result = await service.Save(post)
+        setPost({ ...post, id: result.id })
+
+        //setCurrentPost(props.post)
+        //props.onsaveCallback(props.post)
+      }
+    
 
 
 
@@ -164,10 +190,10 @@ export default function PostEditor() {
             <div className="grid grid-cols-[5%_70%_25%] w-[1200]">
 
               <div>
-                <VerticalToolbar onChangePublicationState={onChangePublishState} onsaveCallback={() => {}} onCleanCallback={clearAll} />
+                <VerticalToolbar onChangePublicationState={onChangePublishState} onsaveCallback={onsave} onCleanCallback={clearAll} />
               </div>
 
-              <Editor post={post} onsaveCallback={onsaveCallback}></Editor>
+              <Editor ref={editorRef}   post={post}></Editor>
 
               <div className='w-64 ml-2 mt-4'>
 
