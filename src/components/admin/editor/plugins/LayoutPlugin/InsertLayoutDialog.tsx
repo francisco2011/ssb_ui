@@ -6,6 +6,7 @@ import { faPlus, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '~/components/Button';
 import { JSX } from 'react/jsx-runtime';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 
 //reference from the original
 //const LAYOUTS = [
@@ -23,18 +24,14 @@ type columnModel = {
 }
 
 export default function InsertLayoutDialog({
-    activeEditor,
     onClose,
 }: {
-    activeEditor: LexicalEditor;
-    onClose: () => void;
+    onClose: (layout: string) => void;
 }): JSX.Element {
     //const [layout, setLayout] = useState('');
     const [columns, setColumns] = useState<columnModel[]>([])
-
     const MAX_WIDTH_PERCENTAGE = 96
-
-
+    
     useEffect(() => {
 
         setColumns([{ id: 1, width: 48 }, { id: 2, width: 48 }])
@@ -49,9 +46,9 @@ export default function InsertLayoutDialog({
 
     const onClick = () => {
 
+        
         const layout = buildLayout()
-        activeEditor.dispatchCommand(INSERT_LAYOUT_COMMAND, layout);
-        onClose();
+        onClose(layout);
     };
 
     const calcMaxWidth = (ignoreId?: Number) => {

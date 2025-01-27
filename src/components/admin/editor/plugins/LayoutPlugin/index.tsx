@@ -6,7 +6,7 @@
  *
  */
 
-import type {ElementNode, LexicalCommand, LexicalNode, NodeKey} from 'lexical';
+import type {ElementNode, LexicalCommand, LexicalEditor, LexicalNode, NodeKey} from 'lexical';
 
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {

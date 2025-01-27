@@ -1,11 +1,10 @@
-import { faColumns, faImage, faTableColumns, faUnderline } from "@fortawesome/free-solid-svg-icons";
+import { faTableColumns } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import clsx from "clsx";
-import { FORMAT_TEXT_COMMAND, LexicalEditor } from "lexical";
+import { LexicalEditor } from "lexical";
 
-import { useEffect, useState } from "react";
 import { JSX } from "react/jsx-runtime";
 import InsertLayoutDialog from "../plugins/LayoutPlugin/InsertLayoutDialog";
+import { INSERT_LAYOUT_COMMAND } from "../plugins/LayoutPlugin";
 
 const CAN_USE_DOM: boolean =
     typeof window !== 'undefined' &&
@@ -13,25 +12,26 @@ const CAN_USE_DOM: boolean =
     typeof window.document.createElement !== 'undefined';
 
 function Dialog({
-    activeEditor,
     onClose
 }: {
-    activeEditor: LexicalEditor;
-    onClose: () => void;
+    onClose: (layout: string) => void;
 }): JSX.Element {
 
 
     return (
         <>
-            <InsertLayoutDialog activeEditor={activeEditor} onClose={onClose} />
+            <InsertLayoutDialog onClose={onClose} />
         </>
     );
 }
 
-function InsertColumnLayoutModal({ currentEditor }) {
+function InsertColumnLayoutModal({ onContentCallback }: { onContentCallback: (layout: string) => void }) {
 
-    function closeModal() {
+    function closeModal(layout: string) {
         const modal = document.getElementById('my_modal_layout') as any;
+
+        onContentCallback(layout)
+
         modal.close()
     }
 
@@ -53,10 +53,7 @@ function InsertColumnLayoutModal({ currentEditor }) {
             <dialog id="my_modal_layout" className="modal">
                 <div className="modal-box">
 
-                    <Dialog
-                        activeEditor={currentEditor}
-                        onClose={closeModal}
-                    />
+                    <Dialog onClose={closeModal} />
 
                 </div>
             </dialog></>

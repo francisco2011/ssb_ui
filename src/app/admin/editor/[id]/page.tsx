@@ -179,11 +179,11 @@ export default function PostEditor() {
                   <input type="checkbox" />
                   <div className="collapse-title text-xl font-medium">Edit Description</div>
                   <div className="collapse-content">
-                    <Editor ref={descriptionEditorRef} content={post.description ?? ''} post={post} onContentDeletedCallback={() => {}}></Editor>
+                    <Editor key={1} ref={descriptionEditorRef} content={post.description ?? ''} post={post} onContentDeletedCallback={() => {}}></Editor>
                   </div>
                 </div>
                 <div>
-                  <Editor ref={editorRef} content={post.content ?? ''} post={post} onContentDeletedCallback={clearAll}></Editor>
+                  <Editor key={2} ref={editorRef} content={post.content ?? ''} post={post} onContentDeletedCallback={clearAll}></Editor>
                 </div>
 
               </div>

@@ -106,6 +106,7 @@ import DrawIOResponse from "./plugins/DrawIOPlugin/DrawIOResponse";
 import { INSERT_DRAW_IO_IMAGE_COMMAND } from "./plugins/DrawIOPlugin";
 import InsertColumnLayoutModal from "./toolbar/InsertColumnLayaoutModal";
 import ClearEditorButton from "./toolbar/ClearEditorButton";
+import { INSERT_LAYOUT_COMMAND } from "./plugins/LayoutPlugin";
 
 
 type Props = {
@@ -538,6 +539,14 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
     ////////////////////////////////////
 
+
+    const insertColumnLayout = useCallback( (layout: string) => {
+
+        if(layout) editor.dispatchCommand(INSERT_LAYOUT_COMMAND, layout);
+
+    }, [editor]
+    )
+
     return (
         <div className="z-40 sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
@@ -606,7 +615,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <GifPickerButton onClickCallback={insertGif} />
                     <HorizontalRuleButton  currentEditor={editor}/>
                     <InsertTableButton currentEditor={editor}/>
-                    <InsertColumnLayoutModal currentEditor={editor}/>
+                    <InsertColumnLayoutModal onContentCallback={insertColumnLayout}/>
                     <DrawIOModalButton onContentCallback={onDrawIO}/>
                 
                 </div>

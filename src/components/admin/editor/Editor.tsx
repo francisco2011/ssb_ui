@@ -104,10 +104,11 @@ export type ContentState = {
 type props = {
   content: string,
   post: PostModel,
-  onContentDeletedCallback: () => void
+  onContentDeletedCallback: () => void,
 }
 
 const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
+
   const [tags, setTags] = useState<string[]>([])
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
@@ -289,8 +290,9 @@ useImperativeHandle(ownRef, () => ({
           <HorizontalRulePlugin />
           <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
           <TableCellResizerPlugin />
+          <LayoutPlugin/>
           <DrawIOPlugin />
-          <LayoutPlugin />
+          
 
           <div className='editor-container'>
             <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
