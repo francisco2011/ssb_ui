@@ -140,7 +140,7 @@
     background-color: rgba(60, 132, 244, 0.5);
   }
 
-  .editor-shell .editor-image .image-edit-button {
+  .editor-shell .editor-image .drawio-image-edit-button {
     display: block;
     position: absolute;
     top: 50px;
@@ -156,11 +156,11 @@
     user-select: none;
   }
   
-  .editor-shell .editor-image .image-edit-button:hover {
+  .editor-shell .editor-image .drawio-image-edit-button:hover {
     background-color: rgba(60, 132, 244, 0.5);
   }
   
   
-  .editor-shell .editor-image .image-edit-button:hover {
+  .editor-shell .editor-image .drawio-image-edit-button:hover {
     background-color: rgba(60, 132, 244, 0.5);
   }

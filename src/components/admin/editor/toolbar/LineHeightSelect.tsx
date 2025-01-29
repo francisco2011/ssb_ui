@@ -12,8 +12,7 @@ const defaultOptions: any = [
   ['2.5', '2.5']
 ];
 
-const LineHeightSelect = ({ selectedOption, currentEditor, callback }: SelectProps<string>) => {
-
+const LineHeightSelect = ({ selectedOption, callback }: SelectProps<string>) => {
 
   const onSelect = useCallback(
     (e: any ) => {

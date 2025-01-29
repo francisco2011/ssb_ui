@@ -1,21 +1,22 @@
-import { faRotateLeft, faRotateRight, faTable } from "@fortawesome/free-solid-svg-icons";
+import { faTable } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
-import { LexicalEditor, REDO_COMMAND, UNDO_COMMAND } from "lexical";
-import ButtonProps from "./props/IButtonProps";
 import { INSERT_TABLE_COMMAND } from "@lexical/table";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
-function InsertTableButton({ currentEditor }: {currentEditor: LexicalEditor}) {
+function InsertTableButton() {
+
+  const [editor] = useLexicalComposerContext();
 
     return(
         <button
-        className={clsx(
+        className={
           "px-1 bg-gray-400 hover:bg-gray-600 transition-colors duration-100 ease-in"
-        )}
+        }
         onClick={() => {
-            currentEditor.dispatchCommand(INSERT_TABLE_COMMAND, {columns: '3', rows:'3', includeHeaders: true});
+            editor.dispatchCommand(INSERT_TABLE_COMMAND, {columns: '3', rows:'3', includeHeaders: true});
 
         }}
       >

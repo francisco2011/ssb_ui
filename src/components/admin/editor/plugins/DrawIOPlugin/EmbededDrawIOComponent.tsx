@@ -19,9 +19,6 @@ export default function EmbededDrawIOComponent({ imageContext, onData, onClose }
 
   const url = 'https://embed.diagrams.net/?embedInline=1&libraries=1&protocol=json&spin=1&saveAndExit=1&noSaveBtn=0&noExitBtn=1&&highlight=0000ff&edit=_blank&layers=1&nav=1'
 
-  //Usage example:
-  //var file = dataURLtoFile('data:image/png;base64,......', 'a.png');
-  //console.log(file);
   function dataURLtoFile(dataurl, filename) {
     var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -54,8 +51,6 @@ const createDataUri = async (doc) =>
 
 		return 'data:image/svg+png;base64,' + cntntArr[1]
 	};
-
-
 
   const handleMessage = async (evt: any) =>
         {

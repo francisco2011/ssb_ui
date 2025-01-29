@@ -6,10 +6,13 @@ import {
     INSERT_UNORDERED_LIST_COMMAND,
     REMOVE_LIST_COMMAND
   } from "@lexical/list";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
-function BulletListButton({ isActive, currentEditor }: ButtonProps) {
+function BulletListButton({ isActive }: ButtonProps) {
+
+  const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -20,9 +23,9 @@ function BulletListButton({ isActive, currentEditor }: ButtonProps) {
         onClick={() => {
 
             if(isActive){
-                currentEditor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+                editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
             }else{
-                currentEditor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+                editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
             }
         }}
       >

@@ -3,10 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { UNDO_COMMAND } from "lexical";
 import ButtonProps from "./props/IButtonProps";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
-function UndoButton({ isActive, currentEditor }: ButtonProps) {
+function UndoButton({ isActive }: ButtonProps) {
+
+  const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -15,7 +18,7 @@ function UndoButton({ isActive, currentEditor }: ButtonProps) {
           "px-1 bg-gray-400 hover:bg-gray-600 transition-colors duration-100 ease-in"
         )}
         onClick={() => {
-            currentEditor.dispatchCommand(UNDO_COMMAND, undefined);
+            editor.dispatchCommand(UNDO_COMMAND, undefined);
         }}
       >
         <FontAwesomeIcon

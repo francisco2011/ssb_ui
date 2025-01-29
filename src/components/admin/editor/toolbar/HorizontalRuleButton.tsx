@@ -4,10 +4,13 @@ import clsx from "clsx";
 import { LexicalEditor, REDO_COMMAND, UNDO_COMMAND } from "lexical";
 import ButtonProps from "./props/IButtonProps";
 import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
-function HorizontalRuleButton({ currentEditor } : { currentEditor: LexicalEditor}) {
+function HorizontalRuleButton() {
+
+  const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -15,7 +18,7 @@ function HorizontalRuleButton({ currentEditor } : { currentEditor: LexicalEditor
           "px-1 bg-gray-400 hover:bg-gray-600 transition-colors duration-100 ease-in"
         )}
         onClick={() => {
-            currentEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+          editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
         }}
       >
         <FontAwesomeIcon

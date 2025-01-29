@@ -108,7 +108,7 @@ export default function PostEditor() {
   const updateMetadata = async (_metadata: ContentMetada) => {
 
     var isPublishedStateSame = metadata.isPublished == _metadata.isPublished
-    setMetadata(metadata)
+    setMetadata(_metadata)
 
     if(!isPublishedStateSame && post?.id){
       await service.changePublishState(post?.id)
@@ -179,11 +179,11 @@ export default function PostEditor() {
                   <input type="checkbox" />
                   <div className="collapse-title text-xl font-medium">Edit Description</div>
                   <div className="collapse-content">
-                    <Editor key={1} ref={descriptionEditorRef} content={post.description ?? ''} post={post} onContentDeletedCallback={() => {}}></Editor>
+                    <Editor ref={descriptionEditorRef} content={post.description ?? ''} post={post} onContentDeletedCallback={() => {}}></Editor>
                   </div>
                 </div>
                 <div>
-                  <Editor key={2} ref={editorRef} content={post.content ?? ''} post={post} onContentDeletedCallback={clearAll}></Editor>
+                  <Editor ref={editorRef} content={post.content ?? ''} post={post} onContentDeletedCallback={clearAll}></Editor>
                 </div>
 
               </div>

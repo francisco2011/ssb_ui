@@ -57,7 +57,7 @@ import TableActionMenuPlugin from './plugins/TableActionMenu';
 import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
 import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIOImageNode';
 import DrawIOPlugin from './plugins/DrawIOPlugin';
-import { LayoutPlugin } from './plugins/LayoutPlugin';
+import LayoutPlugin  from './plugins/LayoutPlugin';
 import { LayoutContainerNode } from './plugins/LayoutPlugin/LayoutContainerNode';
 import { LayoutItemNode } from './plugins/LayoutPlugin/LayoutItemNode';
 import ContentModel from '~/models/ContentModel';
@@ -104,7 +104,7 @@ export type ContentState = {
 type props = {
   content: string,
   post: PostModel,
-  onContentDeletedCallback: () => void,
+  onContentDeletedCallback: () => void
 }
 
 const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
@@ -282,6 +282,8 @@ useImperativeHandle(ownRef, () => ({
           <InlineImagePlugin />
           <TagPlugin onNewCallback={(c) => addTag(c)} />
           <LinkPlugin hasLinkAttributes={false} />
+          <LayoutPlugin/>
+          <DrawIOPlugin />
           <AutoFocusPlugin />
           <CodeHighlightPlugin />
           <LexicalAutoLinkPlugin />
@@ -290,10 +292,7 @@ useImperativeHandle(ownRef, () => ({
           <HorizontalRulePlugin />
           <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
           <TableCellResizerPlugin />
-          <LayoutPlugin/>
-          <DrawIOPlugin />
           
-
           <div className='editor-container'>
             <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
 

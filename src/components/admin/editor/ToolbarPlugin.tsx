@@ -168,39 +168,39 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
         () => {
             editor.update(() => {
 
-                if(!copiedFormat) return
+                if (!copiedFormat) return
                 const selection = $getSelection();
                 if ($isRangeSelection(selection)) {
 
-                    if(copiedFormat.IsBold) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
-                    if(copiedFormat.IsItalic) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
-                    if(copiedFormat.IsStrikethrough) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
-                    if(copiedFormat.IsUnderline) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
-                    if(copiedFormat.IsCode) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
-                    if(copiedFormat.IsSubscript) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
-                    if(copiedFormat.IsSuperscript) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
-                    
+                    if (copiedFormat.IsBold) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+                    if (copiedFormat.IsItalic) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
+                    if (copiedFormat.IsStrikethrough) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+                    if (copiedFormat.IsUnderline) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
+                    if (copiedFormat.IsCode) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
+                    if (copiedFormat.IsSubscript) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
+                    if (copiedFormat.IsSuperscript) editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
+
                     const styles: Record<string, string> = {}
-                    
 
-                    if(copiedFormat.FontSize) styles['font-size'] = copiedFormat.FontSize
-                    if(copiedFormat.FontColor) styles['color'] = copiedFormat.FontColor
-                    if(copiedFormat.BackgroundColor) styles['background-color'] = copiedFormat.BackgroundColor
-                    if(copiedFormat.FontFamily) styles['font-family'] = copiedFormat.FontFamily
-                    if(copiedFormat.LineHeight) styles['line-height'] = copiedFormat.LineHeight
-                    
-                    if(Object.keys(styles).length > 0) $patchStyleText(selection, styles);
-                    
-                    if(copiedFormat.IsQuote) $wrapNodes(selection, () => $createQuoteNode());
-                    
-                    if(copiedFormat.HeadingType) $wrapNodes(selection, () => $createHeadingNode(copiedFormat.HeadingType));
-                    if(copiedFormat.IsListBulletList) editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
-                    if(copiedFormat.IsOrderedList)  editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
 
-                    if(copiedFormat.Alignment == 'center')  editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
-                    if(copiedFormat.Alignment == 'right')  editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
-                    if(copiedFormat.Alignment == 'left')  editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
-                    if(copiedFormat.Alignment == 'justify')  editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
+                    if (copiedFormat.FontSize) styles['font-size'] = copiedFormat.FontSize
+                    if (copiedFormat.FontColor) styles['color'] = copiedFormat.FontColor
+                    if (copiedFormat.BackgroundColor) styles['background-color'] = copiedFormat.BackgroundColor
+                    if (copiedFormat.FontFamily) styles['font-family'] = copiedFormat.FontFamily
+                    if (copiedFormat.LineHeight) styles['line-height'] = copiedFormat.LineHeight
+
+                    if (Object.keys(styles).length > 0) $patchStyleText(selection, styles);
+
+                    if (copiedFormat.IsQuote) $wrapNodes(selection, () => $createQuoteNode());
+
+                    if (copiedFormat.HeadingType) $wrapNodes(selection, () => $createHeadingNode(copiedFormat.HeadingType));
+                    if (copiedFormat.IsListBulletList) editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+                    if (copiedFormat.IsOrderedList) editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+
+                    if (copiedFormat.Alignment == 'center') editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
+                    if (copiedFormat.Alignment == 'right') editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
+                    if (copiedFormat.Alignment == 'left') editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
+                    if (copiedFormat.Alignment == 'justify') editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
 
                     setCopiedFormat(null)
                 }
@@ -327,9 +327,9 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
     }, [editor, setIsLinkEditMode, isLink]);
 
     const insertGif = useCallback((payload: InsertImagePayload) => {
-        
+
         editor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload);
-        
+
     }, [editor])
 
     const applyHeadingText = useCallback(
@@ -415,7 +415,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                 if ($isRangeSelection(selection)) {
 
 
-                    var newNode = $createEmojiNode('',emoji)
+                    var newNode = $createEmojiNode('', emoji)
                     selection?.insertNodes([newNode])
 
                 }
@@ -507,14 +507,14 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
     }
 
     const onMaxWidthChanged = (value: number) => {
-        onPropertiesChange({MaxLengthpx: value + 'px'})
+        onPropertiesChange({ MaxLengthpx: value + 'px' })
     }
 
- /////////////////////DRAWIO/////////////////
+    /////////////////////DRAWIO/////////////////
 
- const service = new ContentService()
+    const service = new ContentService()
 
-    const loadImage = async (file: File | null) : Promise<ContentModel | null> => {
+    const loadImage = async (file: File | null): Promise<ContentModel | null> => {
 
         if (file && post.id) {
             const result = await service.UploadFile(file, post.id, 'imgBody')
@@ -525,113 +525,110 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
     };
 
-
-    const onDrawIO =  useCallback( async (data: DrawIOResponse | null) =>  {
-        if(data && data.Content){
+    const onDrawIO = async (data: DrawIOResponse | null) => {
+        if (data && data.Content) {
             const img = await loadImage(data.Content)
-            if(img && img.url && img.name){
+            if (img && img.url && img.name) {
 
-                editor.dispatchCommand(INSERT_DRAW_IO_IMAGE_COMMAND, {src: img.url, position: 'full', imgId: img.name});
+                editor.dispatchCommand(INSERT_DRAW_IO_IMAGE_COMMAND, { src: img.url, position: 'full', imgId: img.name });
             }
 
         }
-    }, [editor, post])
+    }
 
-    ////////////////////////////////////
+        ////////////////////////////////////
+
+        const insertColumnLayout = (layout: string) => {
+
+            if (layout) editor.dispatchCommand(INSERT_LAYOUT_COMMAND, layout);
+
+        }
+
+        return (
+            <div className="z-40 sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
+
+                <div className="grid-rows-3">
+                    <div className="flex items-stretch space-x-1 mb-1 ">
+                        <ClearEditorButton onClickCallback={onEditorClearCallback} />
+                        <StrikethroughButton isActive={isStrikethrough} />
+
+                        <BoldButton isActive={isBold} />
+
+                        <ItalicButton isActive={isItalic} />
+
+                        <UnderlineButton isActive={isUnderline} />
+
+                        <span className="w-[2px] bg-black block h-full">'</span>
+
+                        <LeftButton isActive={alignment == 'left'} />
+                        <RightButton isActive={alignment == 'right'} />
+                        <CenterButton isActive={alignment == 'center'} />
+                        <JustifyButton isActive={alignment == 'justify'} />
+
+                        <span className="w-[2px] bg-black block h-full">'</span>
+
+                        <IndentButton isActive={true} />
+                        <OutdentButton isActive={true} />
+
+                        <span className="w-[2px] bg-black block h-full">'</span>
+
+                        <FontSizeSelect callback={applyStyleText} selectedOption={fontSize} />
+                        <FontFamilySelect callback={applyStyleText} selectedOption={fontFamily} />
+                        <HeadingSelect callback={applyHeadingText} selectedOption={headingSize} />
+
+                        <BulletListButton isActive={isBulletList} />
+                        <OrderedListButton isActive={isOrderedList} />
+                        <QuoteButton callback={applyQuoteText} selectedOption={isQuote} />
+
+                    </div>
+
+                    <div className="flex items-stretch space-x-1">
+                        <CodeButton isActive={isCode}/>
+                        <LanguageSelect callback={applyCodeLanguage} selectedOption={codeLanguage} />
+                        <InsertLinkButton onClickCallback={insertLink} isActive={isLink} />
+                        <span className="w-[2px] bg-black block h-full">'</span>
+                        <UndoButton isActive={canUndo} />
+                        <RedoButton isActive={canRedo}  />
+                        <span className="w-[2px] bg-black block h-full">'</span>
+                        <LineHeightSelect callback={applyStyleText} selectedOption={lineHeight} />
+
+                        <span className="w-[2px] bg-black block h-full">'</span>
+
+                        <TextColorPickerButton callback={applyStyleText} selectedOption={color} />
+                        <BgColorPickerButton callback={applyStyleText} selectedOption={bgColor} />
+
+                        <span className="w-[2px] bg-black block h-full">'</span>
+
+                        <FormatCopyButton onClickCallback={copyFormat} isActive={copiedFormat != null} />
+                        <PasteCopiedFormatButton onClickCallback={applyFormat} />
+                        <ClearFormatingButton onClickCallback={onClearFormatting} />
+                        <span className="w-[2px] bg-black block h-full">'</span>
+
+                        <SubscriptButton isActive={isSubscript} />
+                        <SuperscriptButton isActive={isSuperscript}/>
+                        <span className="w-[2px] bg-black block h-full">'</span>
+                        <InsertImageModal isActive={false} _className={""} _postId={post.id} contentType={"imgBody"} />
+                        <EmojiPickerButton onClickCallback={insertEmoji} />
+                        <GifPickerButton onClickCallback={insertGif} />
+                        <HorizontalRuleButton />
+                        <InsertTableButton />
+                        <InsertColumnLayoutModal onContentCallback={insertColumnLayout} />
+                        <DrawIOModalButton onContentCallback={onDrawIO} />
+
+                    </div>
+                    <div className="mt-2">
+                        <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged} />
 
 
-    const insertColumnLayout = useCallback( (layout: string) => {
-
-        if(layout) editor.dispatchCommand(INSERT_LAYOUT_COMMAND, layout);
-
-    }, [editor]
-    )
-
-    return (
-        <div className="z-40 sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
-
-            <div className="grid-rows-3">
-                <div className="flex items-stretch space-x-1 mb-1 ">
-                    <ClearEditorButton currentEditor={editor}  onClickCallback={onEditorClearCallback} />
-                    <StrikethroughButton currentEditor={editor} isActive={isStrikethrough} />
-
-                    <BoldButton currentEditor={editor} isActive={isBold} />
-
-                    <ItalicButton currentEditor={editor} isActive={isItalic} />
-
-                    <UnderlineButton currentEditor={editor} isActive={isUnderline} />
-
-                    <span className="w-[2px] bg-black block h-full">'</span>
-
-                    <LeftButton currentEditor={editor} isActive={alignment == 'left'} />
-                    <RightButton currentEditor={editor} isActive={alignment == 'right'} />
-                    <CenterButton currentEditor={editor} isActive={alignment == 'center'} />
-                    <JustifyButton currentEditor={editor} isActive={alignment == 'justify'} />
-
-                    <span className="w-[2px] bg-black block h-full">'</span>
-
-                    <IndentButton currentEditor={editor} isActive={true} />
-                    <OutdentButton currentEditor={editor} isActive={true} />
-
-                    <span className="w-[2px] bg-black block h-full">'</span>
-
-                    <FontSizeSelect currentEditor={editor} callback={applyStyleText} selectedOption={fontSize} />
-                    <FontFamilySelect currentEditor={editor} callback={applyStyleText} selectedOption={fontFamily} />
-                    <HeadingSelect currentEditor={editor} callback={applyHeadingText} selectedOption={headingSize} />
-
-                    <BulletListButton currentEditor={editor} isActive={isBulletList} />
-                    <OrderedListButton currentEditor={editor} isActive={isOrderedList} />
-                    <QuoteButton callback={applyQuoteText} currentEditor={editor} selectedOption={isQuote} />
+                    </div>
 
                 </div>
 
-                <div className="flex items-stretch space-x-1">
-                    <CodeButton isActive={isCode} currentEditor={editor} />
-                    <LanguageSelect currentEditor={editor} callback={applyCodeLanguage} selectedOption={codeLanguage} />
-                    <InsertLinkButton onClickCallback={insertLink} isActive={isLink} />
-                    <span className="w-[2px] bg-black block h-full">'</span>
-                    <UndoButton isActive={canUndo} currentEditor={editor} />
-                    <RedoButton isActive={canRedo} currentEditor={editor} />
-                    <span className="w-[2px] bg-black block h-full">'</span>
-                    <LineHeightSelect callback={applyStyleText} currentEditor={editor} selectedOption={lineHeight} />
-                    
-                    <span className="w-[2px] bg-black block h-full">'</span>
-                    
-                    <TextColorPickerButton callback={applyStyleText} selectedOption={color} />
-                    <BgColorPickerButton callback={applyStyleText} selectedOption={bgColor} />
-                    
-                    <span className="w-[2px] bg-black block h-full">'</span>
 
-                    <FormatCopyButton onClickCallback={copyFormat} isActive={copiedFormat != null} />
-                    <PasteCopiedFormatButton onClickCallback={applyFormat}/>
-                    <ClearFormatingButton onClickCallback={onClearFormatting} />
-                    <span className="w-[2px] bg-black block h-full">'</span>
 
-                    <SubscriptButton isActive={isSubscript} currentEditor={editor} />
-                    <SuperscriptButton isActive={isSuperscript} currentEditor={editor}/>
-                    <span className="w-[2px] bg-black block h-full">'</span>
-                    <InsertImageModal isActive={false} currentEditor={editor} _className={""} _postId={post.id} contentType={"imgBody"} />
-                    <EmojiPickerButton onClickCallback={insertEmoji} />
-                    <GifPickerButton onClickCallback={insertGif} />
-                    <HorizontalRuleButton  currentEditor={editor}/>
-                    <InsertTableButton currentEditor={editor}/>
-                    <InsertColumnLayoutModal onContentCallback={insertColumnLayout}/>
-                    <DrawIOModalButton onContentCallback={onDrawIO}/>
-                
-                </div>
-                <div className="mt-2">
-                <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged}/>
-
-                
-                </div>
 
             </div>
 
-
-
-
-        </div>
-
-    );
-}
+        );
+    }
 

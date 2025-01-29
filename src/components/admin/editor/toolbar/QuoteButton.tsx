@@ -11,7 +11,7 @@ import { useCallback } from "react";
 
 
 
-function QuoteButton({ selectedOption, currentEditor, callback }: SelectProps<boolean>) {
+function QuoteButton({ selectedOption, callback }: SelectProps<boolean>) {
 
     const onClick = useCallback(
         (e: any ) => {

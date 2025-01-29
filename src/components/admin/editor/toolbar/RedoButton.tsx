@@ -3,10 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { REDO_COMMAND, UNDO_COMMAND } from "lexical";
 import ButtonProps from "./props/IButtonProps";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
-function RedoButton({ isActive, currentEditor }: ButtonProps) {
+function RedoButton({ isActive }: ButtonProps) {
+
+  const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -15,7 +18,7 @@ function RedoButton({ isActive, currentEditor }: ButtonProps) {
           "px-1 bg-gray-400 hover:bg-gray-600 transition-colors duration-100 ease-in"
         )}
         onClick={() => {
-            currentEditor.dispatchCommand(REDO_COMMAND, undefined);
+            editor.dispatchCommand(REDO_COMMAND, undefined);
         }}
       >
         <FontAwesomeIcon

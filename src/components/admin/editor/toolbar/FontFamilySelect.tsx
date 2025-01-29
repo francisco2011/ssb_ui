@@ -22,7 +22,7 @@ const defaultFontFamilyOptions: any = [
     
   ];
 
-const FontFamilySelect = ({ selectedOption, currentEditor, callback }: SelectProps<string>) => {
+const FontFamilySelect = ({ selectedOption, callback }: SelectProps<string>) => {
 
 
   const onSelect = useCallback(

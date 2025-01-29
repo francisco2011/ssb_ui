@@ -48,7 +48,7 @@ export const UPDATE_LAYOUT_COMMAND: LexicalCommand<{
   nodeKey: NodeKey;
 }> = createCommand<{template: string; nodeKey: NodeKey}>();
 
-export function LayoutPlugin(): null {
+export default function LayoutPlugin() {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     if (!editor.hasNodes([LayoutContainerNode, LayoutItemNode])) {
@@ -56,6 +56,8 @@ export function LayoutPlugin(): null {
         'LayoutPlugin: LayoutContainerNode, or LayoutItemNode not registered on editor',
       );
     }
+
+    console.log("LayoutPlugin:Editor:" + editor._key)
 
     const $onEscape = (before: boolean) => {
       const selection = $getSelection();
@@ -117,6 +119,30 @@ export function LayoutPlugin(): null {
     };
 
     return mergeRegister(
+
+      editor.registerCommand(
+        INSERT_LAYOUT_COMMAND,
+        (template) => {
+          editor.update(() => {
+            console.log("INSERT:LayoutPlugin:Editor:" + editor._key)
+            const container = $createLayoutContainerNode(template);
+            const itemsCount = getItemsCountFromTemplate(template);
+
+            for (let i = 0; i < itemsCount; i++) {
+              container.append(
+                $createLayoutItemNode().append($createParagraphNode()),
+              );
+            }
+
+            $insertNodeToNearestRoot(container);
+            container.selectStart();
+          });
+
+          return true;
+        },
+        COMMAND_PRIORITY_EDITOR,
+      ),
+
       // When layout is the last child pressing down/right arrow will insert paragraph
       // below it to allow adding more content. It's similar what $insertBlockNode
       // (mainly for decorators), except it'll always be possible to continue adding
@@ -145,27 +171,7 @@ export function LayoutPlugin(): null {
         () => $onEscape(true),
         COMMAND_PRIORITY_LOW,
       ),
-      editor.registerCommand(
-        INSERT_LAYOUT_COMMAND,
-        (template) => {
-          editor.update(() => {
-            const container = $createLayoutContainerNode(template);
-            const itemsCount = getItemsCountFromTemplate(template);
-
-            for (let i = 0; i < itemsCount; i++) {
-              container.append(
-                $createLayoutItemNode().append($createParagraphNode()),
-              );
-            }
-
-            $insertNodeToNearestRoot(container);
-            container.selectStart();
-          });
-
-          return true;
-        },
-        COMMAND_PRIORITY_EDITOR,
-      ),
+      
       editor.registerCommand(
         UPDATE_LAYOUT_COMMAND,
         ({template, nodeKey}) => {

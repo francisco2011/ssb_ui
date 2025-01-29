@@ -126,7 +126,6 @@ export function UpdateDrawIOImageDialog({
       <select
         style={{marginBottom: '1em', width: '208px'}}
         value={position}
-        label="Position"
         name="position"
         id="position-select"
         onChange={handlePositionChange}>
@@ -145,10 +144,10 @@ export function UpdateDrawIOImageDialog({
         <label htmlFor="halves">Split in Halves</label>
       </div>
 
-      <DialogActions children={undefined}>
+      <DialogActions >
         <Button
           data-test-id="image-modal-file-upload-btn"
-          onClick={() => handleOnConfirm()} children={undefined}>
+          onClick={() => handleOnConfirm()}>
           Confirm
         </Button>
       </DialogActions>
@@ -398,7 +397,7 @@ export default function DrawIOComponent({
                           } }>
                           Config
                       </button><button
-                          className="image-edit-button"
+                          className="drawio-image-edit-button"
                           ref={buttonRef}
                           onClick={() => {
                               showModal('Draw IO', (onClose) => (

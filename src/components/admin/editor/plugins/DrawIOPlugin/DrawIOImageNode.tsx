@@ -46,8 +46,8 @@ import DrawIOComponent from './DrawIOComponent';
   
   function $convertImageElement(domNode: Node): null | DOMConversionOutput {
     if (isHTMLElement(domNode) && domNode.nodeName === 'IMG') {
-      const {alt: altText, src, width, height} = domNode as HTMLImageElement;
-      const node = $createNode({altText, height, src, width});
+      const {alt: src, width, height} = domNode as HTMLImageElement;
+      const node = $createNode({height, src, width});
       return {node};
     }
     return null;

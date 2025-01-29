@@ -43,7 +43,7 @@ export const INSERT_DRAW_IO_IMAGE_COMMAND: LexicalCommand<DrawIOImagePayload> =
   export const UPDATE_DRAW_IO_IMAGE_COMMAND: LexicalCommand<DrawIOImagePayload> =
   createCommand('UPDATE_DRAW_IO_IMAGE_COMMAND');
 
-export default function DrawIOPlugin(): JSX.Element | null {
+export default function DrawIOPlugin() {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
@@ -51,11 +51,13 @@ export default function DrawIOPlugin(): JSX.Element | null {
       throw new Error('ImagesPlugin: ImageNode not registered on editor');
     }
 
+    console.log("DrawIOPlugin:Editor:" + editor._key)
+
     return mergeRegister(
       editor.registerCommand<ReadOnlyDrawIOImagePayload>(
         INSERT_DRAW_IO_IMAGE_COMMAND,
          (payload) => {
-
+          console.log("INSERT:DrawIOPlugin:Editor:" + editor._key)
           const imageNode = $createNode(payload);
           $insertNodes([imageNode]);
           if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {

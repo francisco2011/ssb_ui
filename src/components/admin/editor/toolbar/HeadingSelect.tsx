@@ -12,7 +12,7 @@ const defaultHeadingOptions: any = [
   ['h6', 'h6']
 ];
 
-const HeadingSelect = ({ selectedOption, currentEditor, callback }: SelectProps<string>) => {
+const HeadingSelect = ({ selectedOption, callback }: SelectProps<string>) => {
 
 
   const onSelect = useCallback(

@@ -24,14 +24,16 @@ type columnModel = {
 }
 
 export default function InsertLayoutDialog({
-    onClose,
+    onData,
+    onClose
 }: {
-    onClose: (layout: string) => void;
+    onData: (layout: string) => void;
+    onClose: () => void
 }): JSX.Element {
     //const [layout, setLayout] = useState('');
     const [columns, setColumns] = useState<columnModel[]>([])
     const MAX_WIDTH_PERCENTAGE = 96
-    
+
     useEffect(() => {
 
         setColumns([{ id: 1, width: 48 }, { id: 2, width: 48 }])
@@ -46,9 +48,10 @@ export default function InsertLayoutDialog({
 
     const onClick = () => {
 
-        
+
         const layout = buildLayout()
-        onClose(layout);
+        onData(layout);
+        onClose()
     };
 
     const calcMaxWidth = (ignoreId?: Number) => {
@@ -89,8 +92,11 @@ export default function InsertLayoutDialog({
         if (val > calcMaxWidth(id)) return
 
         var array = [...columns];
-        array.find(c => c.id == id).width = val
-        setColumns(array)
+        const el = array.find(c => c.id == id)
+        if (el) {
+            el.width = val
+            setColumns(array)
+        }
     }
 
 

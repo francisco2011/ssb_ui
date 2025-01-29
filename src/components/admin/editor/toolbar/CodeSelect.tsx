@@ -16,7 +16,7 @@ const defaultHeadingOptions: any = [
   ['plain text', 'Plain Text']
 ];
 
-const CodeSelect = ({ selectedOption, currentEditor, callback }: SelectProps<string>) => {
+const CodeSelect = ({ selectedOption, callback }: SelectProps<string>) => {
 
 
   const onSelect = useCallback(

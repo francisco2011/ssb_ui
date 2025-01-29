@@ -6,10 +6,13 @@ import {
     INSERT_ORDERED_LIST_COMMAND,
     REMOVE_LIST_COMMAND
   } from "@lexical/list";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
-function OrderedListButton({ isActive, currentEditor }: ButtonProps) {
+function OrderedListButton({ isActive }: ButtonProps) {
+
+  const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -20,9 +23,9 @@ function OrderedListButton({ isActive, currentEditor }: ButtonProps) {
         onClick={() => {
 
             if(isActive){
-                currentEditor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+                editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
             }else{
-                currentEditor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+                editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
             }
         }}
       >

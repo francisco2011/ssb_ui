@@ -3,10 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { FORMAT_TEXT_COMMAND } from "lexical";
 import ButtonProps from "./props/IButtonProps";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
-function BoldButton({ isActive, currentEditor }: ButtonProps) {
+function BoldButton({ isActive }: ButtonProps) {
+
+  const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -15,7 +18,7 @@ function BoldButton({ isActive, currentEditor }: ButtonProps) {
           isActive ? "bg-gray-600" : "bg-gray-400"
         )}
         onClick={() => {
-            currentEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+          editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
         }}
       >
         <FontAwesomeIcon icon={faBold} className="text-white w-3.5 h-3.5" />

@@ -3,10 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND } from "lexical";
 import ButtonProps from "./props/IButtonProps";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
-function CodeButton({ isActive, currentEditor }: ButtonProps) {
+function CodeButton({ isActive }: ButtonProps) {
+
+  const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -14,7 +17,7 @@ function CodeButton({ isActive, currentEditor }: ButtonProps) {
           "px-1 bg-gray-400 hover:bg-gray-600 transition-colors duration-100 ease-in"
         )}
         onClick={() => {
-          currentEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
+          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
         }}
       >
         <FontAwesomeIcon

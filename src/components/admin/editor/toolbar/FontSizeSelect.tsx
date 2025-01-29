@@ -26,7 +26,7 @@ const defaultFontSizeOptions: any = [
   ['72px', '72px'],
 ];
 
-const FontSizeSelect = ({ selectedOption, currentEditor, callback }: SelectProps<string>) => {
+const FontSizeSelect = ({ selectedOption, callback }: SelectProps<string>) => {
 
 
   const onFontSizeSelect = useCallback(

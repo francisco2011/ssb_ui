@@ -128,12 +128,12 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
 
                     <label>
                         <input type="radio" checked={state.isPublished === true} value={1} onChange={onPublishedChange} />
-                        YES
+                        yes
                     </label>
 
                     <label>
                         <input type="radio" checked={state.isPublished === false} value={0} onChange={onPublishedChange} />
-                        NO
+                        no
                     </label>
 
                 </div>

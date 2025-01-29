@@ -1,17 +1,18 @@
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { CLEAR_EDITOR_COMMAND, LexicalEditor } from "lexical";
 
 type LinkButtonProps = {
     onClickCallback: () => void,
-    currentEditor: LexicalEditor
 }
 
-function ClearEditorButton({ currentEditor, onClickCallback }: LinkButtonProps) {
+function ClearEditorButton({ onClickCallback }: LinkButtonProps) {
 
+  const [editor] = useLexicalComposerContext();
 
     const clearEditor = () => {
-        currentEditor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
         onClickCallback()
       }
 
