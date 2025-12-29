@@ -5,7 +5,7 @@ import {  format } from "date-fns";
 
 
 
-export default function PostRow({post, onEditClickCallback}: {post: PostModel, onEditClickCallback: any}) {
+export default function PostRow({post, onEditClickCallback, onDeleteClickCallback}: {post: PostModel, onEditClickCallback: any, onDeleteClickCallback: any}) {
 
     return (
 
@@ -24,7 +24,7 @@ export default function PostRow({post, onEditClickCallback}: {post: PostModel, o
             <button onClick={() => (onEditClickCallback(post.id))} className="btn-md">
             <FontAwesomeIcon className="w-5 h-5" icon={faPenToSquare} />
             </button>
-            <button className="btn-md">
+            <button className="btn-md" onClick={() => (onDeleteClickCallback(post.id))}>
             <FontAwesomeIcon className="w-5 h-5" icon={faTrash} />
             </button>
         </td>

@@ -25,6 +25,7 @@ import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
 import TagSelector from "~/components/admin/tagSelector/TagSelector";
 import PostPreview from "~/components/admin/editor/PostPreview";
 import { Metadata } from "next";
+import TagService from "~/services/TagService";
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -54,6 +55,7 @@ export default function PostEditor() {
 
   const params = useParams<{ id: string; }>()
   const service = new PostService();
+  const tagService = new TagService();
 
   const [tags, setTags] = useState<string[]>([])
   const [post, setPost] = useState<PostModel | null>(null)
@@ -129,6 +131,16 @@ export default function PostEditor() {
     }
   }
 
+  const onSaveTags = async () => {
+    
+    if (!post || !post.id) return
+    if (!editorRef?.current) return;
+
+    var model = {tags: tags};
+
+    await tagService.updateTags(post.id, model);
+  }
+
 
 
   const onsave = async () => {
@@ -193,7 +205,7 @@ export default function PostEditor() {
               <div className='w-64 ml-2 mt-4'>
 
                 <div className=' sticky top-3'>
-                  <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} />
+                  <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} onSaveCallback={onSaveTags}/>
                 </div>
 
 

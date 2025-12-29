@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Tag from "./Tag";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSave, faShare } from "@fortawesome/free-solid-svg-icons";
 
-export default function TagSelector({ externalValues, isClean, onNewCallback }): JSX.Element {
+export default function TagSelector({ externalValues, isClean, onNewCallback, onSaveCallback }): JSX.Element {
 
     const [values, setValues] = useState<string[]>([])
     const input = useRef<HTMLInputElement>(null);
@@ -86,6 +88,17 @@ export default function TagSelector({ externalValues, isClean, onNewCallback }):
                     }
                 </div>
             </div>
+            <button
+                    className={''}
+                    onClick={() => {
+                        onSaveCallback()
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      icon={faSave}
+                      className="text-black w-6 h-6"
+                    />
+                  </button>
         </div>
     );
 

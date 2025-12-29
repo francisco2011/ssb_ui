@@ -1,4 +1,5 @@
 import TagModel from "~/models/TagModel";
+import TagUpdateModel from "~/models/TagUpdateModel";
 
 
 export default class TagService{
@@ -21,6 +22,20 @@ export default class TagService{
           }
         
         return data;
+      }
+
+      async updateTags(id: number, model: TagUpdateModel) {
+
+        var url = "http://localhost:5079/tags/" + id;
+    
+        const response = await fetch(url, {
+          method: "PUT",
+          body: JSON.stringify(model),
+          headers: new Headers({ 'content-type': 'application/json' }),
+        });
+        if (!response.ok) {
+          throw new Error("Error while changing state")
+        }
       }
 }
 

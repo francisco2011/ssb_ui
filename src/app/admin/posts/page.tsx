@@ -160,6 +160,11 @@ export default function Posts() {
         await loadDataWithParams(newState)
     }
 
+    const onDeleteClicked = async (id: number) => {
+        const p = await postService.Delete(id)
+        await onClearClicked()
+    }
+
     const onNewClicked = async () => {
         const _post: PostModel = {
             id: null,
@@ -256,7 +261,7 @@ export default function Posts() {
                     </thead>
                     <tbody>
                         {
-                            postResponse?.posts.map(c => <PostRow key={c.id} post={c} onEditClickCallback={goTo} />)
+                            postResponse?.posts.map(c => <PostRow key={c.id} post={c} onEditClickCallback={goTo} onDeleteClickCallback={onDeleteClicked} />)
                         }
                     </tbody>
                 </table>

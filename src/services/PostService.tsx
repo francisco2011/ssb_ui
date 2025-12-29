@@ -17,6 +17,26 @@ export default class PostService {
     return data;
   }
 
+  async Delete(id: number){
+    var url = "http://localhost:5079/post/" + id;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: new Headers({ 'content-type': 'application/json' }),
+    });
+
+
+    if (response.status != 204) {
+
+      var error = await response.text();
+
+      console.error('Fetch error:', error);
+      throw error;
+    }
+
+
+  }
+
   async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean): Promise<PostModelResponse> {
 
     var url = "http://localhost:5079/post?limit="+ limit + "&offset=" + offset;
