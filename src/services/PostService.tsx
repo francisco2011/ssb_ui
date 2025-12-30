@@ -37,7 +37,7 @@ export default class PostService {
 
   }
 
-  async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean): Promise<PostModelResponse> {
+  async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean, loadContent?: boolean): Promise<PostModelResponse> {
 
     var url = "http://localhost:5079/post?limit="+ limit + "&offset=" + offset;
 
@@ -49,6 +49,10 @@ export default class PostService {
 
     if(published){
       url += "&published=" + published
+    }
+
+    if (loadContent) {
+      url += "&loadContent=" + loadContent
     }
 
     if(typeId){

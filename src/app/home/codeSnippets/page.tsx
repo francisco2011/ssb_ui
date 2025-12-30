@@ -30,7 +30,7 @@ export default async function CodeSnippets({
     const tagService = new TagService();
     const tags = await tagService.List(5)
 
-    const initialPosts = await PostServiceCodeSnippetTransformSA(3, 0, 5, initialTags, true)
+    const initialPosts = await PostServiceCodeSnippetTransformSA(3, 0, 5, initialTags, true, true)
 
     return (
 

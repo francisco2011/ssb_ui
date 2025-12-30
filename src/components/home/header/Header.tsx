@@ -2,15 +2,10 @@ import Link from "next/link";
 import PostService from "~/services/PostService";
 import HeroEditorTheme from '~/themes/HeroEditorTheme';
 import { $generateHtmlFromNodes } from "@lexical/html";
-import editorTheme from "~/themes/EditorTheme";
 import { createHeadlessEditor } from '@lexical/headless';
-
-
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { HashtagNode } from "@lexical/hashtag";
-
-import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
 import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
 import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
@@ -40,7 +35,7 @@ export default async function Header(): Promise<JSX.Element> {
     let html = ''
 
     const service = new PostService()
-    const pt = await service.List(1, 0, 4, [], true)
+    const pt = await service.List(1, 0, 4, [], true, true)
     var content = pt && pt.posts && pt.posts.length > 0 && pt.posts[0] ? pt.posts[0].content : null
 
     const editor = createHeadlessEditor({
@@ -63,42 +58,29 @@ export default async function Header(): Promise<JSX.Element> {
         theme: HeroEditorTheme
     });
 
+    const cleanup = setupDom();
 
-
-    let _html: any = null
-    editor.update(() => {
+    
 
         var editorState: EditorState | null = null
 
-        if(!content) return
-
-        if (content.startsWith('{"w')) {
-
-            var newState = JSON.parse(content)
-
-            editorState = editor.parseEditorState(newState.editorState)
-
-        } else {
-            editorState = editor.parseEditorState(content)
-        }
-
-        // const editorState = editor.parseEditorState(content?? '')
-
+        if(!content)  return
+        var newState = JSON.parse(content)
+        editorState = editor.parseEditorState(newState.editorState)
+        
         if (editorState) {
             editor.setEditorState(editorState);
-            const cleanup = setupDom();
-            _html = $generateHtmlFromNodes(editor, null);
-            cleanup()
+            
+            editor.update(() => {
+            html = $generateHtmlFromNodes(editor, null);
+            
+        });
         }
 
+    cleanup()
 
-
-    });
-
-
-
-    html = _html
-
+    
+   
     return (
         <>
             <ul className="menu bg-base-200 rounded-box w-56 sticky top-0 left-0 float-start">

@@ -66,10 +66,6 @@ export default function CodePreviewReadonlyEditor({ content, contents, editorThe
 
         </div>
       
-
-
-
-
     </>
   );
 }

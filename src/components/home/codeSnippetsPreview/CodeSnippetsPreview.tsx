@@ -28,7 +28,7 @@ export default function CodeSnippetsPreview({ tags, initialPosts }: Props): JSX.
     const loadMorePosts = async () => {
 
         const initialPostsCount = posts.length;
-        const apiPosts = await PostServiceCodeSnippetTransformSA(3, offset, 5, selectedTags, true)
+        const apiPosts = await PostServiceCodeSnippetTransformSA(3, offset, 5, selectedTags, true, true)
 
         setPosts((prevPosts) => [...prevPosts, ...apiPosts.posts]);
         setOffset((prevOffset) => prevOffset + 3);

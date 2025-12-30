@@ -1,5 +1,4 @@
 "use server"
-import PostModel from "~/models/PostModel";
 import PostServiceSA from "./PostServiceSA";
 import { createHeadlessEditor } from "@lexical/headless";
 import EditorCodePreviewTheme from "~/themes/EditorCodePreviewTheme";
@@ -17,7 +16,6 @@ function setupDom() {
   const _window = global.window;
   const _document = global.document;
 
-  // @ts-expect-error
   global.window = dom.window;
   global.document = dom.window.document;
 
@@ -27,7 +25,12 @@ function setupDom() {
   };
 }
 
-export default async function PostServiceCodeSnippetTransformSA(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean) : Promise<PostModelResponse> {
+export default async function PostServiceCodeSnippetTransformSA(limit: number, 
+                                                                offset: number, 
+                                                                typeId?: number, 
+                                                                tags?: string[], 
+                                                                published?: boolean, 
+                                                                loadContent?: boolean) : Promise<PostModelResponse> {
 
   const service = new PostServiceSA();
 
@@ -44,24 +47,19 @@ export default async function PostServiceCodeSnippetTransformSA(limit: number, o
     theme: EditorCodePreviewTheme
   });
 
-    var posts = await service.List(limit, offset, typeId, tags, published);
-
+  console.log(loadContent)
+    var posts = await service.List(limit, offset, typeId, tags, published, loadContent);
+    
     posts.posts.forEach(c => {
 
       if(c.content){
         let editorState: EditorState | null = null 
         let width = ''
 
-        if(c.content.startsWith('{"w')){
-      
-          var newState = JSON.parse(c.content)
-          width = newState.width
-          
-          editorState = editor.parseEditorState(newState.editorState)
-  
-        }else{
-          editorState = editor.parseEditorState(c.content)
-        }
+        var newState = JSON.parse(c.content)
+        width = newState.width
+        
+        editorState = editor.parseEditorState(newState.editorState)
 
       editor.setEditorState(editorState);
 
@@ -80,7 +78,6 @@ export default async function PostServiceCodeSnippetTransformSA(limit: number, o
       }
       
     })
-
     return posts
 
 }
