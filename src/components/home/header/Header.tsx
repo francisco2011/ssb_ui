@@ -64,7 +64,7 @@ export default async function Header(): Promise<JSX.Element> {
 
         var editorState: EditorState | null = null
 
-        if(!content)  return
+        if(!content)  return 
         var newState = JSON.parse(content)
         editorState = editor.parseEditorState(newState.editorState)
         

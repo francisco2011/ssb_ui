@@ -11,6 +11,7 @@ import PostTypeService from '~/services/PostTypeService';
 import TagService from '~/services/TagService';
 import Select, { SelectInstance } from 'react-select';
 import PostModel from '~/models/PostModel';
+import PostServiceArticleTransformSA from '~/services/PostServiceArticleTransformSA';
 
 type LocalState = {
     selectedTags: string[],
@@ -66,7 +67,8 @@ export default function Posts() {
 
         const offset = state.page == 1 ? 0 : (state.pageSize * (state.page - (state.page == 1 ? 0 : 1)))
 
-        const data = (await postService.List(state.pageSize, offset));
+        //const data = (await postService.List(state.pageSize, offset));
+        const data = await PostServiceArticleTransformSA(state.pageSize, offset)
         setPostResponse(data)
     }
 
@@ -74,7 +76,11 @@ export default function Posts() {
 
         const offset = _state.page == 1 ? 0 : (_state.pageSize * (_state.page - (_state.page == 1 ? 0 : 1)))
 
-        const data = (await postService.List(_state.pageSize, offset, _state.type?.id ?? null, _state.selectedTags));
+        //const data = (await postService.List(_state.pageSize, offset, _state.type?.id ?? null, _state.selectedTags));
+
+
+        const data = await PostServiceArticleTransformSA(_state.pageSize, offset, _state.type?.id ?? null, _state.selectedTags)
+
         setPostResponse(data)
     }
 

@@ -38,10 +38,12 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
                     {format(post.createdAt, "yyyy-MM-dd")}
                 </h6>
                 <h3 className="card-title line-clamp-2">
-                    <Link href={"/home/post/" + post.id}>{post.title}</Link>
+                    <Link href={"/home/post/" + post.id} dangerouslySetInnerHTML={{ __html: post._titleHtml?.value??'' }}></Link>
                 </h3>
                 
-                <p className="line-clamp-4">{post.description}</p>
+                <p className="line-clamp-4" dangerouslySetInnerHTML={{ __html: post._descriptionHtml?.value??'' }}>
+                
+                </p>
                 <div className="card-actions justify-end line-clamp-3">
 
                     {

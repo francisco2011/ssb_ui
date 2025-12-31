@@ -1,8 +1,6 @@
 import React, { Dispatch, useCallback, useContext, useEffect, useRef, useState } from "react";
 import SaveContentModal from "./verticalToolbar/SaveContentModal";
 import ContentMetadaModel from "~/models/ContentMetadata";
-import ClearEditorButton from "./verticalToolbar/ClearEditorButton";
-import PublishButton from "./verticalToolbar/PublishButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 

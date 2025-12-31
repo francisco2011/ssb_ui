@@ -1,11 +1,17 @@
 "use server"
-import PostModel from "~/models/PostModel";
 import PostServiceSA from "./PostServiceSA";
 import { createHeadlessEditor } from "@lexical/headless";
-import EditorCodePreviewTheme from "~/themes/EditorCodePreviewTheme";
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { $generateHtmlFromNodes } from "@lexical/html";
 import PostModelResponse from "~/models/PostModelResponse";
+import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { ListItemNode, ListNode } from "@lexical/list";
+import { EmojiNode } from "~/components/admin/editor/plugins/EmojisPlugin/EmojiNode";
+import { TagNode } from "~/components/admin/editor/plugins/tagsPlugin/TagNode";
+import { HashtagNode } from "@lexical/hashtag";
+import { AutoLinkNode, LinkNode } from "@lexical/link";
+import HeroEditorTheme from "~/themes/HeroEditorTheme";
+import { EditorState } from "lexical";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -26,42 +32,76 @@ function setupDom() {
   };
 }
 
-export default async function PostServiceArticleTransformSA(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean) : Promise<PostModelResponse> {
+export default async function PostServiceArticleTransformSA(limit: number,
+  offset: number,
+  typeId?: number,
+  tags?: string[], published?: boolean): Promise<PostModelResponse> {
 
   const service = new PostServiceSA();
 
   const editor = createHeadlessEditor({
     namespace: 'Readonly-editor',
-    nodes: [
+    nodes: [HeadingNode,
+      QuoteNode,
+      ListNode,
+      ListItemNode,
+      TagNode,
+      EmojiNode,
       CodeNode,
-      CodeHighlightNode
-    ],
+      CodeHighlightNode,
+      HashtagNode,
+      AutoLinkNode,
+      LinkNode],
     // Handling of errors during update
     onError(error: Error) {
       throw error;
     },
-    theme: EditorCodePreviewTheme
+    theme: HeroEditorTheme
   });
 
-    var posts = await service.List(limit, offset, typeId, tags, published);
+  const cleanup = setupDom();
 
-    //posts.forEach(c => {
+  var posts = await service.List(limit, offset, typeId, tags, published, false);
 
-    //  const editorState = editor.parseEditorState(c.content ?? '')
-    //  editor.setEditorState(editorState);
+  posts.posts.forEach(c => {
 
-    //  const cleanup = setupDom();
-    //  let _html: any = null
-    //  editor.update(() => {
+    if (c.title) {
+      let editorState: EditorState | null = null
 
-    //    _html = $generateHtmlFromNodes(editor, null);
-    //    c._htmlContent = _html
+      var newState = JSON.parse(c.title)
+      const width = newState.width
 
-    //  });
+      editorState = editor.parseEditorState(newState.editorState)
 
-    //  cleanup()
-    //})
+      editor.setEditorState(editorState);
 
-    return posts
+      editor.update(() => {
+        const _html = $generateHtmlFromNodes(editor, null);
+        c._titleHtml = { value: _html, width: width }
+      });
+
+    }
+
+    if (c.description) {
+      let editorState: EditorState | null = null
+
+      var newState = JSON.parse(c.description)
+      const width = newState.width
+
+      editorState = editor.parseEditorState(newState.editorState)
+
+      editor.setEditorState(editorState);
+
+      editor.update(() => {
+        const _html = $generateHtmlFromNodes(editor, null);
+        c._descriptionHtml = { value: _html, width: width }
+      });
+
+    }
+
+  })
+
+  cleanup()
+  return posts
 
 }

@@ -81,7 +81,7 @@
 .editor {
   flex: auto;
   max-width: 100%;
-  min-height: 700px;
+  /**min-height: 700px;**/
   position: relative;
   resize: vertical;
   z-index: -1;
@@ -99,7 +99,7 @@ z-index: -1;
 .editor-article {
   flex: auto;
   max-width: 100%;
-  min-height: 700px;
+  /**min-height: 700px;**/
   color: black;
   position: relative;
   resize: vertical;

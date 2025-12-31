@@ -38,9 +38,7 @@ export default function CodeSnippetCard({ post, onTagClickCallback }: Props) {
                     <div className="grid grid-cols-[40%_60%]">
                         <div >
 
-                            <div style={{width: post._contentWidth}} dangerouslySetInnerHTML={{ __html: post._htmlContent }} >
-
-                            </div>
+                            <div style={{width: post._contentHtml?.width}} dangerouslySetInnerHTML={{ __html: post._contentHtml?.value }}/>
 
 
                         </div>

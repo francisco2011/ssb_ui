@@ -1,6 +1,12 @@
 import ContentModel from "./ContentModel";
 import PostTypeModel from "./PostTypeModel";
 
+export interface HtmlContent{
+    value?: any,
+    width?: any    
+}
+
+
 export default interface PostModel{
 
     id: number | null;
@@ -12,6 +18,7 @@ export default interface PostModel{
     tags: string[];
     type: PostTypeModel | null
     contents: ContentModel[];
-    _htmlContent?: any
-    _contentWidth?: any
+    _contentHtml?:HtmlContent
+    _titleHtml?: HtmlContent
+    _descriptionHtml?: HtmlContent
 }

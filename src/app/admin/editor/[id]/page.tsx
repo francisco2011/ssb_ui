@@ -62,10 +62,10 @@ export default function PostEditor() {
   const [metadata, setMetadata] = useState<ContentMetada>({
     isPublished: false,
     imgModel: null,
-    title: '',
     type: null
   })
   const [isClearAll, setIsClearAll] = useState<boolean>(false);
+  const titleEditorRef = useRef(null)
   const editorRef = useRef(null);
   const descriptionEditorRef = useRef(null)
 
@@ -81,7 +81,6 @@ export default function PostEditor() {
         const metadata: ContentMetada = {
           isPublished: p.isPublished,
           imgModel: null,// prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
-          title: p.title,
           type: p.type
         }
         setMetadata(metadata)
@@ -147,6 +146,10 @@ export default function PostEditor() {
     if (!post) return
     if (!editorRef?.current) return;
 
+    
+    //@ts-ignore
+    const titleEditorState = titleEditorRef.current.getState() as ContentState | null;
+
     //@ts-ignore
     const editorState = editorRef.current.getState() as ContentState | null;
     //@ts-ignore
@@ -160,7 +163,7 @@ export default function PostEditor() {
 
     post.content = editorState.Content
     post.contents = editorState.Imgs
-    post.title = metadata.title
+    post.title = titleEditorState?.Content??''
     post.description = descriptionEditorState?.Content??''
     post.type = metadata.type
 
@@ -179,7 +182,7 @@ export default function PostEditor() {
 
           <main className="flex min-h-screen flex-col">
 
-            <div className="grid grid-cols-[5%_70%_25%] w-[1200]">
+            <div className="grid grid-cols-[5%_70%_25%] w-[75rem]">
 
               <div>
                 <VerticalToolbar onsaveCallback={onsave} />
@@ -187,15 +190,36 @@ export default function PostEditor() {
 
               <div>
 
-                <div className="collapse bg-base-200 my-5" >
+              <div className="collapse bg-base-200 my-1" >
                   <input type="checkbox" />
-                  <div className="collapse-title text-xl font-medium">Edit Description</div>
+                  <div className="collapse-title text-l font-medium">Title</div>
                   <div className="collapse-content">
-                    <Editor ref={descriptionEditorRef} content={post.description ?? ''} post={post} onContentDeletedCallback={() => {}}></Editor>
+                    <Editor ref={titleEditorRef} 
+                            content={post.title ?? ''} 
+                            post={post} onContentDeletedCallback={() => {}} 
+                            config={{ heightRem: '2rem', allowedToolBarOptions:{allowEmogis: true} }}></Editor>
+                  </div>
+                </div>
+                <div className="collapse bg-base-200 my-1" >
+                  <input type="checkbox" />
+                  <div className="collapse-title text-l font-medium">Edit Description</div>
+                  <div className="collapse-content">
+                    <Editor ref={descriptionEditorRef} 
+                            content={post.description ?? ''} 
+                            post={post} 
+                            onContentDeletedCallback={() => {}}
+                            config={{ heightRem: '5rem', allowedToolBarOptions:{allowEmogis: true} }}></Editor>
                   </div>
                 </div>
                 <div>
-                  <Editor ref={editorRef} content={post.content ?? ''} post={post} onContentDeletedCallback={clearAll}></Editor>
+                  <Editor ref={editorRef} 
+                          content={post.content ?? ''} 
+                          post={post} 
+                          onContentDeletedCallback={clearAll}
+                          config={{ heightRem: '100rem', allowedToolBarOptions:{allowCode:true, allowColumn: true, 
+                                                                                  allowDiagram: true, allowEmogis: true,
+                                                                                  allowGif: true, allowImages: true,
+                                                                                  allowTable: true, allowWidthRule: true } }}></Editor>
                 </div>
 
               </div>
@@ -204,7 +228,7 @@ export default function PostEditor() {
 
               <div className='w-64 ml-2 mt-4'>
 
-                <div className=' sticky top-3'>
+                <div className='sticky top-3'>
                   <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} onSaveCallback={onSaveTags}/>
                 </div>
 

@@ -11,7 +11,6 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     const [postTypes, setPostTypes] = useState<PostTypeModel[]>([])
 
     const [state, setState] = useState<ContentMetadaModel>({
-        title: '',
         imgModel: null,
         type: null,
         isPublished: false
@@ -49,7 +48,6 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
             var img = post.contents.find(c => c.type == "preview")
             setState({
                 imgModel: img && img.name && img.url ? { name: img.name, src: img.url } : null,
-                title: post.title,
                 type: post.type,
                 isPublished: post.isPublished
             })
@@ -60,12 +58,6 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
 
     }, [post]);
 
-
-    function handleTitleChange(e) {
-        //setTitle(e.target.value);
-        setState({ ...state, title: e.target.value })
-        onChange(state)
-    }
 
     function handleTypeSelected(e) {
         const st = postTypes.find(c => c.name == e.target.value)
@@ -88,23 +80,6 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     return (
         <>
             <div className="bg-base-200">
-
-                <div className="text-center">Preview</div>
-
-                <div className="label">
-                    <span className="label-text">Title</span>
-                </div>
-
-                <div className="mr-2 ml-2">
-
-                    <textarea value={state.title}
-                        onChange={(e) => handleTitleChange(e)}
-                        className="textarea textarea-bordered textarea-xs text-black w-full"
-                        placeholder="Add a title"
-                    >
-                    </textarea>
-
-                </div>
 
                 <div className="label">
                     <span className="label-text">Type</span>

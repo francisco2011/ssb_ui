@@ -108,16 +108,27 @@ import InsertColumnLayoutModal from "./toolbar/InsertColumnLayaoutModal";
 import ClearEditorButton from "./toolbar/ClearEditorButton";
 import { INSERT_LAYOUT_COMMAND } from "./plugins/LayoutPlugin";
 
+export type ToolbarConfig = {
+    allowImages?: boolean,
+    allowEmogis?: boolean,
+    allowGif?: boolean,
+    allowDiagram?: boolean,
+    allowTable?: boolean,
+    allowColumn?: boolean,
+    allowWidthRule?: boolean,
+    allowCode?: boolean
+}
 
 type Props = {
     setIsLinkEditMode: Dispatch<boolean>,
     post: PostModel,
     onPropertiesChange: Dispatch<ToolBarProperties>
     defaultWidth: string,
-    onEditorClearCallback: () => void
+    onEditorClearCallback: () => void,
+    config?: ToolbarConfig
 }
 
-export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesChange, defaultWidth, onEditorClearCallback }: Props) {
+export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesChange, defaultWidth, onEditorClearCallback, config }: Props) {
 
     const defaultFontSize = '15px';
     const defaultFontFamily = 'Arial';
@@ -536,99 +547,149 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
         }
     }
 
-        ////////////////////////////////////
+    ////////////////////////////////////
 
-        const insertColumnLayout = (layout: string) => {
+    const insertColumnLayout = (layout: string) => {
 
-            if (layout) editor.dispatchCommand(INSERT_LAYOUT_COMMAND, layout);
+        if (layout) editor.dispatchCommand(INSERT_LAYOUT_COMMAND, layout);
 
-        }
+    }
 
-        return (
-            <div className="z-40 sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
+    return (
+        <div className="z-40 sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
-                <div className="grid-rows-3">
-                    <div className="flex items-stretch space-x-1 mb-1 ">
-                        <ClearEditorButton onClickCallback={onEditorClearCallback} />
-                        <StrikethroughButton isActive={isStrikethrough} />
+            <div className="grid-rows-3">
+                <div className="flex items-stretch space-x-1 mb-1 ">
+                    <ClearEditorButton onClickCallback={onEditorClearCallback} />
+                    <StrikethroughButton isActive={isStrikethrough} />
 
-                        <BoldButton isActive={isBold} />
+                    <BoldButton isActive={isBold} />
 
-                        <ItalicButton isActive={isItalic} />
+                    <ItalicButton isActive={isItalic} />
 
-                        <UnderlineButton isActive={isUnderline} />
+                    <UnderlineButton isActive={isUnderline} />
 
-                        <span className="w-[2px] bg-black block h-full">'</span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
 
-                        <LeftButton isActive={alignment == 'left'} />
-                        <RightButton isActive={alignment == 'right'} />
-                        <CenterButton isActive={alignment == 'center'} />
-                        <JustifyButton isActive={alignment == 'justify'} />
+                    <LeftButton isActive={alignment == 'left'} />
+                    <RightButton isActive={alignment == 'right'} />
+                    <CenterButton isActive={alignment == 'center'} />
+                    <JustifyButton isActive={alignment == 'justify'} />
 
-                        <span className="w-[2px] bg-black block h-full">'</span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
 
-                        <IndentButton isActive={true} />
-                        <OutdentButton isActive={true} />
+                    <IndentButton isActive={true} />
+                    <OutdentButton isActive={true} />
 
-                        <span className="w-[2px] bg-black block h-full">'</span>
+                    <span className="w-[2px] bg-black block h-full">'</span>
 
-                        <FontSizeSelect callback={applyStyleText} selectedOption={fontSize} />
-                        <FontFamilySelect callback={applyStyleText} selectedOption={fontFamily} />
-                        <HeadingSelect callback={applyHeadingText} selectedOption={headingSize} />
+                    <FontSizeSelect callback={applyStyleText} selectedOption={fontSize} />
+                    <FontFamilySelect callback={applyStyleText} selectedOption={fontFamily} />
+                    <HeadingSelect callback={applyHeadingText} selectedOption={headingSize} />
 
-                        <BulletListButton isActive={isBulletList} />
-                        <OrderedListButton isActive={isOrderedList} />
-                        <QuoteButton callback={applyQuoteText} selectedOption={isQuote} />
-
-                    </div>
-
-                    <div className="flex items-stretch space-x-1">
-                        <CodeButton isActive={isCode}/>
-                        <LanguageSelect callback={applyCodeLanguage} selectedOption={codeLanguage} />
-                        <InsertLinkButton onClickCallback={insertLink} isActive={isLink} />
-                        <span className="w-[2px] bg-black block h-full">'</span>
-                        <UndoButton isActive={canUndo} />
-                        <RedoButton isActive={canRedo}  />
-                        <span className="w-[2px] bg-black block h-full">'</span>
-                        <LineHeightSelect callback={applyStyleText} selectedOption={lineHeight} />
-
-                        <span className="w-[2px] bg-black block h-full">'</span>
-
-                        <TextColorPickerButton callback={applyStyleText} selectedOption={color} />
-                        <BgColorPickerButton callback={applyStyleText} selectedOption={bgColor} />
-
-                        <span className="w-[2px] bg-black block h-full">'</span>
-
-                        <FormatCopyButton onClickCallback={copyFormat} isActive={copiedFormat != null} />
-                        <PasteCopiedFormatButton onClickCallback={applyFormat} />
-                        <ClearFormatingButton onClickCallback={onClearFormatting} />
-                        <span className="w-[2px] bg-black block h-full">'</span>
-
-                        <SubscriptButton isActive={isSubscript} />
-                        <SuperscriptButton isActive={isSuperscript}/>
-                        <span className="w-[2px] bg-black block h-full">'</span>
-                        <InsertImageModal isActive={false} _className={""} _postId={post.id} contentType={"imgBody"} />
-                        <EmojiPickerButton onClickCallback={insertEmoji} />
-                        <GifPickerButton onClickCallback={insertGif} />
-                        <HorizontalRuleButton />
-                        <InsertTableButton />
-                        <InsertColumnLayoutModal onContentCallback={insertColumnLayout} />
-                        <DrawIOModalButton onContentCallback={onDrawIO} />
-
-                    </div>
-                    <div className="mt-2">
-                        <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged} />
-
-
-                    </div>
+                    <BulletListButton isActive={isBulletList} />
+                    <OrderedListButton isActive={isOrderedList} />
+                    <QuoteButton callback={applyQuoteText} selectedOption={isQuote} />
 
                 </div>
 
+                <div className="flex items-stretch space-x-1">
+
+                    {
+                        config && config.allowCode == true ?
+
+                            <><CodeButton isActive={isCode} /><LanguageSelect callback={applyCodeLanguage} selectedOption={codeLanguage} /></>
+
+                            : null
+                    }
+
+
+
+                    <InsertLinkButton onClickCallback={insertLink} isActive={isLink} />
+                    <span className="w-[2px] bg-black block h-full">'</span>
+                    <UndoButton isActive={canUndo} />
+                    <RedoButton isActive={canRedo} />
+                    <span className="w-[2px] bg-black block h-full">'</span>
+                    <LineHeightSelect callback={applyStyleText} selectedOption={lineHeight} />
+
+                    <span className="w-[2px] bg-black block h-full">'</span>
+
+                    <TextColorPickerButton callback={applyStyleText} selectedOption={color} />
+                    <BgColorPickerButton callback={applyStyleText} selectedOption={bgColor} />
+
+                    <span className="w-[2px] bg-black block h-full">'</span>
+
+                    <FormatCopyButton onClickCallback={copyFormat} isActive={copiedFormat != null} />
+                    <PasteCopiedFormatButton onClickCallback={applyFormat} />
+                    <ClearFormatingButton onClickCallback={onClearFormatting} />
+                    <span className="w-[2px] bg-black block h-full">'</span>
+
+                    <SubscriptButton isActive={isSubscript} />
+                    <SuperscriptButton isActive={isSuperscript} />
+                    <span className="w-[2px] bg-black block h-full">'</span>
+
+                    {
+                        config && config.allowEmogis ?
+                            <InsertImageModal isActive={false} _className={""} _postId={post.id} contentType={"imgBody"} />
+                            : null
+                    }
+
+                    {
+                        config && config.allowEmogis ?
+                            <EmojiPickerButton onClickCallback={insertEmoji} />
+                            : null
+                    }
+
+                    {
+                        config && config.allowGif ?
+                            <GifPickerButton onClickCallback={insertGif} />
+                            : null
+                    }
+
+
+                    <HorizontalRuleButton />
+
+                    {
+                        config && config.allowTable ?
+                            <InsertTableButton />
+                            : null
+                    }
+
+                    {
+                        config && config.allowColumn ?
+                            <InsertColumnLayoutModal onContentCallback={insertColumnLayout} />
+                            : null
+                    }
+
+                    {
+                        config && config.allowDiagram ?
+                            <DrawIOModalButton onContentCallback={onDrawIO} />
+                            : null
+                    }
+
+
+
+                </div>
+
+                {
+                    config && config.allowWidthRule ?
+                        <div className="mt-2">
+                            <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged} />
+
+
+                        </div>
+                        : null
+                }
 
 
 
             </div>
 
-        );
-    }
+
+
+
+        </div>
+
+    );
+}
 

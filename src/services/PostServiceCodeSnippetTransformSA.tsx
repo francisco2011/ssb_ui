@@ -47,37 +47,35 @@ export default async function PostServiceCodeSnippetTransformSA(limit: number,
     theme: EditorCodePreviewTheme
   });
 
-  console.log(loadContent)
     var posts = await service.List(limit, offset, typeId, tags, published, loadContent);
-    
+    const cleanup = setupDom();
     posts.posts.forEach(c => {
 
       if(c.content){
         let editorState: EditorState | null = null 
-        let width = ''
-
+        
         var newState = JSON.parse(c.content)
-        width = newState.width
+        const width = newState.width
         
         editorState = editor.parseEditorState(newState.editorState)
 
       editor.setEditorState(editorState);
 
-      const cleanup = setupDom();
-      let _html: any = null
+      
+      
       editor.update(() => {
-
-        _html = $generateHtmlFromNodes(editor, null);
-        c._htmlContent = _html
-        c._contentWidth = width
-
+        
+        const _html = $generateHtmlFromNodes(editor, null);
+        c._contentHtml = { value: _html, width: width }
+        
       });
 
-      cleanup()
+      
 
       }
       
     })
+    cleanup()
     return posts
 
 }

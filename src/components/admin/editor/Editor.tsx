@@ -40,7 +40,7 @@ import ContentMetada from '~/models/ContentMetadata';
 import { $nodesOfType, CLEAR_EDITOR_COMMAND, EditorState } from 'lexical';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import editorTheme from '~/themes/EditorTheme';
-import ToolbarPlugin from './ToolbarPlugin';
+import ToolbarPlugin, { ToolbarConfig } from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
 import PostModel from '~/models/PostModel';
 import { ContentType } from '~/models/ContentType';
@@ -57,10 +57,15 @@ import TableActionMenuPlugin from './plugins/TableActionMenu';
 import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
 import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIOImageNode';
 import DrawIOPlugin from './plugins/DrawIOPlugin';
-import LayoutPlugin  from './plugins/LayoutPlugin';
+import LayoutPlugin from './plugins/LayoutPlugin';
 import { LayoutContainerNode } from './plugins/LayoutPlugin/LayoutContainerNode';
 import { LayoutItemNode } from './plugins/LayoutPlugin/LayoutItemNode';
 import ContentModel from '~/models/ContentModel';
+
+type EditorConfiguration = {
+  allowedToolBarOptions: ToolbarConfig,
+  heightRem: string
+}
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -95,7 +100,7 @@ const editorConfig = {
 };
 
 export type ContentState = {
-  
+
   Content: string,
   Imgs: ContentModel[]
 
@@ -104,7 +109,8 @@ export type ContentState = {
 type props = {
   content: string,
   post: PostModel,
-  onContentDeletedCallback: () => void
+  onContentDeletedCallback: () => void,
+  config: EditorConfiguration
 }
 
 const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
@@ -118,8 +124,8 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   //const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const editor = useRef<LexicalEditor>(null);
 
-useImperativeHandle(ownRef, () => ({
-    getState: () : ContentState | null => {
+  useImperativeHandle(ownRef, () => ({
+    getState: (): ContentState | null => {
       return getActualState()
     },
 
@@ -132,7 +138,7 @@ useImperativeHandle(ownRef, () => ({
 
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
-  const [contentWidthpx, setContentWidthpx] = useState('900px')
+  const [contentWidthpx, setContentWidthpx] = useState('4rem')
 
   const addTag = val => {
     var string_copy = (' ' + val).slice(1);
@@ -151,7 +157,7 @@ useImperativeHandle(ownRef, () => ({
   };
 
   useEffect(() => {
-    
+
     if (props.content && props.content != '' && editor.current) {
 
       let initialEditorState: EditorState | null = null
@@ -207,9 +213,9 @@ useImperativeHandle(ownRef, () => ({
   }, [isSmallWidthViewport]);
 
 
-  const getActualState = () : ContentState | null => {
+  const getActualState = (): ContentState | null => {
     if (!editor?.current) return null;
-    
+
     const editorState = editor.current.getEditorState();
 
     let imageNodes: ImageNode[] = []
@@ -275,14 +281,19 @@ useImperativeHandle(ownRef, () => ({
         <LexicalComposer initialConfig={editorConfig}>
 
           <EditorRefPlugin editorRef={editor} />
-          <ToolbarPlugin post={props.post} defaultWidth={contentWidthpx} setIsLinkEditMode={setIsLinkEditMode} onPropertiesChange={onToolbarProperties} onEditorClearCallback={props.onContentDeletedCallback} />
+          <ToolbarPlugin post={props.post}
+            defaultWidth={contentWidthpx}
+            setIsLinkEditMode={setIsLinkEditMode}
+            onPropertiesChange={onToolbarProperties}
+            onEditorClearCallback={props.onContentDeletedCallback}
+            config={props.config.allowedToolBarOptions} />
           <ClearEditorPlugin />
           <ListPlugin />
           <ImagesPlugin />
           <InlineImagePlugin />
           <TagPlugin onNewCallback={(c) => addTag(c)} />
           <LinkPlugin hasLinkAttributes={false} />
-          <LayoutPlugin/>
+          <LayoutPlugin />
           <DrawIOPlugin />
           <AutoFocusPlugin />
           <CodeHighlightPlugin />
@@ -292,9 +303,9 @@ useImperativeHandle(ownRef, () => ({
           <HorizontalRulePlugin />
           <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
           <TableCellResizerPlugin />
-          
+
           <div className='editor-container'>
-            <div style={{ height: '700px', width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
+            <div style={{ minHeight: props.config.heightRem, height: 'auto',  width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
 
               {floatingAnchorElem && !isSmallWidthViewport && (
                 <>
