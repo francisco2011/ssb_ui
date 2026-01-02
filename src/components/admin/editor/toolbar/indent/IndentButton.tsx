@@ -3,10 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, LexicalEditor, OUTDENT_CONTENT_COMMAND } from "lexical";
 import ButtonProps from "../props/IButtonProps";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
-function IndentButton({ isActive, currentEditor }: ButtonProps) {
+function IndentButton({ isActive }: ButtonProps) {
+
+const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -14,7 +17,7 @@ function IndentButton({ isActive, currentEditor }: ButtonProps) {
             "px-1 hover:bg-gray-600 transition-colors duration-100 ease-in bg-gray-400"
           }
         onClick={() => {
-            currentEditor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
+          editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
         }}
       >
         <FontAwesomeIcon icon={faIndent} className="text-white w-3.5 h-3.5" />

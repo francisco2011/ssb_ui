@@ -24,7 +24,6 @@ import ContentMetada from '~/models/ContentMetadata';
 import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
 import TagSelector from "~/components/admin/tagSelector/TagSelector";
 import PostPreview from "~/components/admin/editor/PostPreview";
-import { Metadata } from "next";
 import TagService from "~/services/TagService";
 
 const editorConfig = {
@@ -167,8 +166,14 @@ export default function PostEditor() {
     post.description = descriptionEditorState?.Content??''
     post.type = metadata.type
 
-    const result = await service.Save(post)
-    setPost({ ...post, id: result.id })
+    try{
+      const result = await service.Save(post)
+      setPost({ ...post, id: result.id })
+
+    }catch(error){
+
+    }
+
 
   }
 

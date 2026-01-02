@@ -21,7 +21,8 @@ function EmojiPickerButton({ onClickCallback }: { onClickCallback: (emoji: strin
                     <Popover ref={popoverRef} buttonClass={"px-1 bg-gray-400 hover:bg-gray-700 transition-colors duration-100 ease-in"}
                         content={<EmojiPicker
                             onEmojiClick={onEmojiSelected}
-                            emojiStyle={EmojiStyle.NATIVE} />}>
+                            emojiStyle={EmojiStyle.NATIVE} 
+                            />}>
                         <FontAwesomeIcon
                             icon={faFaceSmile}
                             className="text-white w-3.5 h-3.5" />

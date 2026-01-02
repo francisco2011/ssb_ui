@@ -3,8 +3,11 @@ import ButtonProps from "../props/IButtonProps";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSubscript } from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
-function SubscriptButton({ isActive, currentEditor }: ButtonProps) {
+function SubscriptButton({ isActive }: ButtonProps) {
+
+  const [editor] = useLexicalComposerContext();
 
   return(
       <button
@@ -13,7 +16,7 @@ function SubscriptButton({ isActive, currentEditor }: ButtonProps) {
           isActive ? "bg-gray-600" : "bg-gray-400"
         )}
       onClick={() => {
-          currentEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
       }}
     >
       <FontAwesomeIcon icon={faSubscript} className="text-white w-3.5 h-3.5" />

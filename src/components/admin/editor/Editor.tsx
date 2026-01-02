@@ -161,26 +161,27 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     if (props.content && props.content != '' && editor.current) {
 
       let initialEditorState: EditorState | null = null
-
-      if (props.content.startsWith('{"w')) {
-
-        var newState = JSON.parse(props.content)
-        var w = newState.width
-        setContentWidthpx(w)
-        initialEditorState = editor.current.parseEditorState(newState.editorState)
-
-      } else {
-        initialEditorState = editor.current.parseEditorState(props.content)
-      }
+      var newState = JSON.parse(props.content)
+      var w = newState.width
+      setContentWidthpx(w)
+      initialEditorState = editor.current.parseEditorState(newState.editorState)
 
       if (!initialEditorState) return
-
+      
       let imageNodes: ImageNode[] = []
+      let inlineImageNodes: InlineImageNode[] = []
       initialEditorState.read(() => {
         imageNodes = $nodesOfType(ImageNode);
+        inlineImageNodes = $nodesOfType(InlineImageNode);
       })
 
       imageNodes.forEach(c => {
+        var cntnt = props.post.contents.find(d => d && d.name && d.name == c.__imgId)
+
+        if (cntnt?.url) c.__src = cntnt.url
+      })
+
+      inlineImageNodes.forEach(c => {
         var cntnt = props.post.contents.find(d => d && d.name && d.name == c.__imgId)
 
         if (cntnt?.url) c.__src = cntnt.url

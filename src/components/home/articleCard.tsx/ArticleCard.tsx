@@ -28,11 +28,18 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
 
     return (
         <div key={post.id} className="card  image-full max-w-80 max-h-80  shadow-xl">
-            <figure>
+
+            {
+                url? 
+                <figure>
                 <img
                     src={url}
                     alt="Test" />
             </figure>
+                : null
+            }
+
+            
             <div className="card-body">
                 <h6 className="text-right text-xs">
                     {format(post.createdAt, "yyyy-MM-dd")}

@@ -3,10 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, LexicalEditor } from "lexical";
 import ButtonProps from "../props/IButtonProps";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
+function CenterButton({ isActive }: ButtonProps) {
 
-function CenterButton({ isActive, currentEditor }: ButtonProps) {
+  const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -15,7 +17,7 @@ function CenterButton({ isActive, currentEditor }: ButtonProps) {
                   isActive ? "bg-gray-600" : "bg-gray-400"
                 )}
         onClick={() => {
-            currentEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
+          editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
         }}
       >
         <FontAwesomeIcon

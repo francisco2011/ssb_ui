@@ -92,7 +92,7 @@ import SuperscriptButton from "./toolbar/script/SuperscriptButton";
 import SubscriptButton from "./toolbar/script/SubscriptButton";
 import MaxLengthBar from "~/components/admin/editor/plugins/MaxWidthPlugin/MaxWidthBar";
 import ToolBarProperties from "./ToolbarProperties";
-import EmojiPickerButton from "./toolbar/emoji/EmojiPickerButton";
+import EmojiPickerButton from "./toolbar/emojiPicker/EmojiPickerButton";
 import { $createEmojiNode } from "~/components/admin/editor/plugins/EmojisPlugin/EmojiNode";
 import GifPickerButton from "./toolbar/gif/GifPickerButton";
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
@@ -556,7 +556,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
     }
 
     return (
-        <div className="z-40 sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
+        <div style={{"zIndex":999}} className="sticky top-3 bg-white h-auto min-w-52 px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
             <div className="grid-rows-3">
                 <div className="flex items-stretch space-x-1 mb-1 ">
@@ -629,7 +629,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                     <span className="w-[2px] bg-black block h-full">'</span>
 
                     {
-                        config && config.allowEmogis ?
+                        config && config.allowImages ?
                             <InsertImageModal isActive={false} _className={""} _postId={post.id} contentType={"imgBody"} />
                             : null
                     }

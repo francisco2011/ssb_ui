@@ -3,9 +3,12 @@ import ButtonProps from "../props/IButtonProps";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSubscript, faSuperscript } from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
-function SuperscriptButton({ isActive, currentEditor }: ButtonProps) {
+function SuperscriptButton({ isActive }: ButtonProps) {
 
+const [editor] = useLexicalComposerContext();
+  
   return(
       <button
       className={clsx(
@@ -13,7 +16,7 @@ function SuperscriptButton({ isActive, currentEditor }: ButtonProps) {
           isActive ? "bg-gray-600" : "bg-gray-400"
         )}
       onClick={() => {
-          currentEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
       }}
     >
       <FontAwesomeIcon icon={faSuperscript} className="text-white w-3.5 h-3.5" />

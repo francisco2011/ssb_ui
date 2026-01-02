@@ -3,11 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { FORMAT_ELEMENT_COMMAND } from "lexical";
 import ButtonProps from "../props/IButtonProps";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 
 
 
-function RightButton({ isActive, currentEditor }: ButtonProps) {
+function RightButton({ isActive }: ButtonProps) {
+
+const [editor] = useLexicalComposerContext();
 
     return(
         <button
@@ -16,7 +19,7 @@ function RightButton({ isActive, currentEditor }: ButtonProps) {
                   isActive ? "bg-gray-600" : "bg-gray-400"
                 )}
         onClick={() => {
-            currentEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
+          editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
         }}
       >
         <FontAwesomeIcon

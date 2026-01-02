@@ -47,29 +47,29 @@ import './Popover.css';
   }, []);
 
   return (
-    <div className="popover-container">
-      <button
-        ref={triggerRef}
-        onClick={toggleVisibility}
-        className={props.buttonClass}
-        aria-haspopup="true"
-        aria-expanded={isVisible}
-        aria-controls="popover-content"
-      >
-        {props.children}
-      </button>
-      {isVisible && (
-        <div
-          id="popover-content"
-          ref={popoverRef}
-          className="popover-content"
-          role="dialog"
-          aria-modal="true"
-        >
-          {props.content}
-        </div>
-      )}
-    </div>
+    <><button
+      ref={triggerRef}
+      onClick={toggleVisibility}
+      className={props.buttonClass}
+      aria-haspopup="true"
+      aria-expanded={isVisible}
+      aria-controls="popover-content"
+    >
+      {props.children}
+    </button><div className="popover-container">
+
+        {isVisible && (
+          <div
+            id="popover-content"
+            ref={popoverRef}
+            className="z-50 popover-content"
+            role="dialog"
+            aria-modal="true"
+          >
+            {props.content}
+          </div>
+        )}
+      </div></>
   );
 });
 
