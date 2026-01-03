@@ -36,13 +36,16 @@ export default async function Articles({
     return (
 
         <div id="parent" className="relative h-screen">
-            <div id="child-bottom" className="w-[1000]">
-                <TagsDisplay rootPath="/home/articles" allTags={tags} />
-            </div>
-
-            <div id="child-top" className="absolute h-30% ">
+            <div className="grid grid-cols-4 gap-4">
+            <div  className="col-span-3 ">
                 <ArticlesPreview initialPosts={initialPosts} tags={[]} />
             </div>
+            <div className="col-span-1">
+                <TagsDisplay rootPath="/home/articles" allTags={tags} />
+            </div>
+            </div>
+
+
         </div>
 
 

@@ -39,24 +39,21 @@ export default function TagsDisplay({ allTags, rootPath }: Props): JSX.Element {
     const onSearchSelected = useCallback(() => {
 
         let url = "?"
-        
+
         console.log(selectedTags)
 
-        selectedTags.forEach(c => {  url+="&tag=" + c })
-        
+        selectedTags.forEach(c => { url += "&tag=" + c })
+
         router.push(url)
-    },[]);
+    }, []);
 
     return (
 
-        <><ul className="flex gap-3 my-4 md:my-12 flex-wrap justify-center px-4 md:px-8 ">
+        <>
 
-            {allTags.map(c => <TagPill onTagClicked={onTagClicked} tag={c} key={c.term}></TagPill>)}
-
-        </ul>
             <div className="">
 
-            <button
+                <button
                     className={''}
                     onClick={() => {
                         onBackClicked()
@@ -80,7 +77,7 @@ export default function TagsDisplay({ allTags, rootPath }: Props): JSX.Element {
                         className="text-slate-700 w-10 h-10 cursor-pointer"
                     />
                 </button>
-                
+
                 <button
                     className={''}
                     onClick={() => {
@@ -94,6 +91,12 @@ export default function TagsDisplay({ allTags, rootPath }: Props): JSX.Element {
                 </button>
 
             </div>
+
+            <ul className="flex gap-3 my-4 md:my-12 flex-wrap px-4">
+
+                {allTags.map(c => <TagPill onTagClicked={onTagClicked} tag={c} key={c.term}></TagPill>)}
+
+            </ul>
         </>
 
 

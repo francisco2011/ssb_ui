@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ContentType } from "~/models/ContentType";
 import PostModel from "~/models/PostModel";
 import Link from 'next/link'
-import {format} from 'date-fns'
+import { format } from 'date-fns'
 
 type Props = {
     post: PostModel;
@@ -27,29 +27,27 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
 
 
     return (
-        <div key={post.id} className="card  image-full max-w-80 max-h-80  shadow-xl">
+        <div key={post.id} className="card image-full w-28 max-w-28 sm:min-w-36 sm:max-w-36 md:min-w-38 lg:min-w-48 xl:min-w-56 2xl:min-w-56">
 
             {
-                url? 
-                <figure>
-                <img
-                    src={url}
-                    alt="Test" />
-            </figure>
-                : null
+                url ?
+                    <figure>
+                        <img className="h-auto w-auto"
+                            src={url} />
+                    </figure>
+                    : null
             }
 
-            
-            <div className="card-body">
-                <h6 className="text-right text-xs">
+            <div className="card-body w-28 max-w-28 sm:min-w-36 sm:max-w-36 md:min-w-38 lg:min-w-48 xl:min-w-56 2xl:min-w-56">
+                <h6 className="text-right">
                     {format(post.createdAt, "yyyy-MM-dd")}
                 </h6>
                 <h3 className="card-title line-clamp-2">
-                    <Link href={"/home/post/" + post.id} dangerouslySetInnerHTML={{ __html: post._titleHtml?.value??'' }}></Link>
+                    <Link href={"/home/post/" + post.id} dangerouslySetInnerHTML={{ __html: post._titleHtml?.value ?? '' }}></Link>
                 </h3>
-                
-                <p className="line-clamp-4" dangerouslySetInnerHTML={{ __html: post._descriptionHtml?.value??'' }}>
-                
+
+                <p className="line-clamp-4" dangerouslySetInnerHTML={{ __html: post._descriptionHtml?.value ?? '' }}>
+
                 </p>
                 <div className="card-actions justify-end line-clamp-3">
 
@@ -59,6 +57,9 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
 
                 </div>
             </div>
+
+
+
         </div>
     );
 }

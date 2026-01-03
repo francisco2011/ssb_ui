@@ -48,7 +48,7 @@ export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Elem
 
     return (
         <>
-        <div className="grid grid-cols-3 gap-5 place-items-stretch">
+        <div className="grid gap-5 place-items-stretch grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols4 2xl:grid-cols4">
         {
             posts.map( c => <ArticleCard key={c.id} onTagClickCallback={onTagClicked} post={c} />)
         }

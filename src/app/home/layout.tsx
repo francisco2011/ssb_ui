@@ -16,11 +16,31 @@ export default function RootLayout({
   return (
     <html data-theme="dracula" lang="en" className={`${GeistSans.variable}`}>
       <body>
-      <Header  />
-      <main className="flex overflow-x-scroll min-h-screen flex-col items-center justify-center bg-gray-50">
-      
-        {children}
-      </main>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        </head>
+
+        <main className="flex overflow-x-scroll   bg-gray-50">
+          <div className="grid grid-cols-4 gap-4">
+
+          <div className="col-span-1  h-full border-r0">
+          <Header />
+
+          </div>
+          <div className="col-span-3 ">
+          <div className="items-center justify-center flex-col">
+            {children}
+          </div>
+          </div>
+
+          </div>
+
+         
+
+
+        </main>
+
+
       </body>
     </html>
   );

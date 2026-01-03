@@ -174,7 +174,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
         imageNodes = $nodesOfType(ImageNode);
         inlineImageNodes = $nodesOfType(InlineImageNode);
       })
-
+      
       imageNodes.forEach(c => {
         var cntnt = props.post.contents.find(d => d && d.name && d.name == c.__imgId)
 

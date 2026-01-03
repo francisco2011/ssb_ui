@@ -69,16 +69,24 @@ export default function ReadonlyEditor({ content, contents, editorTheme, shellCl
           editorState = editor.current.parseEditorState(content)
         }
 
-        let imageNodes: ImageNode[] =[]
-        editorState.read(() => {
-            imageNodes = $nodesOfType(ImageNode);
-        })
-
-        imageNodes.filter(c => c.__imgId).forEach(c => {
-          var cntnt = contents.find(d => d.name == c.__imgId)
-
-          if(cntnt) c.__src = cntnt.url
-        })
+        let imageNodes: ImageNode[] = []
+              let inlineImageNodes: InlineImageNode[] = []
+              editorState.read(() => {
+                imageNodes = $nodesOfType(ImageNode);
+                inlineImageNodes = $nodesOfType(InlineImageNode);
+              })
+              
+              imageNodes.forEach(c => {
+                var cntnt = contents.find(d => d && d.name && d.name == c.__imgId)
+        
+                if (cntnt?.url) c.__src = cntnt.url
+              })
+        
+              inlineImageNodes.forEach(c => {
+                var cntnt = contents.find(d => d && d.name && d.name == c.__imgId)
+        
+                if (cntnt?.url) c.__src = cntnt.url
+              })
         
         queueMicrotask(() => {
 

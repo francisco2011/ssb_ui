@@ -60,17 +60,9 @@ export function UploadImageDialogBody({
     const service = new ContentService()
 
     const loadImage = async (files: FileList | null) => {
-
+        debugger
         if (!files) return
 
-        //const reader = new FileReader();
-        //reader.onload = function () {
-        //    if (typeof reader.result === 'string') {
-        //        setSrc(reader.result);
-        //    }
-        //    return '';
-        //};
-        //if (files !== null && files.length > 0) {
         var file = files[0];
 
         if (file) {
@@ -78,12 +70,10 @@ export function UploadImageDialogBody({
 
             if (result.url) setSrc(result.url)
             if (result.name) setImgId(result.name)
-
+                
             if (onImageLoaded && result.url && result.name) onImageLoaded({ altText: '', src: result.url, imgId: result.name })
         }
 
-        //    if (file) reader.readAsDataURL(file);
-        //}
     };
 
     return (
@@ -144,7 +134,7 @@ export function UploadImageDialogBody({
                     <Button
                         data-test-id="image-modal-file-upload-btn"
                         disabled={isDisabled}
-                        onClick={() => loadInline ? onClickLoadInline({ altText, src }) : onClick({ altText, src, imgId })}
+                        onClick={() => loadInline ? onClickLoadInline({ altText, src, imgId }) : onClick({ altText, src, imgId })}
                     >
                         Confirm
                     </Button>
