@@ -25,6 +25,7 @@ import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
 import TagSelector from "~/components/admin/tagSelector/TagSelector";
 import PostPreview from "~/components/admin/editor/PostPreview";
 import TagService from "~/services/TagService";
+import { $getRoot, $nodesOfType, LexicalEditor, LexicalNode, TextNode } from "lexical";
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -64,9 +65,9 @@ export default function PostEditor() {
     type: null
   })
   const [isClearAll, setIsClearAll] = useState<boolean>(false);
-  const titleEditorRef = useRef(null)
+  const titleEditorRef = useRef(null);
   const editorRef = useRef(null);
-  const descriptionEditorRef = useRef(null)
+  const descriptionEditorRef = useRef(null);
 
   useEffect(() => {
 
@@ -143,7 +144,7 @@ export default function PostEditor() {
 
   const onsave = async () => {
     if (!post) return
-    if (!editorRef?.current) return;
+    if (!editorRef?.current || !titleEditorRef?.current) return;
 
     
     //@ts-ignore
@@ -165,6 +166,25 @@ export default function PostEditor() {
     post.title = titleEditorState?.Content??''
     post.description = descriptionEditorState?.Content??''
     post.type = metadata.type
+
+
+    //attempt to replace {{title}}
+
+
+      let titleFirstNode: LexicalNode | null = null
+
+      //@ts-ignore
+      titleEditorRef.current.getEditor().read(() => {
+        const root = $getRoot();
+        titleFirstNode = root.getFirstChild();
+      })
+//@ts-ignore
+      editorRef.current.replaceContent(titleFirstNode, "{{title}}");
+     
+    
+
+    ////////////////////////////
+
 
     try{
       const result = await service.Save(post)

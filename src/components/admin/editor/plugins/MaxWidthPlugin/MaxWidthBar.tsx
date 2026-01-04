@@ -2,27 +2,32 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+export enum Unit{
+    rem = "rem",
+    px = "px"
+}
 
-export default function MaxWidthBar({ maxWidth, defaultWidth, onMaxChanged }: { maxWidth: number, defaultWidth: string, onMaxChanged: (val: number) => void }) {
+export default function MaxWidthBar({ maxWidth, defaultWidth, unit, onMaxChanged }: { maxWidth: number, 
+                                    defaultWidth: string, unit: Unit, onMaxChanged: (val: number) => void }) {
     const [selectedLength, setSelectedLength] = useState(maxWidth);
-    const [selectedLengthLabel, setSelectedLengthLabel] = useState(maxWidth  + "px")
+    const [selectedLengthLabel, setSelectedLengthLabel] = useState(maxWidth  + "rem")
 
-    //
-    const leftPadding = '20px'
+    var unitStr = unit.toString()
 
     useEffect(() => {
         
-        const dv = Number(defaultWidth.replace("px", '')) / 10
+        setSelectedLengthLabel(defaultWidth)
+
+        const dv = Number(defaultWidth.replace(unitStr, '')) 
         setSelectedLength(dv)
-        setSelectedLengthLabel((dv * 10) + "px")
+        
 
       }, [defaultWidth]);
 
-    const clazz = "h-8 w-[" + maxWidth + "px] bg-gray-200 rounded-sm grid grid-rows-2 grid-flow-col pl-["+ leftPadding + "]"
+    
 
-    const steps = maxWidth / 10
-    const mSteps = maxWidth / 100
-    const offset = maxWidth % 100
+    const steps = maxWidth 
+    const mSteps = maxWidth /10
 
     const allSteps: any[] = [];
     for (var i = 0; i < steps - 1; i++) {
@@ -32,15 +37,15 @@ export default function MaxWidthBar({ maxWidth, defaultWidth, onMaxChanged }: { 
         allSteps.push({ val: k });
     }
 
-    const allMSteps: React.JSX.Element[] = [<div key={0} className="w-[100px]"></div>];
-    for (var i = 0; i < mSteps - 1; i++) {
-        allMSteps.push(<div key={i + 1} className="w-[100px] text-[10px]">{(i + 1) * 100}</div>);
-    }
 
+    const allMSteps: React.JSX.Element[] = [<div key={0} className="w-[10rem]"></div>];
+    for (var i = 0; i < mSteps - 1; i++) {
+        allMSteps.push(<div key={i + 1} className={"w-[10rem] text-[1rem]"}>{(i * 10 + 10)}</div>);
+    }
     const onMaxLengthSelected = (val) => {
 
-        const maxValue = val * 10
-        const sl = maxValue + "px"
+        const maxValue = val 
+        const sl = maxValue + unitStr
 
         setSelectedLength(maxValue)
         setSelectedLengthLabel(sl)
@@ -56,18 +61,18 @@ export default function MaxWidthBar({ maxWidth, defaultWidth, onMaxChanged }: { 
                 }
             </div>
 
-            <div className={clazz}>
+            <div className={"h-8 w-[" + maxWidth + unitStr + " ] bg-gray-200 rounded-sm grid grid-rows-2 grid-flow-col"}>
                 <div className="flex">
                     {
                         allMSteps
                     }
                 </div>
                 <div className="flex">
-                    <div key={0} className="w-[10px]">|</div>
+                    <div key={0} className="w-[1rem]">|</div>
                     {
-                        allSteps.map(c => selectedLength == c.val  ? <div key={c.val} className="w-[10px] cursor-pointer" onClick={() => onMaxLengthSelected(c.val)}>
+                        allSteps.map(c => selectedLength == c.val  ? <div key={c.val} className="w-[1rem] cursor-pointer" onClick={() => onMaxLengthSelected(c.val)}>
                             <FontAwesomeIcon icon={faCircle} className="text-black w-3 h-3" /></div>
-                            : <div key={c.val} className="w-[10px] text-[10px] cursor-pointer" onClick={() => onMaxLengthSelected(c.val)}>|</div>)
+                            : <div key={c.val} className="w-[1rem] text-[1rem] cursor-pointer" onClick={() => onMaxLengthSelected(c.val)}>|</div>)
                     }
                 </div>
             </div>

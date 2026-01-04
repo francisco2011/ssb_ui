@@ -10,7 +10,7 @@ export default function PostReadonlyEditor({ content, contents  }) {
 
   return (
     <>
-      <ReadonlyEditor onHtmlGenerated={() => {}} content={content} contents={contents} contentClassName="editor-article" shellClassName="editor-scroller-article" editorTheme={EditorTheme}/>
+      <ReadonlyEditor content={content} contents={contents} contentClassName="editor-article" shellClassName="editor-scroller-article" editorTheme={EditorTheme}/>
 
     </>
   );

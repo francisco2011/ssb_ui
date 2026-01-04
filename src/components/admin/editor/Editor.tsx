@@ -37,7 +37,7 @@ import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin'
 import ContentMetada from '~/models/ContentMetadata';
-import { $nodesOfType, CLEAR_EDITOR_COMMAND, EditorState } from 'lexical';
+import { $nodesOfType, CLEAR_EDITOR_COMMAND, EditorState, LexicalNode, TextNode } from 'lexical';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import editorTheme from '~/themes/EditorTheme';
 import ToolbarPlugin, { ToolbarConfig } from './ToolbarPlugin';
@@ -125,6 +125,13 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   const editor = useRef<LexicalEditor>(null);
 
   useImperativeHandle(ownRef, () => ({
+
+    replaceContent: (externalContent: LexicalNode, template: string) => {
+      replaceContent(externalContent, template)
+    },
+
+    getEditor: (): LexicalEditor | null => { return editor.current },
+
     getState: (): ContentState | null => {
       return getActualState()
     },
@@ -138,7 +145,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
-  const [contentWidthpx, setContentWidthpx] = useState('4rem')
+  const [contentWidth, setContentWidthRem] = useState('50rem')
 
   const addTag = val => {
     var string_copy = (' ' + val).slice(1);
@@ -163,18 +170,18 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       let initialEditorState: EditorState | null = null
       var newState = JSON.parse(props.content)
       var w = newState.width
-      setContentWidthpx(w)
+      setContentWidthRem(w)
       initialEditorState = editor.current.parseEditorState(newState.editorState)
 
       if (!initialEditorState) return
-      
+
       let imageNodes: ImageNode[] = []
       let inlineImageNodes: InlineImageNode[] = []
       initialEditorState.read(() => {
         imageNodes = $nodesOfType(ImageNode);
         inlineImageNodes = $nodesOfType(InlineImageNode);
       })
-      
+
       imageNodes.forEach(c => {
         var cntnt = props.post.contents.find(d => d && d.name && d.name == c.__imgId)
 
@@ -238,7 +245,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
 
     const extendedState = {
-      width: contentWidthpx,
+      width: contentWidth,
       editorState: editorState.toJSON()
     }
 
@@ -259,17 +266,36 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   }
 
   const onToolbarProperties = (data: ToolBarProperties) => {
-    if (data.MaxLengthpx) setContentWidthpx(data.MaxLengthpx)
+    if (data.MaxLength) setContentWidthRem(data.MaxLength)
   }
 
 
 
-  const addOffsetContentWidthpx = (val) => {
-    if (typeof val == typeof '' && val.indexOf('px') != -1) {
-      val = val.replace('px', '')
+  const addOffsetContentWidthrem = (val) => {
+    if (typeof val == typeof '' && val.indexOf('rem') != -1) {
+      val = val.replace('rem', '')
     }
 
-    return (Number(val) + 35) + 'px'
+    return (Number(val) + 2) + 'rem'
+  }
+
+  const replaceContent = (externalContent: LexicalNode, template: string) => {
+    let textNodes: TextNode[] = []
+    
+    editor.current?.update(() => {
+
+      textNodes = $nodesOfType(TextNode);
+
+      for (const node of textNodes) {
+        const text = node.getTextContent();
+
+        if (text == "{{title}}" && externalContent) {
+
+          node.replace(externalContent, true)
+
+        }
+      }
+    })
   }
 
   return (
@@ -283,7 +309,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
           <EditorRefPlugin editorRef={editor} />
           <ToolbarPlugin post={props.post}
-            defaultWidth={contentWidthpx}
+            defaultWidth={contentWidth}
             setIsLinkEditMode={setIsLinkEditMode}
             onPropertiesChange={onToolbarProperties}
             onEditorClearCallback={props.onContentDeletedCallback}
@@ -306,7 +332,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
           <TableCellResizerPlugin />
 
           <div className='editor-container'>
-            <div style={{ minHeight: props.config.heightRem, height: 'auto',  width: addOffsetContentWidthpx(contentWidthpx) }} ref={ref}>
+            <div style={{ minHeight: props.config.heightRem, height: 'auto', width: addOffsetContentWidthrem(contentWidth) }} ref={ref}>
 
               {floatingAnchorElem && !isSmallWidthViewport && (
                 <>

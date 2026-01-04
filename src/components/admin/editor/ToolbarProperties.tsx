@@ -1,3 +1,3 @@
 export default class ToolBarProperties{
-    MaxLengthpx: string | null
+    MaxLength: string | null
 }

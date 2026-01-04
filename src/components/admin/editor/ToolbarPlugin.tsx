@@ -90,7 +90,7 @@ import FormatContainer from "./toolbar/formatCopy/FormatContainer";
 import PasteCopiedFormatButton from "./toolbar/formatCopy/PasteCopiedFomartButton";
 import SuperscriptButton from "./toolbar/script/SuperscriptButton";
 import SubscriptButton from "./toolbar/script/SubscriptButton";
-import MaxLengthBar from "~/components/admin/editor/plugins/MaxWidthPlugin/MaxWidthBar";
+import MaxLengthBar, { Unit } from "~/components/admin/editor/plugins/MaxWidthPlugin/MaxWidthBar";
 import ToolBarProperties from "./ToolbarProperties";
 import EmojiPickerButton from "./toolbar/emojiPicker/EmojiPickerButton";
 import { $createEmojiNode } from "~/components/admin/editor/plugins/EmojisPlugin/EmojiNode";
@@ -518,7 +518,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
     }
 
     const onMaxWidthChanged = (value: number) => {
-        onPropertiesChange({ MaxLengthpx: value + 'px' })
+        onPropertiesChange({ MaxLength: value + 'rem' })
     }
 
     /////////////////////DRAWIO/////////////////
@@ -674,7 +674,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
                 {
                     config && config.allowWidthRule ?
                         <div className="mt-2">
-                            <MaxLengthBar maxWidth={800} defaultWidth={defaultWidth} onMaxChanged={onMaxWidthChanged} />
+                            <MaxLengthBar maxWidth={50} defaultWidth={defaultWidth} unit={Unit.rem} onMaxChanged={onMaxWidthChanged} />
 
 
                         </div>

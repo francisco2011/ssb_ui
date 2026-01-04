@@ -17,13 +17,15 @@ import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import ClickableLinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/ClickableLinkPlugin';
 import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
-import { $nodesOfType, EditorState, LexicalEditor } from 'lexical';
+import { $getRoot, $nodesOfType, EditorState, LexicalEditor, LexicalNode, TextNode } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/InlineImageNode';
+import { LayoutContainerNode } from '~/components/admin/editor/plugins/LayoutPlugin/LayoutContainerNode';
+import { LayoutItemNode } from '~/components/admin/editor/plugins/LayoutPlugin/LayoutItemNode';
 
 
-export default function ReadonlyEditor({ content, contents, editorTheme, shellClassName, contentClassName, onHtmlGenerated  }) {
+export default function ReadonlyEditor({  content, contents, editorTheme, shellClassName, contentClassName }) {
 
   const editorConfig = {
     namespace: 'Readonly-editor',
@@ -40,7 +42,9 @@ export default function ReadonlyEditor({ content, contents, editorTheme, shellCl
       HashtagNode,
       AutoLinkNode,
       LinkNode,
-      HorizontalRuleNode
+      HorizontalRuleNode,
+      LayoutContainerNode,
+      LayoutItemNode
     ],
     // Handling of errors during update
     onError(error: Error) {
@@ -52,86 +56,68 @@ export default function ReadonlyEditor({ content, contents, editorTheme, shellCl
 
   const editor = useRef<LexicalEditor>(null);
   useEffect(() => {
-    
-    if(content && editor.current){
 
-      let editorState: EditorState | null = null 
+      if (content && editor && editor.current) {
+
+        let editorState: EditorState | null = null
         let width = ''
-
-        if(content.startsWith('{"w')){
-      
-          var newState = JSON.parse(content)
-          width = newState.width
-          
-          editorState = editor.current.parseEditorState(newState.editorState)
   
-        }else{
-          editorState = editor.current.parseEditorState(content)
-        }
-
+        var newState = JSON.parse(content)
+        width = newState.width
+  
+        editorState = editor.current.parseEditorState(newState.editorState)
+  
         let imageNodes: ImageNode[] = []
-              let inlineImageNodes: InlineImageNode[] = []
-              editorState.read(() => {
-                imageNodes = $nodesOfType(ImageNode);
-                inlineImageNodes = $nodesOfType(InlineImageNode);
-              })
-              
-              imageNodes.forEach(c => {
-                var cntnt = contents.find(d => d && d.name && d.name == c.__imgId)
+        let inlineImageNodes: InlineImageNode[] = []
+        editorState.read(() => {
+          imageNodes = $nodesOfType(ImageNode);
+          inlineImageNodes = $nodesOfType(InlineImageNode);
+          
+        })
+  
+        imageNodes.forEach(c => {
+          var cntnt = contents.find(d => d && d.name && d.name == c.__imgId)
+  
+          if (cntnt?.url) c.__src = cntnt.url
+        })
+  
+        inlineImageNodes.forEach(c => {
+          var cntnt = contents.find(d => d && d.name && d.name == c.__imgId)
+  
+          if (cntnt?.url) c.__src = cntnt.url
+        })
+        editor.current.setEditorState(editorState)
         
-                if (cntnt?.url) c.__src = cntnt.url
-              })
+        editor.current.setEditable(false)
         
-              inlineImageNodes.forEach(c => {
-                var cntnt = contents.find(d => d && d.name && d.name == c.__imgId)
-        
-                if (cntnt?.url) c.__src = cntnt.url
-              })
-        
-        queueMicrotask(() => {
+      }
+  
 
-          if(editor?.current){
-            editor.current.setEditorState(editorState)
-            editor.current.setEditable(false)
-
-            editorState.read(() => {
-              if(editor.current){
-                var html = $generateHtmlFromNodes(editor.current)
-                onHtmlGenerated(html)
-              }
-              
-            });
-          }
-        });
-
-
-    }
-
-}, []);
+  }, []);
 
 
   return (
     <>
       <div className={shellClassName}>
-          <LexicalComposer initialConfig={editorConfig} >
-            <EditorRefPlugin editorRef={editor} />
-            
-            <ClickableLinkPlugin />
-            <RichTextPlugin
-              contentEditable={
-                <div className="editor-scroller">
-                  <div className={contentClassName}>
-                    <ContentEditable />
-                  </div>
-                </div>
-              }
-              ErrorBoundary={LexicalErrorBoundary}
-            />
-          </LexicalComposer>
-          <div />
+        <LexicalComposer initialConfig={editorConfig} >
+          <EditorRefPlugin editorRef={editor} />
 
-        </div>
-      
+          <ClickableLinkPlugin />
+          <RichTextPlugin
+            contentEditable={
+              <div className="editor-scroller">
+                <div className={contentClassName}>
+                  <ContentEditable />
+                </div>
+              </div>
+            }
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+        </LexicalComposer>
+        <div />
+
+      </div>
+
 
 
 
