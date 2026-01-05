@@ -32,12 +32,10 @@ import FloatingLinkEditorPlugin from '~/components/admin/editor/plugins/LinkPlug
 import { CAN_USE_DOM } from '~/components/admin/editor/plugins/shared/canUseDOM';
 import DraggableBlockPlugin from '~/components/admin/editor/plugins/DraggableBlockPlugin/DraggableBlockPlugin';
 import LinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/LinkPlugin';
-import VerticalToolbarPlugin from '~/components/admin/editor/VerticalToolbar';
 import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin'
-import ContentMetada from '~/models/ContentMetadata';
-import { $nodesOfType, CLEAR_EDITOR_COMMAND, EditorState, LexicalNode, TextNode } from 'lexical';
+import { $copyNode, $createParagraphNode, $getRoot, $insertNodes, $nodesOfType, CLEAR_EDITOR_COMMAND, EditorState, LexicalNode, TextNode } from 'lexical';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import editorTheme from '~/themes/EditorTheme';
 import ToolbarPlugin, { ToolbarConfig } from './ToolbarPlugin';
@@ -61,6 +59,7 @@ import LayoutPlugin from './plugins/LayoutPlugin';
 import { LayoutContainerNode } from './plugins/LayoutPlugin/LayoutContainerNode';
 import { LayoutItemNode } from './plugins/LayoutPlugin/LayoutItemNode';
 import ContentModel from '~/models/ContentModel';
+import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 
 type EditorConfiguration = {
   allowedToolBarOptions: ToolbarConfig,
@@ -74,7 +73,6 @@ const editorConfig = {
     ListNode,
     ListItemNode,
     ImageNode,
-    TagNode,
     EmojiNode,
     CodeNode,
     CodeHighlightNode,
@@ -126,8 +124,13 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
   useImperativeHandle(ownRef, () => ({
 
-    replaceContent: (externalContent: LexicalNode, template: string) => {
-      replaceContent(externalContent, template)
+    toHtml: (): string => {
+      return toHtml();
+    },
+
+    replaceContent: (externalContent: string, template: string) => {
+      if (!editor?.current) return;
+      return replaceContent(externalContent, template, editor.current)
     },
 
     getEditor: (): LexicalEditor | null => { return editor.current },
@@ -201,7 +204,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       });
     }
 
-  }, [props.post]);
+  }, [props.post.content]);
 
   useEffect(() => {
     const updateViewPortWidth = () => {
@@ -279,29 +282,51 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     return (Number(val) + 2) + 'rem'
   }
 
-  const replaceContent = (externalContent: LexicalNode, template: string) => {
+  const replaceContent = (externalContentHtml: string, template: string, editor: LexicalEditor) => {
+
     let textNodes: TextNode[] = []
     
-    editor.current?.update(() => {
+    editor.update(() => {
+
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(externalContentHtml, 'text/html');
+
+      // Generate Lexical nodes from the DOM
+      const nodes = $generateNodesFromDOM(editor, dom);
 
       textNodes = $nodesOfType(TextNode);
+
+      const paragraphNode = $createParagraphNode();
+
+      nodes.forEach((n)=> paragraphNode.append(n))
 
       for (const node of textNodes) {
         const text = node.getTextContent();
 
-        if (text == "{{title}}" && externalContent) {
+        if (text == template && nodes) {
 
-          node.replace(externalContent, true)
+          //$insertNodes(nodes);
+          //const copy = $copyNode(titleFirstNode)
+          node.replace(paragraphNode)
 
         }
       }
     })
   }
 
+  const toHtml = (): string => {
+
+    if (editor?.current == null) return ''
+
+    let htmlString = '';
+    editor.current.update(() => {
+      htmlString = $generateHtmlFromNodes(editor.current, null); // The second parameter is for selection, pass null for the entire content
+    });
+    return htmlString;
+  }
+
   return (
     <>
-
-
 
       <div className="editor-shell">
 
@@ -318,7 +343,6 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
           <ListPlugin />
           <ImagesPlugin />
           <InlineImagePlugin />
-          <TagPlugin onNewCallback={(c) => addTag(c)} />
           <LinkPlugin hasLinkAttributes={false} />
           <LayoutPlugin />
           <DrawIOPlugin />
@@ -383,3 +407,5 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 })
 
 export default Editor;
+
+

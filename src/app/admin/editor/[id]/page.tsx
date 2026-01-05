@@ -19,13 +19,12 @@ import editorTheme from '~/themes/EditorTheme';
 import { useParams } from 'next/navigation';
 import Editor, { ContentState } from '~/components/admin/editor/Editor';
 import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/InlineImageNode';
-
 import ContentMetada from '~/models/ContentMetadata';
 import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
 import TagSelector from "~/components/admin/tagSelector/TagSelector";
 import PostPreview from "~/components/admin/editor/PostPreview";
 import TagService from "~/services/TagService";
-import { $getRoot, $nodesOfType, LexicalEditor, LexicalNode, TextNode } from "lexical";
+import { $getRoot, LexicalNode } from "lexical";
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -149,17 +148,29 @@ export default function PostEditor() {
     
     //@ts-ignore
     const titleEditorState = titleEditorRef.current.getState() as ContentState | null;
-
-    //@ts-ignore
-    const editorState = editorRef.current.getState() as ContentState | null;
+    
     //@ts-ignore
     const descriptionEditorState = descriptionEditorRef.current.getState() as ContentState | null;
-
-    if (!editorState) return
 
     // @ts-ignore
     if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
 
+
+    
+    // @ts-ignore
+    var titleHtml = titleEditorRef.current.toHtml() as string
+    //@ts-ignore
+    editorRef.current.replaceContent(titleHtml, "{{title}}");
+
+    // @ts-ignore
+    var descriptionHtml = descriptionEditorRef.current.toHtml() as string
+    //@ts-ignore
+    editorRef.current.replaceContent(descriptionHtml, "{{description}}");
+
+     //@ts-ignore
+     const editorState = editorRef.current.getState() as ContentState | null;
+
+     if(!editorState)return
 
     post.content = editorState.Content
     post.contents = editorState.Imgs
@@ -167,29 +178,13 @@ export default function PostEditor() {
     post.description = descriptionEditorState?.Content??''
     post.type = metadata.type
 
-
-    //attempt to replace {{title}}
-
-
-      let titleFirstNode: LexicalNode | null = null
-
-      //@ts-ignore
-      titleEditorRef.current.getEditor().read(() => {
-        const root = $getRoot();
-        titleFirstNode = root.getFirstChild();
-      })
-//@ts-ignore
-      editorRef.current.replaceContent(titleFirstNode, "{{title}}");
-     
-    
-
     ////////////////////////////
 
 
     try{
       const result = await service.Save(post)
-      setPost({ ...post, id: result.id })
-
+      setPost({ ...post, id: result.id, content: post.content })
+//debugger
     }catch(error){
 
     }
@@ -222,7 +217,7 @@ export default function PostEditor() {
                     <Editor ref={titleEditorRef} 
                             content={post.title ?? ''} 
                             post={post} onContentDeletedCallback={() => {}} 
-                            config={{ heightRem: '2rem', allowedToolBarOptions:{allowEmogis: true} }}></Editor>
+                            config={{ heightRem: '2rem', allowedToolBarOptions:{allowEmogis: true, allowWidthRule: true} }}></Editor>
                   </div>
                 </div>
                 <div className="collapse bg-base-200 my-1" >
@@ -233,7 +228,7 @@ export default function PostEditor() {
                             content={post.description ?? ''} 
                             post={post} 
                             onContentDeletedCallback={() => {}}
-                            config={{ heightRem: '5rem', allowedToolBarOptions:{allowEmogis: true} }}></Editor>
+                            config={{ heightRem: '5rem', allowedToolBarOptions:{allowEmogis: true, allowWidthRule: true} }}></Editor>
                   </div>
                 </div>
                 <div>

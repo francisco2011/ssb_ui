@@ -86,10 +86,15 @@ export default function ReadonlyEditor({  content, contents, editorTheme, shellC
   
           if (cntnt?.url) c.__src = cntnt.url
         })
-        editor.current.setEditorState(editorState)
         
-        editor.current.setEditable(false)
         
+        queueMicrotask(() => {
+          if (editor?.current) {
+            editor.current.setEditorState(editorState)
+            editor.current.setEditable(false)
+          }
+        });
+
       }
   
 
