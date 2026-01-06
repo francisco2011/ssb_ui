@@ -1,0 +1,17 @@
+import PaginationModel from "./PaginationModel";
+
+export default interface SectionModel{
+
+    id: number | null;
+    name: string;
+    content: string | null;
+    tag: string | null;
+    modifiable: boolean;
+}
+
+export interface SectionModelResponse{
+
+    sections: SectionModel[];
+    pagination: PaginationModel;
+    
+}

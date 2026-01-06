@@ -19,9 +19,6 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
 
 import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
 import ImagesPlugin from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
-import TagSelector from '~/components/admin/tagSelector/TagSelector';
-import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
-import TagPlugin from '~/components/admin/editor/plugins/tagsPlugin/TagPlugin';
 import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from "@lexical/link";
@@ -106,6 +103,7 @@ export type ContentState = {
 
 type props = {
   content: string,
+  contents: ContentModel[],
   post: PostModel,
   onContentDeletedCallback: () => void,
   config: EditorConfiguration
@@ -186,13 +184,13 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       })
 
       imageNodes.forEach(c => {
-        var cntnt = props.post.contents.find(d => d && d.name && d.name == c.__imgId)
+        var cntnt = props.contents.find(d => d && d.name && d.name == c.__imgId)
 
         if (cntnt?.url) c.__src = cntnt.url
       })
 
       inlineImageNodes.forEach(c => {
-        var cntnt = props.post.contents.find(d => d && d.name && d.name == c.__imgId)
+        var cntnt = props.contents.find(d => d && d.name && d.name == c.__imgId)
 
         if (cntnt?.url) c.__src = cntnt.url
       })
@@ -204,7 +202,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       });
     }
 
-  }, [props.post.content]);
+  }, [props.content]);
 
   useEffect(() => {
     const updateViewPortWidth = () => {
