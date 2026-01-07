@@ -121,14 +121,14 @@ export type ToolbarConfig = {
 
 type Props = {
     setIsLinkEditMode: Dispatch<boolean>,
-    post: PostModel,
+    //post: PostModel,
     onPropertiesChange: Dispatch<ToolBarProperties>
     defaultWidth: string,
     onEditorClearCallback: () => void,
     config?: ToolbarConfig
 }
 
-export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesChange, defaultWidth, onEditorClearCallback, config }: Props) {
+export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, defaultWidth, onEditorClearCallback, config }: Props) {
 
     const defaultFontSize = '15px';
     const defaultFontFamily = 'Arial';
@@ -527,10 +527,10 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
     const loadImage = async (file: File | null): Promise<ContentModel | null> => {
 
-        if (file && post.id) {
-            const result = await service.UploadFile(file, post.id, 'imgBody')
-            return result
-        }
+       //if (file && post.id) {
+            //const result = await service.UploadFile(file, post.id, 'imgBody')
+            //return result
+        //}
 
         return null
 
@@ -630,7 +630,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, post, onPropertiesCha
 
                     {
                         config && config.allowImages ?
-                            <InsertImageModal isActive={false} _className={""} _postId={post.id} contentType={"imgBody"} />
+                            <InsertImageModal isActive={false} _className={"max-w-[30rem]"} contentType={"imgBody"} />
                             : null
                     }
 

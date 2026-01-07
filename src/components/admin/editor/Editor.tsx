@@ -331,7 +331,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
         <LexicalComposer initialConfig={editorConfig}>
 
           <EditorRefPlugin editorRef={editor} />
-          <ToolbarPlugin post={props.post}
+          <ToolbarPlugin 
             defaultWidth={contentWidth}
             setIsLinkEditMode={setIsLinkEditMode}
             onPropertiesChange={onToolbarProperties}

@@ -216,6 +216,7 @@ export default function PostEditor() {
                   <div className="collapse-content">
                     <Editor ref={titleEditorRef} 
                             content={post.title ?? ''} 
+                            contents={[]}
                             post={post} onContentDeletedCallback={() => {}} 
                             config={{ heightRem: '2rem', allowedToolBarOptions:{allowEmogis: true, allowWidthRule: true} }}></Editor>
                   </div>
@@ -226,6 +227,7 @@ export default function PostEditor() {
                   <div className="collapse-content">
                     <Editor ref={descriptionEditorRef} 
                             content={post.description ?? ''} 
+                            contents={[]}
                             post={post} 
                             onContentDeletedCallback={() => {}}
                             config={{ heightRem: '5rem', allowedToolBarOptions:{allowEmogis: true, allowWidthRule: true} }}></Editor>
@@ -234,6 +236,7 @@ export default function PostEditor() {
                 <div>
                   <Editor ref={editorRef} 
                           content={post.content ?? ''} 
+                          contents={post.contents}
                           post={post} 
                           onContentDeletedCallback={clearAll}
                           config={{ heightRem: '100rem', allowedToolBarOptions:{allowCode:true, allowColumn: true, 

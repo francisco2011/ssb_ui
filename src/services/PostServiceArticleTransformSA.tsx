@@ -12,6 +12,7 @@ import { HashtagNode } from "@lexical/hashtag";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import HeroEditorTheme from "~/themes/HeroEditorTheme";
 import { EditorState } from "lexical";
+import { DrawIOImageNode } from "~/components/admin/editor/plugins/DrawIOPlugin/DrawIOImageNode";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -22,7 +23,6 @@ function setupDom() {
   const _window = global.window;
   const _document = global.document;
 
-  // @ts-expect-error
   global.window = dom.window;
   global.document = dom.window.document;
 
@@ -70,9 +70,7 @@ export default async function PostServiceArticleTransformSA(limit: number,
 
       var newState = JSON.parse(c.title)
       const width = newState.width
-
       editorState = editor.parseEditorState(newState.editorState)
-
       editor.setEditorState(editorState);
 
       editor.update(() => {

@@ -17,7 +17,6 @@ export function UploadImageDialogBody({
     showAlternativeText,
     onImageLoaded,
     imgClassname,
-    postId,
     contentType,
     alreadyLoadedImgUrl,
     allowLoadInline
@@ -28,7 +27,6 @@ export function UploadImageDialogBody({
     showAlternativeText: boolean,
     onImageLoaded: (payload: InsertImagePayload) => void | null;
     imgClassname: string,
-    postId: number,
     contentType: string,
     alreadyLoadedImgUrl: ImgModel | null,
     allowLoadInline: boolean | undefined
@@ -43,17 +41,14 @@ export function UploadImageDialogBody({
         setLoadInline(!loadInline);
     };
 
-    var _postId = postId;
-
     useEffect(() => {
-        _postId = postId
 
         if (alreadyLoadedImgUrl && alreadyLoadedImgUrl.src && alreadyLoadedImgUrl.name) {
             setSrc(alreadyLoadedImgUrl.src)
             setImgId(alreadyLoadedImgUrl.name)
         }
 
-    }, [postId]);
+    }, []);
 
     const isDisabled = src === '';
 
@@ -64,16 +59,20 @@ export function UploadImageDialogBody({
         if (!files) return
         var file = files[0];
 
-        if (file) {
-            const result = await service.UploadFile(file, _postId, contentType)
-            if (result.url) setSrc(result.url)
-            if (result.name) setImgId(result.name)
+        const reader = new FileReader();
 
-            if (onImageLoaded && result.url && result.name) onImageLoaded({ altText: '', src: result.url, imgId: result.name })
-        }
+        reader.addEventListener("load", () => {
+            
+           if(reader.result) setSrc(reader.result as string)
+            debugger
+        });
 
-        //    if (file) reader.readAsDataURL(file);
-        //}
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+
+
+ 
     };
 
     return (

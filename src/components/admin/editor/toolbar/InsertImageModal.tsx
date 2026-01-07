@@ -1,8 +1,7 @@
 import { faImage, faUnderline } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
-import { FORMAT_TEXT_COMMAND, LexicalEditor } from "lexical";
-import ButtonProps from "./props/IButtonProps";
+import { LexicalEditor } from "lexical";
 
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../plugins/imagePlugin/ImagesPlugin";
 import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
@@ -15,17 +14,14 @@ function ImageDialog({
     activeEditor,
     onClose,
     contentType,
-    _postId,
     imgClassName
 }: {
     activeEditor: LexicalEditor;
     onClose: () => void;
     contentType: string,
-    _postId: number,
     imgClassName: string
 }): JSX.Element {
 
-    const [postId, setPostId] = useState<number>(0)
 
     const onClick = (payload: InsertImagePayload) => {
         activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
@@ -37,35 +33,19 @@ function ImageDialog({
         onClose();
     };
 
-    useEffect(() => {
 
-        if (_postId) {
-            setPostId(_postId)
-        }
-
-    }, [_postId]);
 
     return (
         <>
-            <UploadImageDialogBody allowLoadInline={true} alreadyLoadedImgUrl={null} onClickLoadInline={onClickLoadInline} contentType={contentType} postId={postId} onImageLoaded={() => { }} onClick={onClick} showDialogAction={true} showAlternativeText={true} imgClassname={imgClassName} />
+            <UploadImageDialogBody allowLoadInline={true} alreadyLoadedImgUrl={null} onClickLoadInline={onClickLoadInline} contentType={contentType} onImageLoaded={() => { }} onClick={onClick} showDialogAction={true} showAlternativeText={true} imgClassname={imgClassName} />
         </>
     );
 }
 
-function InsertImageModal({ isActive, contentType, _postId, _className }) {
+function InsertImageModal({ isActive, contentType, _className }) {
 
     const [modal, showModal] = useModal();
     const [editor] = useLexicalComposerContext();
-    const [postId, setPostId] = useState<number>(0)
-
-    useEffect(() => {
-
-        if (_postId) {
-            setPostId(_postId)
-        }
-
-    }, [_postId]);
-
 
     return (
         <><button
@@ -79,7 +59,6 @@ function InsertImageModal({ isActive, contentType, _postId, _className }) {
                         activeEditor={editor}
                         onClose={onClose}
                         contentType={contentType}
-                        _postId={postId}
                         imgClassName={_className}
                     />
 
