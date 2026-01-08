@@ -23,10 +23,11 @@ import {$applyNodeReplacement, createEditor, DecoratorNode} from 'lexical';
 import * as React from 'react';
 import {Suspense} from 'react';
 import $createImageNode from './CreateImageNode';
+import ImageInterface from './ImageInterface';
 
 const ImageComponent = React.lazy(() => import('./ImageComponent'));
 
-export interface ImagePayload {
+export interface ImagePayload extends ImageInterface {
   altText: string;
   caption?: LexicalEditor;
   height?: number;
@@ -182,6 +183,18 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
       width: this.__width === 'inherit' ? 0 : this.__width,
       imgId: this.__imgId
     };
+  }
+
+  toImageInterface(): ImageInterface {
+
+    return {
+      altText: this.getAltText(),
+      height: this.__height === 'inherit' ? 0 : this.__height,
+      showCaption: this.__showCaption,
+      src: this.getSrc(),
+      width: this.__width === 'inherit' ? 0 : this.__width,
+      imgId: this.__imgId
+    }
   }
 
   setWidthAndHeight(

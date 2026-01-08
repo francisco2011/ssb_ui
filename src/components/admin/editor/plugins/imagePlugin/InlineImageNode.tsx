@@ -28,12 +28,13 @@ import type {
   } from 'lexical';
   import * as React from 'react';
   import {Suspense} from 'react';
+import ImageInterface from './ImageInterface';
   
   const InlineImageComponent = React.lazy(() => import('./InlineImageComponent'));
   
   export type Position = 'left' | 'right' | 'full' | undefined;
   
-  export interface InlineImagePayload {
+  export interface InlineImagePayload extends ImageInterface {
     altText: string;
     caption?: LexicalEditor;
     height?: number;
@@ -50,7 +51,9 @@ import type {
     altText?: string;
     showCaption?: boolean;
     position?: Position;
-    isSplitInHalves?: boolean
+    isSplitInHalves?: boolean;
+    src?: string;
+    imgId?: string;
   }
   
   function $convertInlineImageElement(domNode: Node): null | DOMConversionOutput {
@@ -122,7 +125,7 @@ import type {
         isSplitHalves
       }).updateFromJSON(serializedNode);
     }
-  
+
     updateFromJSON(
       serializedNode: LexicalUpdateJSON<SerializedInlineImageNode>,
     ): this {
@@ -193,6 +196,18 @@ import type {
       };
     }
   
+ toImageInterface(): ImageInterface {
+
+    return {
+      altText: this.getAltText(),
+      height: this.__height === 'inherit' ? 0 : this.__height,
+      showCaption: this.__showCaption,
+      src: this.getSrc(),
+      width: this.__width === 'inherit' ? 0 : this.__width,
+      imgId: this.__imgId
+    }
+  }
+
     getSrc(): string {
       return this.__src;
     }
@@ -239,20 +254,14 @@ import type {
 
     update(payload: UpdateInlineImagePayload): void {
       const writable = this.getWritable();
-      const {altText, showCaption, position, isSplitInHalves} = payload;
-      if (altText !== undefined) {
-        writable.__altText = altText;
-      }
-      if (showCaption !== undefined) {
-        writable.__showCaption = showCaption;
-      }
-      if (position !== undefined) {
-        writable.__position = position;
-      }
+      const {altText, showCaption, position, isSplitInHalves, src, imgId} = payload;
+      if (altText) writable.__altText = altText;
+      if (showCaption) writable.__showCaption = showCaption;
+      if (position) writable.__position = position;
+      if(isSplitInHalves) writable.__isSplitHalves = isSplitInHalves
+      if(src) writable.__src = src
+      if(imgId) writable.__imgId = imgId
 
-      if(isSplitInHalves !== undefined){
-        writable.__isSplitHalves = isSplitInHalves
-      }
     }
   
     // View

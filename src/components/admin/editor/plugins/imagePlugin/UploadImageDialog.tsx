@@ -9,6 +9,7 @@ import { ContentType } from "~/models/ContentType";
 import ContentModel from "~/models/ContentModel";
 import ImgModel from "~/models/ImgModel";
 import { InsertInlineImagePayload } from "./InlineImagePlugin";
+import { v4 as uuidv4 } from 'uuid';
 
 export function UploadImageDialogBody({
     onClick,
@@ -32,7 +33,7 @@ export function UploadImageDialogBody({
     allowLoadInline: boolean | undefined
 }) {
     const [src, setSrc] = useState('');
-    const [imgId, setImgId] = useState('');
+    const [imgId, setImgId] = useState(uuidv4());
     const [altText, setAltText] = useState('');
     const [loadInline, setLoadInline] = useState(true)
 
@@ -64,7 +65,7 @@ export function UploadImageDialogBody({
         reader.addEventListener("load", () => {
             
            if(reader.result) setSrc(reader.result as string)
-            debugger
+            
         });
 
   if (file) {

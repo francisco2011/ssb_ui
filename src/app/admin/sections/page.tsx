@@ -136,9 +136,11 @@ export default function Sections() {
             tag: ''
           };
   
-          //const p = await postService.Save(_post)
-          await goTo(null)
+          const p = await service.Save(_section)
+          await goTo(p.id)
     }
+
+
 
     return (
         <div className="">

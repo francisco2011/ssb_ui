@@ -5,6 +5,7 @@ export default interface ContentModel{
     name: string | null;
     url: string | null;
     type: ContentType | string;
-    //mimeType: string;
+    previousId: string | undefined
+
 }
 

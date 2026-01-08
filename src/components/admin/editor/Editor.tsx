@@ -44,7 +44,7 @@ import ToolBarProperties from './ToolbarProperties';
 import { useObserveElementWidth } from './utils/useObserveElementWidth';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin'
-import { InlineImageNode } from './plugins/imagePlugin/InlineImageNode';
+import { InlineImageNode, UpdateInlineImagePayload } from './plugins/imagePlugin/InlineImageNode';
 import InlineImagePlugin from './plugins/imagePlugin/InlineImagePlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import TableCellResizerPlugin from './plugins/TableCellResizer';
@@ -57,6 +57,8 @@ import { LayoutContainerNode } from './plugins/LayoutPlugin/LayoutContainerNode'
 import { LayoutItemNode } from './plugins/LayoutPlugin/LayoutItemNode';
 import ContentModel from '~/models/ContentModel';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
+import ImageInterface from './plugins/imagePlugin/ImageInterface';
+import { SerializedImageNode } from './plugins/imagePluginbak/ImageNode';
 
 type EditorConfiguration = {
   allowedToolBarOptions: ToolbarConfig,
@@ -104,7 +106,6 @@ export type ContentState = {
 type props = {
   content: string,
   contents: ContentModel[],
-  post: PostModel,
   onContentDeletedCallback: () => void,
   config: EditorConfiguration
 }
@@ -131,8 +132,6 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       return replaceContent(externalContent, template, editor.current)
     },
 
-    getEditor: (): LexicalEditor | null => { return editor.current },
-
     getState: (): ContentState | null => {
       return getActualState()
     },
@@ -141,8 +140,18 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       if (!editor?.current) return;
       editor.current.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
       //setIsClearAll(!isClearAll)
+    },
+
+    getAllImages: (): ImageInterface[] => {
+      if (!editor?.current) return [];
+
+      return getAllImages()
+    },
+
+    UpdateImages: (images: ContentModel[]) => {
+      UpdateImages(images)
     }
-  }));
+}));
 
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
@@ -163,6 +172,8 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
     }
   };
+
+  
 
   useEffect(() => {
 
@@ -312,6 +323,53 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     })
   }
 
+  const UpdateImages = (images: ContentModel[]) => {
+    if(!editor?.current) return
+
+    let imageNodes: ImageNode[] = []
+    let imageInLineNodes: InlineImageNode[] = []
+    editor?.current.read(() => {
+      imageNodes = $nodesOfType(ImageNode);
+      imageInLineNodes = $nodesOfType(InlineImageNode)
+    })
+
+    editor?.current.update(() => {
+      for(var img of images){
+        var foundedImgNode = imageNodes.find(c => c.__imgId == img.previousId)
+        var foundedImgInLineNode = imageInLineNodes.find(c => c.__imgId == img.previousId)
+  
+        //if(foundedImgNode){
+        //  if(img.name) foundedImgNode.__imgId = img.name
+        //  if(img.url) foundedImgNode.__src = img.url
+
+        //} 
+        if(foundedImgInLineNode){
+          
+          var updateObj: UpdateInlineImagePayload = {}
+          if(img.name) updateObj.imgId = img.name
+          if(img.url) updateObj.src = img.url
+          foundedImgInLineNode.update(updateObj)
+        }
+      }
+    }, {discrete: true})
+
+  }
+  
+  const getAllImages = (): ImageInterface[] => {
+    if(!editor?.current) return []
+
+    let imageNodes: ImageNode[] = []
+    let imageInLineNodes: InlineImageNode[] = []
+    editor?.current.read(() => {
+      imageNodes = $nodesOfType(ImageNode);
+      imageInLineNodes = $nodesOfType(InlineImageNode)
+    })
+
+    return [...imageNodes.map(c => c.toImageInterface()), 
+            ...imageInLineNodes.map(c => c.toImageInterface())] 
+    
+  }
+
   const toHtml = (): string => {
 
     if (editor?.current == null) return ''
@@ -322,6 +380,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     });
     return htmlString;
   }
+
 
   return (
     <>

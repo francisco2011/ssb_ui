@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { INSERT_INLINE_IMAGE_COMMAND, InsertInlineImagePayload } from "../plugins/imagePlugin/InlineImagePlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import useModal from "~/components/useModal";
+import { v4 as uuidv4 } from 'uuid';
 
 function ImageDialog({
     activeEditor,
@@ -21,7 +22,6 @@ function ImageDialog({
     contentType: string,
     imgClassName: string
 }): JSX.Element {
-
 
     const onClick = (payload: InsertImagePayload) => {
         activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);

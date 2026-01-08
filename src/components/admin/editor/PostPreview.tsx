@@ -73,7 +73,6 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     function onPublishedChange(e) {
         const newState = { ...state, isPublished: e.currentTarget.value == '1' }
         setState({ ...newState })
-        debugger
         onChange(newState)
     }
 

@@ -2,7 +2,37 @@ import ContentModel from "~/models/ContentModel";
 
 export default class ContentService {
 
-    async UploadFile(file: any, postId: number, contentType: string ): Promise<ContentModel> {
+
+    dataURLtoBlob(dataurl: string, fileName: string ): File | null {
+
+        if(!dataurl) throw new Error("dataurl cant be empty, undefined or null")
+
+        var arr = dataurl.split(',') 
+        
+        if(!arr || arr.length < 2) throw new Error("dataurl is not well formated")
+        
+        //@ts-ignore
+        var mime = arr[0].match(/:(.*?);/)[1];
+
+        //@ts-ignore
+        var  bstr = atob(arr[1]) 
+        var n = bstr.length 
+        var u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([new Blob([u8arr], {type:mime})], fileName) ;
+    }
+
+    async UploadFile(file: File|string, postId: number, contentType: string ): Promise<ContentModel> {
+
+        if( typeof file === 'string'){
+
+            const newFile = this.dataURLtoBlob(file, "no_name")
+
+            if(newFile) file = newFile
+         }
+
         var url = 'http://localhost:5079/post/' + postId + '/contentType/' + contentType;
 
         const formData = new FormData();

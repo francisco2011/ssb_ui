@@ -60,7 +60,6 @@ export function UploadImageDialogBody({
     const service = new ContentService()
 
     const loadImage = async (files: FileList | null) => {
-        debugger
         if (!files) return
 
         var file = files[0];

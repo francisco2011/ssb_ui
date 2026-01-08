@@ -96,7 +96,7 @@ export default function SectionEditor() {
     
     ////////////////////////////
 
-
+debugger
     try{
       const result = await service.Save(section)
       setSection({ ...section, id: result.id, content: section.content })
@@ -127,17 +127,22 @@ export default function SectionEditor() {
               <div>
 
 
-
                 <div>
-                  <Editor ref={editorRef} 
-                          content={section.content ?? ''} 
-                          contents={[]}
-                          post={{id: 0, title: ''}} 
-                          onContentDeletedCallback={clearAll}
-                          config={{ heightRem: '100rem', allowedToolBarOptions:{allowCode:true, allowColumn: true, 
-                                                                                  allowDiagram: true, allowEmogis: true,
-                                                                                  allowGif: true, allowImages: true,
-                                                                                  allowTable: true, allowWidthRule: true } }}></Editor>
+
+                </div>
+                <div>
+                <Editor ref={editorRef}
+                    content={section.content ?? ''}
+                    contents={[]}
+                    onContentDeletedCallback={clearAll}
+                    config={{
+                      heightRem: '50rem', allowedToolBarOptions: {
+                        allowCode: true, allowColumn: true,
+                        allowDiagram: true, allowEmogis: true,
+                        allowGif: true, allowImages: true,
+                        allowTable: true, allowWidthRule: true
+                      }
+                    }}></Editor>
                 </div>
 
               </div>

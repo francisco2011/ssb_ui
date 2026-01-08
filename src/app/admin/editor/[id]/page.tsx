@@ -25,6 +25,9 @@ import TagSelector from "~/components/admin/tagSelector/TagSelector";
 import PostPreview from "~/components/admin/editor/PostPreview";
 import TagService from "~/services/TagService";
 import { $getRoot, LexicalNode } from "lexical";
+import ImageInterface from "~/components/admin/editor/plugins/imagePlugin/ImageInterface";
+import ContentService from "~/services/ContentService";
+import ContentModel from "~/models/ContentModel";
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -55,6 +58,7 @@ export default function PostEditor() {
   const params = useParams<{ id: string; }>()
   const service = new PostService();
   const tagService = new TagService();
+  const contentService = new ContentService()
 
   const [tags, setTags] = useState<string[]>([])
   const [post, setPost] = useState<PostModel | null>(null)
@@ -110,7 +114,7 @@ export default function PostEditor() {
     var isPublishedStateSame = metadata.isPublished == _metadata.isPublished
     setMetadata(_metadata)
 
-    if(!isPublishedStateSame && post?.id){
+    if (!isPublishedStateSame && post?.id) {
       await service.changePublishState(post?.id)
     }
 
@@ -130,62 +134,70 @@ export default function PostEditor() {
   }
 
   const onSaveTags = async () => {
-    
+
     if (!post || !post.id) return
     if (!editorRef?.current) return;
 
-    var model = {tags: tags};
+    var model = { tags: tags };
 
     await tagService.updateTags(post.id, model);
   }
 
 
+  const saveImgs = async (images: ImageInterface[]): Promise<ContentModel[]> => {
+
+    const result: ContentModel[] = []
+
+    const imagesToSave = images.filter(c => c.src.startsWith("data:image"))
+
+    for (var img of imagesToSave) {
+      const newImg = await contentService.UploadFile(img.src, post?.id ?? 0, "imgBody");
+      newImg.previousId = img.imgId
+      result.push(newImg)
+    }
+
+    return result
+  }
 
   const onsave = async () => {
     if (!post) return
     if (!editorRef?.current || !titleEditorRef?.current) return;
 
-    
+
     //@ts-ignore
     const titleEditorState = titleEditorRef.current.getState() as ContentState | null;
-    
+
     //@ts-ignore
     const descriptionEditorState = descriptionEditorRef.current.getState() as ContentState | null;
 
     // @ts-ignore
     if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
 
-
-    
-    // @ts-ignore
-    var titleHtml = titleEditorRef.current.toHtml() as string
     //@ts-ignore
-    editorRef.current.replaceContent(titleHtml, "{{title}}");
-
-    // @ts-ignore
-    var descriptionHtml = descriptionEditorRef.current.toHtml() as string
+    const images = editorRef.current.getAllImages() as ImageInterface[]
+    const newImages = await saveImgs(images)
     //@ts-ignore
-    editorRef.current.replaceContent(descriptionHtml, "{{description}}");
+    editorRef.current.UpdateImages(newImages)
 
-     //@ts-ignore
-     const editorState = editorRef.current.getState() as ContentState | null;
+    //@ts-ignore
+    const editorState = editorRef.current.getState() as ContentState | null;
 
-     if(!editorState)return
+    if (!editorState) return
 
     post.content = editorState.Content
     post.contents = editorState.Imgs
-    post.title = titleEditorState?.Content??''
-    post.description = descriptionEditorState?.Content??''
+    post.title = titleEditorState?.Content ?? ''
+    post.description = descriptionEditorState?.Content ?? ''
     post.type = metadata.type
 
     ////////////////////////////
+    debugger
 
-
-    try{
+    try {
       const result = await service.Save(post)
       setPost({ ...post, id: result.id, content: post.content })
-//debugger
-    }catch(error){
+
+    } catch (error) {
 
     }
 
@@ -210,39 +222,41 @@ export default function PostEditor() {
 
               <div>
 
-              <div className="collapse bg-base-200 my-1" >
+                <div className="collapse bg-base-200 my-1" >
                   <input type="checkbox" />
                   <div className="collapse-title text-l font-medium">Title</div>
                   <div className="collapse-content">
-                    <Editor ref={titleEditorRef} 
-                            content={post.title ?? ''} 
-                            contents={[]}
-                            post={post} onContentDeletedCallback={() => {}} 
-                            config={{ heightRem: '2rem', allowedToolBarOptions:{allowEmogis: true, allowWidthRule: true} }}></Editor>
+                    <Editor ref={titleEditorRef}
+                      content={post.title ?? ''}
+                      contents={[]}
+                      onContentDeletedCallback={() => { }}
+                      config={{ heightRem: '2rem', allowedToolBarOptions: { allowEmogis: true, allowWidthRule: true } }}></Editor>
                   </div>
                 </div>
                 <div className="collapse bg-base-200 my-1" >
                   <input type="checkbox" />
                   <div className="collapse-title text-l font-medium">Edit Description</div>
                   <div className="collapse-content">
-                    <Editor ref={descriptionEditorRef} 
-                            content={post.description ?? ''} 
-                            contents={[]}
-                            post={post} 
-                            onContentDeletedCallback={() => {}}
-                            config={{ heightRem: '5rem', allowedToolBarOptions:{allowEmogis: true, allowWidthRule: true} }}></Editor>
+                    <Editor ref={descriptionEditorRef}
+                      content={post.description ?? ''}
+                      contents={[]}
+                      onContentDeletedCallback={() => { }}
+                      config={{ heightRem: '5rem', allowedToolBarOptions: { allowEmogis: true, allowWidthRule: true } }}></Editor>
                   </div>
                 </div>
                 <div>
-                  <Editor ref={editorRef} 
-                          content={post.content ?? ''} 
-                          contents={post.contents}
-                          post={post} 
-                          onContentDeletedCallback={clearAll}
-                          config={{ heightRem: '100rem', allowedToolBarOptions:{allowCode:true, allowColumn: true, 
-                                                                                  allowDiagram: true, allowEmogis: true,
-                                                                                  allowGif: true, allowImages: true,
-                                                                                  allowTable: true, allowWidthRule: true } }}></Editor>
+                  <Editor ref={editorRef}
+                    content={post.content ?? ''}
+                    contents={post.contents}
+                    onContentDeletedCallback={clearAll}
+                    config={{
+                      heightRem: '100rem', allowedToolBarOptions: {
+                        allowCode: true, allowColumn: true,
+                        allowDiagram: true, allowEmogis: true,
+                        allowGif: true, allowImages: true,
+                        allowTable: true, allowWidthRule: true
+                      }
+                    }}></Editor>
                 </div>
 
               </div>
@@ -252,7 +266,7 @@ export default function PostEditor() {
               <div className='w-64 ml-2 mt-4'>
 
                 <div className='sticky top-3'>
-                  <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} onSaveCallback={onSaveTags}/>
+                  <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} onSaveCallback={onSaveTags} />
                 </div>
 
 
