@@ -23,6 +23,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@lexical/code-shiki": "^0.39.0",
     "@lexical/code": "0.39.0",
     "@lexical/hashtag": "0.39.0",
     "@lexical/headless": "0.39.0",
@@ -42,13 +43,13 @@
     "lexical": "0.39.0",
     "lodash-es": "^4.17.21",
     "next": "^15.0.1",
-    "prismjs": "^1.29.0",
     "react": "^18.3.1",
     "react-colorful": "^5.6.1",
     "react-dom": "^18.3.1",
     "react-select": "^5.9.0",
     "uuid": "^13.0.0",
-    "zod": "^3.23.3"
+    "zod": "^3.23.3",
+    "prismjs": "^1.29.0"
   },
   "devDependencies": {
     "@types/eslint": "^8.56.10",

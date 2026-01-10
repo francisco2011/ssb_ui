@@ -1,22 +1,24 @@
 import React, { useCallback, useContext } from 'react';
 import SelectProps from './props/ISelectProps';
 import SelectBase from '~/components/SelectBase';
+import {
+  CODE_LANGUAGE_FRIENDLY_NAME_MAP,
+} from '@lexical/code';
 
-const defaultHeadingOptions: any = [
-  ['', 'normal'],
-  ['c', 'C'],
-  ['csharp', 'csharp'],
-  ['c-like', 'C-like'],
-  ['html', 'HTML'],
-  ['xml', 'XML'],
-  ['sql', 'SQL'],
-  ['typescript', 'TypeScript'],
-  ['java', 'Java'],
-  ['javascript', 'JavaScript'],
-  ['plain text', 'Plain Text']
-];
 
-const CodeSelect = ({ selectedOption, callback }: SelectProps<string>) => {
+function getCodeLanguageOptions(): [string, string][] {
+  const options: [string, string][] = [];
+
+  for (const [lang, friendlyName] of Object.entries(
+    CODE_LANGUAGE_FRIENDLY_NAME_MAP,
+  )) {
+    options.push([lang, friendlyName]);
+  }
+
+  return options;
+}
+
+const CodeSelect = ({ selectedOption, callback }: SelectProps<string, any>) => {
 
 
   const onSelect = useCallback(
@@ -31,7 +33,7 @@ const CodeSelect = ({ selectedOption, callback }: SelectProps<string>) => {
       <SelectBase
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm block w-20 p-1.3"
         onChange={onSelect}
-        options={defaultHeadingOptions}
+        options={getCodeLanguageOptions()}
         value={selectedOption}
       />
       <i className="chevron-down inside" />

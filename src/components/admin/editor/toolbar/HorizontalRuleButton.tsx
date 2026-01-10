@@ -1,9 +1,7 @@
 import { faRotateLeft, faRotateRight, faRulerHorizontal } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
-import { LexicalEditor, REDO_COMMAND, UNDO_COMMAND } from "lexical";
-import ButtonProps from "./props/IButtonProps";
-import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
+import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/extension";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 

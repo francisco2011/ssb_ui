@@ -8,7 +8,6 @@ import { ListItemNode, ListNode } from "@lexical/list";
 import { HashtagNode } from "@lexical/hashtag";
 import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
 import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
-import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { EditorState, LexicalEditor } from "lexical";
 const jsdom = require("jsdom");
@@ -46,8 +45,6 @@ export default async function Header(): Promise<JSX.Element> {
             ListItemNode,
             TagNode,
             EmojiNode,
-            CodeNode,
-            CodeHighlightNode,
             HashtagNode,
             AutoLinkNode,
             LinkNode],

@@ -29,29 +29,6 @@ import ImageInterface from "~/components/admin/editor/plugins/imagePlugin/ImageI
 import ContentService from "~/services/ContentService";
 import ContentModel from "~/models/ContentModel";
 
-const editorConfig = {
-  namespace: 'Main Editor',
-  nodes: [HeadingNode,
-    QuoteNode,
-    ListNode,
-    ListItemNode,
-    ImageNode,
-    InlineImageNode,
-    TagNode,
-    EmojiNode,
-    CodeNode,
-    CodeHighlightNode,
-    HashtagNode,
-    AutoLinkNode,
-    LinkNode
-  ],
-  // Handling of errors during update
-  onError(error: Error) {
-    throw error;
-  },
-  // The editor theme
-  theme: editorTheme,
-};
 
 export default function PostEditor() {
 
@@ -191,7 +168,6 @@ export default function PostEditor() {
     post.type = metadata.type
 
     ////////////////////////////
-    debugger
 
     try {
       const result = await service.Save(post)
@@ -254,7 +230,8 @@ export default function PostEditor() {
                         allowCode: true, allowColumn: true,
                         allowDiagram: true, allowEmogis: true,
                         allowGif: true, allowImages: true,
-                        allowTable: true, allowWidthRule: true
+                        allowTable: true, allowWidthRule: true,
+                        allowSection: true
                       }
                     }}></Editor>
                 </div>

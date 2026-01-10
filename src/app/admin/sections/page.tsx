@@ -123,8 +123,8 @@ export default function Sections() {
     }
 
     const onDeleteClicked = async (id: number) => {
-    //    const p = await postService.Delete(id)
-    //    await onClearClicked()
+        await service.Delete(id)
+        await onClearClicked()
     }
 
     const onNewClicked = async () => {

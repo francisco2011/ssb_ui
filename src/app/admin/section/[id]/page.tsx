@@ -17,6 +17,7 @@ import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/I
 import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
 import SectionService from "~/services/SectionService";
 import SectionModel from "~/models/SectionModel";
+import TextInput from "~/components/TextInput";
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -48,18 +49,21 @@ export default function SectionEditor() {
   const service = new SectionService();
 
   const [section, setSection] = useState<SectionModel | null>(null)
-  
+
   const [isClearAll, setIsClearAll] = useState<boolean>(false);
+
+  const [name, setName] = useState<string>('')
+
   const editorRef = useRef(null);
-  
+
   useEffect(() => {
 
     const get = async () => {
 
       if (params?.id && params.id != 'none') {
         const p = await service.Get(params.id)
-
         setSection(p)
+        setName(p.name)
 
       } else {
         const section: SectionModel = {
@@ -84,27 +88,24 @@ export default function SectionEditor() {
   }
 
   const onsave = async () => {
-    if (!section) return
+    if (!section || !section.id) return
     if (!editorRef?.current) return;
 
-     //@ts-ignore
-     const editorState = editorRef.current.getState() as ContentState | null;
+    //@ts-ignore
+    const editorState = editorRef.current.getState() as ContentState | null;
 
-     if(!editorState)return
+    if (!editorState) return
 
     section.content = editorState.Content
+    section.name = name
+
+      ////////////////////////////
+
+      
+
+  await service.Update(section.id, section)
+  setSection({ ...section, content: section.content })
     
-    ////////////////////////////
-
-debugger
-    try{
-      const result = await service.Save(section)
-      setSection({ ...section, id: result.id, content: section.content })
-//debugger
-    }catch(error){
-
-    }
-
 
   }
 
@@ -117,6 +118,11 @@ debugger
         <>
 
           <main className="flex min-h-screen flex-col">
+            
+
+            <div className="w-[50rem]">
+              <TextInput onChange={setName} value={name} label="Name"></TextInput>
+            </div>
 
             <div className="grid grid-cols-[5%_70%_25%] w-[75rem]">
 
@@ -125,13 +131,8 @@ debugger
               </div>
 
               <div>
-
-
                 <div>
-
-                </div>
-                <div>
-                <Editor ref={editorRef}
+                  <Editor ref={editorRef}
                     content={section.content ?? ''}
                     contents={[]}
                     onContentDeletedCallback={clearAll}

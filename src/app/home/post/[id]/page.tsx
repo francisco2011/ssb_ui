@@ -32,7 +32,7 @@ export default function PostEditor() {
     <>
 
     {
-        post ? <PostReadonlyEditor content={post.content} contents={post.contents} /> : null
+        post ? <PostReadonlyEditor post={post} /> : null
     }
     
     </>

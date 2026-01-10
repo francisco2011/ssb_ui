@@ -1,6 +1,5 @@
 'use client'
 
-import 'prismjs/components/prism-csharp';
 import 'prismjs/themes/prism-coy.css'
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
@@ -42,8 +41,7 @@ import { ContentType } from '~/models/ContentType';
 import ContentEditable from '~/components/ContentEditable';
 import ToolBarProperties from './ToolbarProperties';
 import { useObserveElementWidth } from './utils/useObserveElementWidth';
-import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
-import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin'
+import { HorizontalRuleNode } from '@lexical/extension';
 import { InlineImageNode, UpdateInlineImagePayload } from './plugins/imagePlugin/InlineImageNode';
 import InlineImagePlugin from './plugins/imagePlugin/InlineImagePlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
@@ -58,7 +56,9 @@ import { LayoutItemNode } from './plugins/LayoutPlugin/LayoutItemNode';
 import ContentModel from '~/models/ContentModel';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import ImageInterface from './plugins/imagePlugin/ImageInterface';
-import { SerializedImageNode } from './plugins/imagePluginbak/ImageNode';
+import { SectionNode } from './plugins/SectionPlugin/SectionNode';
+import SectionPlugin from './plugins/SectionPlugin/SectionPlugin';
+import ContentToHtmlUtil from '~/services/ContentToHtmlUtil';
 
 type EditorConfiguration = {
   allowedToolBarOptions: ToolbarConfig,
@@ -85,7 +85,8 @@ const editorConfig = {
     TableRowNode,
     DrawIOImageNode,
     LayoutContainerNode,
-    LayoutItemNode
+    LayoutItemNode,
+    SectionNode
   ],
   // Handling of errors during update
   onError(error: Error) {
@@ -408,7 +409,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
           <LexicalAutoLinkPlugin />
           <ClickableLinkPlugin />
           <OnChangePlugin onChange={onChange} />
-          <HorizontalRulePlugin />
+          <SectionPlugin/>
           <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
           <TableCellResizerPlugin />
 

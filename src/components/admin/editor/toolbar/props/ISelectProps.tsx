@@ -1,8 +1,8 @@
 import { LexicalEditor } from "lexical";
 
-interface SelectProps<selectedOptionType> {
+interface SelectProps<selectedOptionType, callbackType> {
     selectedOption: selectedOptionType;
-    callback: any;
+    callback: callbackType;
 }
 
 export default SelectProps;

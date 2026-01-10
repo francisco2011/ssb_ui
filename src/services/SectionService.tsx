@@ -53,14 +53,24 @@ export default class SectionService {
     }
   }
 
-  async List(limit: number, offset: number): Promise<SectionModelResponse> {
+  async List(limit: number, offset: number, tags?: string[], includeContent?: boolean): Promise<SectionModelResponse> {
   
       var url = "http://localhost:5079/section?limit=" + limit + "&offset=" + offset;
 
-      var response: Response | undefined = undefined;
-  
-      response = await fetch(url);
-  
+      if(tags && tags.length > 0){
+
+        tags.forEach(c => {
+          url += "&tags=" + c
+        })
+
+      } 
+
+      if(includeContent){
+        url += "&includeContent=" + includeContent
+      }
+
+      var response: Response = await fetch(url);
+      
       const data = await response.json();
       
       if (data.error) {
@@ -70,6 +80,26 @@ export default class SectionService {
   
       
       return data;
+    }
+
+    async Delete(id: number){
+      var url = "http://localhost:5079/section/" + id;
+  
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: new Headers({ 'content-type': 'application/json' }),
+      });
+  
+  
+      if (response.status != 204) {
+  
+        var error = await response.text();
+  
+        console.error('Fetch error:', error);
+        throw error;
+      }
+  
+  
     }
 
 

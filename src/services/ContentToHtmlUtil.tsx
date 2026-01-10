@@ -13,7 +13,16 @@ import { AutoLinkNode, LinkNode } from "@lexical/link";
 import HeroEditorTheme from "~/themes/HeroEditorTheme";
 import { EditorState } from "lexical";
 import { DrawIOImageNode } from "~/components/admin/editor/plugins/DrawIOPlugin/DrawIOImageNode";
+import editorTheme from "~/themes/EditorTheme";
+import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
+import { HorizontalRuleNode } from "@lexical/extension";
+import { InlineImageNode } from "~/components/admin/editor/plugins/imagePlugin/InlineImageNode";
+import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import { LayoutContainerNode } from "~/components/admin/editor/plugins/LayoutPlugin/LayoutContainerNode";
+import { LayoutItemNode } from "~/components/admin/editor/plugins/LayoutPlugin/LayoutItemNode";
 import { SectionNode } from "~/components/admin/editor/plugins/SectionPlugin/SectionNode";
+
+
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -33,74 +42,63 @@ function setupDom() {
   };
 }
 
-export default async function PostServiceArticleTransformSA(limit: number,
-  offset: number,
-  typeId?: number,
-  tags?: string[], published?: boolean): Promise<PostModelResponse> {
+export default async function ContentToHtmlUtil(contents:Map<string, string>): Promise<Map<string, string>> {
 
-  const service = new PostServiceSA();
+    const result = new Map<string, string>()
 
   const editor = createHeadlessEditor({
-    namespace: 'Readonly-editor',
+    namespace: 'Main Editor',
     nodes: [HeadingNode,
       QuoteNode,
       ListNode,
       ListItemNode,
-      TagNode,
+      ImageNode,
       EmojiNode,
       CodeNode,
       CodeHighlightNode,
       HashtagNode,
       AutoLinkNode,
-      LinkNode, SectionNode],
+      LinkNode,
+      HorizontalRuleNode,
+      InlineImageNode,
+      TableNode,
+      TableCellNode,
+      TableRowNode,
+      DrawIOImageNode,
+      LayoutContainerNode,
+      LayoutItemNode,
+      SectionNode
+    ],
     // Handling of errors during update
     onError(error: Error) {
       throw error;
     },
-    theme: HeroEditorTheme
+    // The editor theme
+    theme: editorTheme,
+  
   });
 
   const cleanup = setupDom();
 
-  var posts = await service.List(limit, offset, typeId, tags, published, false);
+for(var cnt of contents){
 
-  posts.posts.forEach(c => {
+    let editorState: EditorState | null = null
+    var newState = JSON.parse(cnt[1])
+    editorState = editor.parseEditorState(newState.editorState)
 
-    if (c.title) {
-      let editorState: EditorState | null = null
+    if(!editorState) throw new Error("Conversion failed for: " + cnt[0])
 
-      var newState = JSON.parse(c.title)
-      const width = newState.width
-      editorState = editor.parseEditorState(newState.editorState)
-      editor.setEditorState(editorState);
+    editor.setEditorState(editorState);
 
-      editor.update(() => {
+    editor.update(() => {
         const _html = $generateHtmlFromNodes(editor, null);
-        c._titleHtml = { value: _html, width: width }
+        result.set(cnt[0], _html)
       });
+}
 
-    }
 
-    if (c.description) {
-      let editorState: EditorState | null = null
-
-      var newState = JSON.parse(c.description)
-      const width = newState.width
-
-      editorState = editor.parseEditorState(newState.editorState)
-
-      editor.setEditorState(editorState);
-
-      editor.update(() => {
-        const _html = $generateHtmlFromNodes(editor, null);
-        c._descriptionHtml = { value: _html, width: width }
-      });
-
-    }
-
-  })
 
   cleanup()
-  return posts
+  return result
 
 }

@@ -19,6 +19,8 @@ import {
     NodeKey,
     $getNodeByKey,
     $isElementNode,
+    $createTextNode,
+    COMMAND_PRIORITY_EDITOR,
 } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
@@ -49,7 +51,7 @@ import {
 } from "@lexical/list";
 
 
-import { mergeRegister } from "@lexical/utils";
+import { $insertNodeToNearestRoot, mergeRegister } from "@lexical/utils";
 import ItalicButton from "./toolbar/ItalicButton";
 import BoldButton from "./toolbar/BoldButton";
 import UnderlineButton from "./toolbar/ButtonUnderline";
@@ -68,7 +70,7 @@ import OrderedListButton from "./toolbar/OrderedListButton";
 import QuoteButton from "./toolbar/QuoteButton";
 import InsertImageModal from "./toolbar/InsertImageModal";
 import LanguageSelect from "./toolbar/CodeSelect";
-import { $createCodeNode, $isCodeHighlightNode, $isCodeNode } from "@lexical/code";
+import { $createCodeNode, $isCodeHighlightNode, $isCodeNode, CODE_LANGUAGE_MAP } from "@lexical/code";
 import CodeButton from "./toolbar/CodeButton";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { sanitizeUrl } from "~/components/admin/editor/plugins/shared/url";
@@ -107,6 +109,9 @@ import { INSERT_DRAW_IO_IMAGE_COMMAND } from "./plugins/DrawIOPlugin";
 import InsertColumnLayoutModal from "./toolbar/InsertColumnLayaoutModal";
 import ClearEditorButton from "./toolbar/ClearEditorButton";
 import { INSERT_LAYOUT_COMMAND } from "./plugins/LayoutPlugin";
+import SectionSelect, { SelectionResult } from "./toolbar/SectionSelect";
+import { $createHorizontalRuleNode, INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/extension";
+import { $createSectionNode } from "./plugins/SectionPlugin/SectionNode";
 
 export type ToolbarConfig = {
     allowImages?: boolean,
@@ -116,7 +121,8 @@ export type ToolbarConfig = {
     allowTable?: boolean,
     allowColumn?: boolean,
     allowWidthRule?: boolean,
-    allowCode?: boolean
+    allowCode?: boolean,
+    allowSection?: boolean
 }
 
 type Props = {
@@ -152,6 +158,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, d
     const [isCode, setIsCode] = useState(false);
     const [fontSize, setFontSize] = useState<string>(defaultFontSize);
     const [fontFamily, setFontFamily] = useState<string>(defaultFontFamily);
+    const [section, setSection] = useState<string>("");
     const [lineHeight, setLineHeight] = useState<string>(defaultLineHeight);
     const [headingSize, setHeadingSize] = useState<string>('');
     const [isBulletList, setIsBulletList] = useState(false);
@@ -250,6 +257,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, d
                     defaultFontFamily
                 )
             );
+
 
             setLineHeight(
                 $getSelectionStyleValueForProperty(
@@ -362,6 +370,9 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, d
 
     const applyCodeLanguage = useCallback(
         (language: string) => {
+
+            language =
+              language as keyof typeof CODE_LANGUAGE_MAP;
             editor.update(() => {
                 let selection = $getSelection();
                 if (selection && $isRangeSelection(selection)) {
@@ -427,6 +438,22 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, d
 
 
                     var newNode = $createEmojiNode('', emoji)
+                    selection?.insertNodes([newNode])
+
+                }
+            });
+        },
+        [editor]
+    )
+
+    const insertSection = useCallback(
+        (section: SelectionResult) => {
+            editor.update(() => {
+
+                const selection = $getSelection();
+                if ($isRangeSelection(selection)) {
+
+                    var newNode = $createSectionNode(section.tag)
                     selection?.insertNodes([newNode])
 
                 }
@@ -507,6 +534,18 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, d
                 },
                 LowPriority,
             ),
+            editor.registerCommand(
+                INSERT_HORIZONTAL_RULE_COMMAND,
+                () => {
+                  const horizontalRuleNode = $createHorizontalRuleNode();
+                  // Custom logic can be added here, e.g., to replace an empty block
+                  editor.update(() => {
+                      $insertNodeToNearestRoot(horizontalRuleNode);
+                  });
+                  return true;
+                },
+                COMMAND_PRIORITY_EDITOR,
+              ),
 
         );
 
@@ -667,7 +706,12 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, d
                             : null
                     }
 
-
+                    {
+                        config && config.allowSection ?
+                        <SectionSelect selectedOption={section} callback={insertSection}  />
+                        : null
+                    }
+                    
 
                 </div>
 
