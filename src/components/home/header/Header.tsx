@@ -10,6 +10,7 @@ import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
 import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { EditorState, LexicalEditor } from "lexical";
+import { SectionNode } from "~/components/admin/editor/plugins/SectionPlugin/SectionNode";
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
@@ -47,7 +48,7 @@ export default async function Header(): Promise<JSX.Element> {
             EmojiNode,
             HashtagNode,
             AutoLinkNode,
-            LinkNode],
+            LinkNode,SectionNode],
         // Handling of errors during update
         onError(error: Error) {
             throw error;

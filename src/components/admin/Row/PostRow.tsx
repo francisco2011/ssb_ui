@@ -1,11 +1,11 @@
-import { faPenToSquare, faToggleOn, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faClone, faPenToSquare, faToggleOn, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PostModel from "~/models/PostModel";
 import {  format } from "date-fns";
 
 
 
-export default function PostRow({post, onEditClickCallback, onDeleteClickCallback}: {post: PostModel, onEditClickCallback: any, onDeleteClickCallback: any}) {
+export default function PostRow({post, onEditClickCallback, onDeleteClickCallback,onCloneClickCallback}: {post: PostModel, onEditClickCallback: any, onDeleteClickCallback: any, onCloneClickCallback: any}) {
 
     return (
 
@@ -26,6 +26,9 @@ export default function PostRow({post, onEditClickCallback, onDeleteClickCallbac
             </button>
             <button className="btn-md" onClick={() => (onDeleteClickCallback(post.id))}>
             <FontAwesomeIcon className="w-5 h-5" icon={faTrash} />
+            </button>
+            <button className="btn-md" onClick={() => (onCloneClickCallback(post.id))}>
+            <FontAwesomeIcon className="w-5 h-5" icon={faClone} />
             </button>
         </td>
       </tr>

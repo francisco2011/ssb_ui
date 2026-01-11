@@ -19,10 +19,13 @@ useEffect(() => {
         const allOptions = await service.List(100,0)
 
         if(allOptions.sections){
-            const selectableOptions =  allOptions.sections.filter(c => c.name && c.tag)
+          //@ts-ignore
+            let selectableOptions:[string, string][] = allOptions.sections.filter(c => c.name && c.tag != null)
                                                             .map(c => [c.tag, c.name])
             
                                                             //@ts-ignore
+            selectableOptions = [["Select section","Selection section"] , ...selectableOptions]
+
             setOptions(selectableOptions)
         }
     } 

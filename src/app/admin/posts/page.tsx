@@ -171,6 +171,11 @@ export default function Posts() {
         await onClearClicked()
     }
 
+    const onCloneClicked = async (id: number) => {
+        const newId = await postService.Clone(id)
+        await goTo(newId)
+    }
+
     const onNewClicked = async () => {
         const _post: PostModel = {
             id: null,
@@ -267,7 +272,7 @@ export default function Posts() {
                     </thead>
                     <tbody>
                         {
-                            postResponse?.posts.map(c => <PostRow key={c.id} post={c} onEditClickCallback={goTo} onDeleteClickCallback={onDeleteClicked} />)
+                            postResponse?.posts.map(c => <PostRow key={c.id} post={c} onCloneClickCallback={onCloneClicked} onEditClickCallback={goTo} onDeleteClickCallback={onDeleteClicked} />)
                         }
                     </tbody>
                 </table>

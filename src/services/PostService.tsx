@@ -17,6 +17,24 @@ export default class PostService {
     return data;
   }
 
+  async Clone(id: number): Promise<number> {
+    var url = "http://localhost:5079/post/" + id +"/clone"; 
+
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: new Headers({ 'content-type': 'application/json' }),
+    });
+    const data = await response.json();
+
+    if (data.error) {
+      console.error(data.error)
+      throw new Error("Error while loading tags")
+    }
+debugger
+    return data as number;
+  }
+
   async Delete(id: number){
     var url = "http://localhost:5079/post/" + id;
 

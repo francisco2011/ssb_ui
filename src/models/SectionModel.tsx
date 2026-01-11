@@ -7,7 +7,7 @@ export default interface SectionModel{
     content: string | null;
     tag: string | null;
     modifiable: boolean;
-    _htmlContent: string
+    _htmlContent: string 
 }
 
 export interface SectionModelResponse{

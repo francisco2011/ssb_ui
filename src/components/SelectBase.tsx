@@ -4,14 +4,14 @@ const SelectBase = ({
   onChange,
   className,
   options,
-  value,
+  value
 }: {
   className: string;
   onChange: (event: { target: { value: string } }) => void;
   options: [string, string][];
   value: string;
 }): JSX.Element => {
-  return (
+return (
     <select className={className} onChange={onChange} value={value}>
       {options.map(([option, text]) => (
         <option key={option} value={option}>
