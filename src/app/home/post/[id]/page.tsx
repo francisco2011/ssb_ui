@@ -5,13 +5,16 @@ import PostModel from '~/models/PostModel';
 import PostService from '~/services/PostService';
 import { useParams, useSearchParams } from 'next/navigation';
 import PostReadonlyEditor from '~/components/home/readonlyEditor/postReadOnlyEditor';
+import ContentService from '~/services/ContentService';
 
 export default function PostEditor() {
 
   const params = useParams<{ id: string; }>()
   const service = new PostService();
+  const contentService = new ContentService();
 
   const [post, setPost] = useState<PostModel | null> (null)
+  const [htmlContent, setHtmlContent] = useState<string | null> (null)
 
   useEffect(() => {
     
@@ -20,8 +23,16 @@ export default function PostEditor() {
       if(params?.id && params.id != 'none'){
         const p = await service.Get(params.id)
         
-        setPost(p)
-  
+        const render = p.contents.find(c => c.type == "render")
+
+        //TODO: ONLY HTML WILL BE ALLOWED
+        if(render && render.url){
+          const htmlContent = await contentService.GetExternalContentAsStr(render.url)
+          setHtmlContent(htmlContent)
+        }else{
+          setPost(p)
+        }
+
       }
     }
     getPost()
@@ -33,6 +44,10 @@ export default function PostEditor() {
 
     {
         post ? <PostReadonlyEditor post={post} /> : null
+    }
+
+    {
+        htmlContent ? <div dangerouslySetInnerHTML={{ __html: htmlContent }}></div> : null
     }
     
     </>

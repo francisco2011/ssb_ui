@@ -5,9 +5,9 @@ export default interface SectionModel{
     id: number | null;
     name: string;
     content: string | null;
+    contentHtml: string | null;
     tag: string | null;
     modifiable: boolean;
-    _htmlContent: string 
 }
 
 export interface SectionModelResponse{

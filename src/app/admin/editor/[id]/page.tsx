@@ -28,6 +28,8 @@ import { $getRoot, LexicalNode } from "lexical";
 import ImageInterface from "~/components/admin/editor/plugins/imagePlugin/ImageInterface";
 import ContentService from "~/services/ContentService";
 import ContentModel from "~/models/ContentModel";
+import SectionService from "~/services/SectionService";
+import SectionModel, { SectionModelResponse } from "~/models/SectionModel";
 
 
 export default function PostEditor() {
@@ -36,6 +38,7 @@ export default function PostEditor() {
   const service = new PostService();
   const tagService = new TagService();
   const contentService = new ContentService()
+  const sectionService = new SectionService()
 
   const [tags, setTags] = useState<string[]>([])
   const [post, setPost] = useState<PostModel | null>(null)
@@ -67,7 +70,7 @@ export default function PostEditor() {
 
       } else {
         let _post: PostModel = {
-          id: null,
+          id: undefined,
           title: '',
           description: '',
           content: null,
@@ -137,7 +140,7 @@ export default function PostEditor() {
   }
 
   const onsave = async () => {
-    if (!post) return
+    if (!post || !post.id) return
     if (!editorRef?.current || !titleEditorRef?.current) return;
 
 
@@ -169,6 +172,15 @@ export default function PostEditor() {
 
     ////////////////////////////
 
+    /////Save HTML/////
+    
+   const html = await generateHtml()
+   
+   const htmlAsFile = contentService.htmltoFile(html, "render.html")
+   await contentService.UploadFile(htmlAsFile, post.id, "render")
+
+    ///////////////////
+    
     try {
       const result = await service.Save(post)
       setPost({ ...post, id: result.id, content: post.content })
@@ -178,6 +190,63 @@ export default function PostEditor() {
     }
 
 
+  }
+
+
+const loadSections = async (): Promise<SectionModelResponse> => {
+
+      if (!editorRef || !titleEditorRef.current) throw new Error("Editor ref can not be null");
+
+        //@ts-ignore
+      var allSections = editorRef.current.getAllSections() as string[]
+      var sections = await sectionService.List(allSections.length, 0, allSections, true)
+      return sections
+}
+
+
+   const generateHtml = async (): Promise<string> => {
+    if (!post) throw new Error("Post can not be null");
+    if (!editorRef || !editorRef.current) throw new Error("Editor ref can not be null");
+    if (!titleEditorRef || !titleEditorRef.current) throw new Error("titleEditorRef ref can not be null");
+    if (!descriptionEditorRef || !descriptionEditorRef.current) throw new Error("titleEditorRef ref can not be null");
+
+    const sections = await loadSections()
+    
+    //Needed because the state will change during this freaking operation :S
+    //@ts-ignore
+    editorRef.current.freezeState()
+
+    //first lets replace default content
+
+    const sectionTitle = sections.sections.find(c => c.tag == "{{title}}")
+    const sectionDescription = sections.sections.find(c => c.tag == "{{description}}")
+
+    if(sectionTitle){
+      // @ts-ignore
+      var titleHtml = titleEditorRef.current.toHtml() as string
+      sectionTitle.contentHtml = titleHtml
+    }
+
+    if(sectionDescription){
+       //@ts-ignore
+      var descriptionHtml = descriptionEditorRef.current.toHtml() as string
+      sectionDescription.contentHtml = descriptionHtml
+    }
+ 
+    //@ts-ignore
+    editorRef.current.replaceContent(sections.sections.map(c => c.contentHtml), 
+                                      sections.sections.map(c => c.tag));
+
+    ///replace content from external sections 
+
+
+    //@ts-ignore
+    const mainContentAsHtml = editorRef.current.toHtml()
+
+    //@ts-ignore
+    editorRef.current.restoreState()
+
+    return mainContentAsHtml as string
   }
 
   return (

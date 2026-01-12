@@ -28,6 +28,7 @@ import SectionService from '~/services/SectionService';
 import ContentToHtmlUtil from '~/services/ContentToHtmlUtil';
 import SectionModel from '~/models/SectionModel';
 import { createHeadlessEditor } from '@lexical/headless';
+import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 
 
 export default function ReadonlyEditor({ post, editorTheme, shellClassName, contentClassName }) {
@@ -35,9 +36,8 @@ export default function ReadonlyEditor({ post, editorTheme, shellClassName, cont
 
   const [sections, setSections] = useState<SectionModel[]>([])///TODO REPLACE BY .... BLANK IMG .... 
 
-  const sectionEditor = createHeadlessEditor({
-    namespace: 'Readonly-editor',
-    nodes: [HeadingNode,
+
+  const allNodes = [HeadingNode,
       QuoteNode,
       ListNode,
       ListItemNode,
@@ -53,8 +53,14 @@ export default function ReadonlyEditor({ post, editorTheme, shellClassName, cont
       HorizontalRuleNode,
       LayoutContainerNode,
       LayoutItemNode,
-      SectionNode
-    ],
+      SectionNode,
+      TableNode, 
+      TableRowNode,
+      TableCellNode]
+
+  const sectionEditor = createHeadlessEditor({
+    namespace: 'Readonly-editor',
+    nodes: allNodes,
     // Handling of errors during update
     onError(error: Error) {
       throw error;
@@ -64,24 +70,7 @@ export default function ReadonlyEditor({ post, editorTheme, shellClassName, cont
 
   const editorConfig = {
     namespace: 'Readonly-editor',
-    nodes: [HeadingNode,
-      QuoteNode,
-      ListNode,
-      ListItemNode,
-      ImageNode,
-      InlineImageNode,
-      TagNode,
-      EmojiNode,
-      CodeNode,
-      CodeHighlightNode,
-      HashtagNode,
-      AutoLinkNode,
-      LinkNode,
-      HorizontalRuleNode,
-      LayoutContainerNode,
-      LayoutItemNode,
-      SectionNode
-    ],
+    nodes: allNodes,
     // Handling of errors during update
     onError(error: Error) {
       throw error;
@@ -122,16 +111,14 @@ export default function ReadonlyEditor({ post, editorTheme, shellClassName, cont
       }
 
 
-
+    const parser = new DOMParser();
       editor.current.update(() => {
         for (var sctCnt of sections) {
 
           const node = sectionNodes.find(c => c.__text == sctCnt.tag)
 
           if (!node) continue
-
-
-          const parser = new DOMParser();
+          
           const dom = parser.parseFromString(sctCnt._htmlContent, 'text/html');
           const nodes = $generateNodesFromDOM(editor.current, dom);
 
@@ -140,8 +127,10 @@ export default function ReadonlyEditor({ post, editorTheme, shellClassName, cont
           nodes.forEach((n) =>  paragraphNode.append(n))
 
           node.replace(paragraphNode)
+
         }
       })
+
       editor.current.setEditable(false)
     } else {
       let editorState: EditorState | null = null

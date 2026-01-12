@@ -58,16 +58,14 @@ import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import ImageInterface from './plugins/imagePlugin/ImageInterface';
 import { SectionNode } from './plugins/SectionPlugin/SectionNode';
 import SectionPlugin from './plugins/SectionPlugin/SectionPlugin';
-import ContentToHtmlUtil from '~/services/ContentToHtmlUtil';
+import { createHeadlessEditor } from '@lexical/headless';
 
 type EditorConfiguration = {
   allowedToolBarOptions: ToolbarConfig,
   heightRem: string
 }
 
-const editorConfig = {
-  namespace: 'Main Editor',
-  nodes: [HeadingNode,
+const allNodes = [HeadingNode,
     QuoteNode,
     ListNode,
     ListItemNode,
@@ -87,7 +85,22 @@ const editorConfig = {
     LayoutContainerNode,
     LayoutItemNode,
     SectionNode
-  ],
+  ]
+
+  const sectionEditor = createHeadlessEditor({
+    namespace: 'Readonly-editor',
+    nodes: allNodes,
+    // Handling of errors during update
+    onError(error: Error) {
+      throw error;
+    },
+    theme: editorTheme
+  });
+
+
+const editorConfig = {
+  namespace: 'Main Editor',
+  nodes: allNodes,
   // Handling of errors during update
   onError(error: Error) {
     throw error;
@@ -122,25 +135,32 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   //const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const editor = useRef<LexicalEditor>(null);
 
+  var FreezedState: EditorState | null = null;
+
+
   useImperativeHandle(ownRef, () => ({
 
     toHtml: (): string => {
       return toHtml();
     },
 
-    replaceContent: (externalContent: string, template: string) => {
+    replaceContent: (externalContent: string[], templates: string[]) => {
       if (!editor?.current) return;
-      return replaceContent(externalContent, template, editor.current)
+      return replaceContent(externalContent, templates, editor.current)
     },
 
     getState: (): ContentState | null => {
       return getActualState()
     },
 
+    getStateAsString: (): string  => {
+      return getActualState()?.Content
+    },
+    
+
     clearAll: () => {
-      if (!editor?.current) return;
+      if(!editor || !editor.current) throw new Error("Editor can not be null!"); 
       editor.current.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-      //setIsClearAll(!isClearAll)
     },
 
     getAllImages: (): ImageInterface[] => {
@@ -151,8 +171,22 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
     UpdateImages: (images: ContentModel[]) => {
       UpdateImages(images)
+    },
+
+    getAllSections: (): string[] => {
+      return getAllSections()
+    },
+
+    freezeState: () => {
+      freezeCurrentState()
+    },
+
+    restoreState: () => {
+      restoreStateFromPreviousFreezedState()
     }
 }));
+
+  
 
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
@@ -234,8 +268,8 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   }, [isSmallWidthViewport]);
 
 
-  const getActualState = (): ContentState | null => {
-    if (!editor?.current) return null;
+  const getActualState = (): ContentState => {
+    if (!editor || !editor.current) throw new Error("Editor can not be null!");
 
     const editorState = editor.current.getEditorState();
 
@@ -292,40 +326,46 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     return (Number(val) + 2) + 'rem'
   }
 
-  const replaceContent = (externalContentHtml: string, template: string, editor: LexicalEditor) => {
+  const replaceContent = (externalContentHtml: string[], tags: string[], editor: LexicalEditor) => {
 
-    let textNodes: TextNode[] = []
-    
+    const parser = new DOMParser();
+
     editor.update(() => {
 
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(externalContentHtml, 'text/html');
+      const sectionNodes = $nodesOfType(SectionNode);
 
-      // Generate Lexical nodes from the DOM
-      const nodes = $generateNodesFromDOM(editor, dom);
+      for (let i = 0; i < tags.length; i++) {
+        
+        var tag = tags[i]
+        var content = externalContentHtml[i]
+        const sectionNode = sectionNodes.find(c => c.__text == tag)
 
-      textNodes = $nodesOfType(TextNode);
+        if(!content || !tag || !sectionNode) continue
 
-      const paragraphNode = $createParagraphNode();
+        const dom = parser.parseFromString(content, 'text/html');
+        
+        // Generate Lexical nodes from the DOM
+        const nodesFromDom = $generateNodesFromDOM(editor, dom);
 
-      nodes.forEach((n)=> paragraphNode.append(n))
+        const paragraphNode = $createParagraphNode();
+        
+        nodesFromDom.forEach((n)=> paragraphNode.append(n))
 
-      for (const node of textNodes) {
-        const text = node.getTextContent();
+        sectionNode.replace(paragraphNode)
 
-        if (text == template && nodes) {
+        // Select the root
+  //$getRoot().select();
 
-          //$insertNodes(nodes);
-          //const copy = $copyNode(titleFirstNode)
-          node.replace(paragraphNode)
+  // Insert them at a selection.
+  //$insertNodes(nodesFromDom);
 
-        }
       }
+
     })
   }
 
   const UpdateImages = (images: ContentModel[]) => {
-    if(!editor?.current) return
+    if(!editor || !editor?.current) throw new Error("Editor can not be null")
 
     let imageNodes: ImageNode[] = []
     let imageInLineNodes: InlineImageNode[] = []
@@ -357,7 +397,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   }
   
   const getAllImages = (): ImageInterface[] => {
-    if(!editor?.current) return []
+    if(!editor || !editor?.current) throw new Error("Editor can not be null")
 
     let imageNodes: ImageNode[] = []
     let imageInLineNodes: InlineImageNode[] = []
@@ -371,17 +411,54 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     
   }
 
+    const getAllSections = (): string[] => {
+    if(!editor || !editor.current) throw new Error("Editor can not be null")
+
+   let sectionNodes: SectionNode[] = []
+        editor.current.read(() => {
+          sectionNodes = $nodesOfType(SectionNode)
+        })
+
+    return sectionNodes.map(c => c.__text)
+    
+  }
+
   const toHtml = (): string => {
 
-    if (editor?.current == null) return ''
+    const editor = getEditor()
 
     let htmlString = '';
-    editor.current.update(() => {
-      htmlString = $generateHtmlFromNodes(editor.current, null); // The second parameter is for selection, pass null for the entire content
+    editor.update(() => {
+      htmlString = $generateHtmlFromNodes(editor, null); // The second parameter is for selection, pass null for the entire content
     });
     return htmlString;
   }
 
+  const freezeCurrentState = () => {
+
+    const editor = getEditor()
+
+    editor.update(() => {
+      FreezedState = editor._editorState // The second parameter is for selection, pass null for the entire content
+    });
+  }
+
+  const restoreStateFromPreviousFreezedState = () => {
+
+    if(!FreezedState) throw new Error("Freezed state is null!")
+    const editor = getEditor()
+
+    editor.update(() => {
+      editor.setEditorState(FreezedState as EditorState) // The second parameter is for selection, pass null for the entire content
+    });
+
+  }
+
+  const getEditor = (): LexicalEditor => {
+    if(!editor || !editor?.current) throw new Error("Editor can not be null")
+
+      return (editor.current as LexicalEditor)
+  }
 
   return (
     <>

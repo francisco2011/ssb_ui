@@ -50,8 +50,6 @@ export default function SectionEditor() {
 
   const [section, setSection] = useState<SectionModel | null>(null)
 
-  const [isClearAll, setIsClearAll] = useState<boolean>(false);
-
   const [name, setName] = useState<string>('')
 
   const editorRef = useRef(null);
@@ -71,7 +69,8 @@ export default function SectionEditor() {
           name: '',
           tag: '',
           content: null,
-          modifiable: true
+          modifiable: true,
+          contentHtml: null
         };
 
         const p = await service.Save(section)
@@ -82,22 +81,18 @@ export default function SectionEditor() {
 
   }, []);
 
-
-  const clearAll = () => {
-    setIsClearAll(true)
-  }
-
   const onsave = async () => {
     if (!section || !section.id) return
     if (!editorRef?.current) return;
 
     //@ts-ignore
-    const editorState = editorRef.current.getState() as ContentState | null;
-
-    if (!editorState) return
-
+    const editorState = editorRef.current.getState() as ContentState;
+    //@ts-ignore
+    const contentHtml = editorRef.current.toHtml() as string
+    
     section.content = editorState.Content
     section.name = name
+    section.contentHtml = contentHtml
 
       ////////////////////////////
 
@@ -135,7 +130,7 @@ export default function SectionEditor() {
                   <Editor ref={editorRef}
                     content={section.content ?? ''}
                     contents={[]}
-                    onContentDeletedCallback={clearAll}
+                    onContentDeletedCallback={() => {}}
                     config={{
                       heightRem: '50rem', allowedToolBarOptions: {
                         allowCode: true, allowColumn: true,

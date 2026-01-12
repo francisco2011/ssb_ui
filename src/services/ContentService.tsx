@@ -24,6 +24,15 @@ export default class ContentService {
         return new File([new Blob([u8arr], {type:mime})], fileName) ;
     }
 
+    htmltoFile(htmlString: string, fileName: string): File {
+
+        if(!htmlString) throw new Error("dataurl cant be empty, undefined or null")
+
+        const blob = new Blob([htmlString], { type: 'text/html' });
+        
+        return new File([blob], fileName) ;
+    }
+
     async UploadFile(file: File|string, postId: number, contentType: string ): Promise<ContentModel> {
 
         if( typeof file === 'string'){
@@ -82,6 +91,19 @@ export default class ContentService {
             console.error(data.error)
             throw new Error("Error while loading data")
         }
+
+        return data;
+    }
+
+    async GetExternalContentAsStr(url: string): Promise<string> {
+        
+        const response = await fetch(url);
+        const data = await response.text();
+
+        //if (data.error) {
+        //    console.error(data.error)
+        //    throw new Error("Error while loading data")
+        //}
 
         return data;
     }

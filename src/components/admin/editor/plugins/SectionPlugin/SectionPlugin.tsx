@@ -13,34 +13,12 @@ import { TextNode } from 'lexical';
 import { useEffect } from 'react';
 import { $createSectionNode, SectionNode } from './SectionNode';
 
-function $findAndTransform(node: TextNode): null | TextNode {
-    const text = node.getTextContent();
-    
-    const newNode = $createSectionNode(text);
-    node.replace(newNode);
-        return newNode;
-  
-  }
-  
-  function $textNodeTransform(node: TextNode): void {
-    let targetNode: TextNode | null = node;
-  
-    while (targetNode !== null) {
-      if (!targetNode.isSimpleText()) {
-        return;
-      }
-  
-      targetNode = $findAndTransform(targetNode);
-    }
-  }
 
 function use(editor: LexicalEditor): void {
   useEffect(() => {
     if (!editor.hasNodes([SectionNode])) {
       throw new Error('SectionNode: SectionNode not registered on editor');
     }
-
-    return editor.registerNodeTransform(TextNode, $textNodeTransform);
   }, [editor]);
 }
 
