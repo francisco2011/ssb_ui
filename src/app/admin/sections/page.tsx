@@ -133,7 +133,8 @@ export default function Sections() {
             name: '',
             content: null,
             modifiable: true,
-            tag: ''
+            tag: '',
+            contentHtml: ''
           };
   
           const p = await service.Save(_section)

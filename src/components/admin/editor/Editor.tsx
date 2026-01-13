@@ -31,7 +31,7 @@ import LinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/LinkPlugin'
 import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin'
-import { $copyNode, $createParagraphNode, $getRoot, $insertNodes, $nodesOfType, CLEAR_EDITOR_COMMAND, EditorState, LexicalNode, TextNode } from 'lexical';
+import { $applyNodeReplacement, $copyNode, $createParagraphNode, $getRoot, $insertNodes, $nodesOfType, CLEAR_EDITOR_COMMAND, EditorState, ElementFormatType, ElementNode, LexicalNode, ParagraphNode, TextNode } from 'lexical';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import editorTheme from '~/themes/EditorTheme';
 import ToolbarPlugin, { ToolbarConfig } from './ToolbarPlugin';
@@ -343,21 +343,17 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
         if(!content || !tag || !sectionNode) continue
 
         const dom = parser.parseFromString(content, 'text/html');
-        
         // Generate Lexical nodes from the DOM
         const nodesFromDom = $generateNodesFromDOM(editor, dom);
 
-        const paragraphNode = $createParagraphNode();
-        
-        nodesFromDom.forEach((n)=> paragraphNode.append(n))
-
-        sectionNode.replace(paragraphNode)
-
-        // Select the root
-  //$getRoot().select();
-
-  // Insert them at a selection.
-  //$insertNodes(nodesFromDom);
+        const firstNodeFromDom = nodesFromDom[0];
+        const firstNodeFromDomAs = firstNodeFromDom as ElementNode
+        const parentNode = sectionNode.getParent()
+        if(parentNode){
+          const format = parentNode.getFormatType()
+          firstNodeFromDomAs.setFormat(format)
+          sectionNode.replace(firstNodeFromDomAs)
+        }
 
       }
 
