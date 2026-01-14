@@ -70,6 +70,9 @@ import type {
     exportDOM(): DOMExportOutput {
       const element = document.createElement('div');
       element.style.gridTemplateColumns = this.__templateColumns;
+      
+      //TODO: HOW TO FIX?
+      element.className = "PlaygroundEditorTheme__layoutContainer"
       element.setAttribute('data-lexical-layout-container', 'true');
       return {element};
     }

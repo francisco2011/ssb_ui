@@ -37,11 +37,11 @@ import ImageInterface from './ImageInterface';
   export interface InlineImagePayload extends ImageInterface {
     altText: string;
     caption?: LexicalEditor;
-    height?: number;
+    width?: number | "inherit";
+    height: number | "inherit";
     key?: NodeKey;
     showCaption?: boolean;
     src: string;
-    width?: number;
     position?: Position;
     imgId?: string;
     isSplitHalves?: boolean
@@ -54,6 +54,8 @@ import ImageInterface from './ImageInterface';
     isSplitInHalves?: boolean;
     src?: string;
     imgId?: string;
+    width?: number | "inherit";
+    height: number | "inherit";
   }
   
   function $convertInlineImageElement(domNode: Node): null | DOMConversionOutput {
@@ -69,10 +71,10 @@ import ImageInterface from './ImageInterface';
     {
       altText: string;
       caption: SerializedEditor;
-      height?: number;
       showCaption: boolean;
       src: string;
-      width?: number;
+      width?: number | "inherit";
+      height: number | "inherit";
       position?: Position;
       imgId?: string;
       isSplitHalves?: boolean
@@ -173,12 +175,36 @@ import ImageInterface from './ImageInterface';
     }
   
     exportDOM(): DOMExportOutput {
+
+      
+      const span = document.createElement('span');
+
+      //span.setAttribute("data-lexical-decorator", "true")
+
+      const className = `editor-shell editor-image position-${this.__position}`; // ${this.__isSplitHalves === undefined || this.__isSplitHalves ? 'half' : ''}`;
+
+      if (className !== undefined) {
+        span.className = className;
+      }
+
+
       const element = document.createElement('img');
       element.setAttribute('src', this.__src);
       element.setAttribute('alt', this.__altText);
       element.setAttribute('width', this.__width.toString());
       element.setAttribute('height', this.__height.toString());
-      return {element};
+
+      const sizeInherit = this.__width != "inherit" && this.__height != "inherit";
+
+      var style = "display: block;"
+      style += sizeInherit ?  `width:${this.__width}px; height:${this.__height}px;` : ""
+
+      element.setAttribute("style", style)
+      
+      span.appendChild(element)
+      //element.setAttribute("class", className)
+
+      return {element:span};
     }
   
     exportJSON(): SerializedInlineImageNode {
@@ -252,16 +278,30 @@ import ImageInterface from './ImageInterface';
       return this.__isSplitHalves === undefined || this.__isSplitHalves;
     }
 
+    getHeight(): number | "inherit"{
+      return this.__height;
+    }
+
+    getWidth(): number | "inherit"{
+      return this.__width;
+    }
+
+    isSizeInherit(): boolean {
+      return this.__height == "inherit" && this.__width == "inherit";
+    }
+
+
     update(payload: UpdateInlineImagePayload): void {
       const writable = this.getWritable();
-      const {altText, showCaption, position, isSplitInHalves, src, imgId} = payload;
+      const {altText, showCaption, position, isSplitInHalves, src, imgId, height, width} = payload;
       if (altText) writable.__altText = altText;
       if (showCaption) writable.__showCaption = showCaption;
       if (position) writable.__position = position;
       if(isSplitInHalves) writable.__isSplitHalves = isSplitInHalves
       if(src) writable.__src = src
       if(imgId) writable.__imgId = imgId
-
+      if(height) writable.__height = height
+      if(width) writable.__width = width
     }
   
     // View

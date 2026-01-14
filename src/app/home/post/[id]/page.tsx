@@ -47,7 +47,15 @@ export default function PostEditor() {
     }
 
     {
-        htmlContent ? <div dangerouslySetInnerHTML={{ __html: htmlContent }}></div> : null
+        htmlContent ? <div className='editor-shell' >
+          <div className='editor-container' >
+            <div >
+              <div className=''  dangerouslySetInnerHTML={{ __html: htmlContent }}>
+
+              </div>
+            </div>
+        </div>
+        </div> : null
     }
     
     </>
