@@ -44,7 +44,8 @@ import ImageInterface from './ImageInterface';
     src: string;
     position?: Position;
     imgId?: string;
-    isSplitHalves?: boolean
+    isSplitHalves?: boolean;
+    hyperlink?: string;
   }
   
   export interface UpdateInlineImagePayload {
@@ -56,6 +57,7 @@ import ImageInterface from './ImageInterface';
     imgId?: string;
     width?: number | "inherit";
     height: number | "inherit";
+    hyperlink?: string;
   }
   
   function $convertInlineImageElement(domNode: Node): null | DOMConversionOutput {
@@ -78,6 +80,7 @@ import ImageInterface from './ImageInterface';
       position?: Position;
       imgId?: string;
       isSplitHalves?: boolean
+      hyperlink?: string;
     },
     SerializedLexicalNode
   >;
@@ -92,6 +95,7 @@ import ImageInterface from './ImageInterface';
     __position: Position;
     __imgId: string | undefined;
     __isSplitHalves: boolean | undefined;
+    __hyperlink?: string;
   
     static getType(): string {
       return 'inline-image';
@@ -108,14 +112,15 @@ import ImageInterface from './ImageInterface';
         node.__caption,
         node.__key,
         node.__imgId,
-        node.__isSplitHalves
+        node.__isSplitHalves,
+        node.__hyperlink
       );
     }
   
     static importJSON(
       serializedNode: SerializedInlineImageNode,
     ): InlineImageNode {
-      const {altText, height, width, src, showCaption, position, imgId, isSplitHalves} = serializedNode;
+      const {altText, height, width, src, showCaption, position, imgId, isSplitHalves, hyperlink} = serializedNode;
       return $createInlineImageNode({
         altText,
         height,
@@ -124,7 +129,8 @@ import ImageInterface from './ImageInterface';
         src,
         width,
         imgId,
-        isSplitHalves
+        isSplitHalves,
+        hyperlink
       }).updateFromJSON(serializedNode);
     }
 
@@ -160,7 +166,8 @@ import ImageInterface from './ImageInterface';
       caption?: LexicalEditor,
       key?: NodeKey,
       imgId?: string,
-      isSplitHalves?: boolean
+      isSplitHalves?: boolean,
+      hyperlink?: string
     ) {
       super(key);
       this.__src = src;
@@ -171,23 +178,20 @@ import ImageInterface from './ImageInterface';
       this.__caption = caption || createEditor();
       this.__position = position;
       this.__imgId = imgId
-      this.__isSplitHalves = isSplitHalves
+      this.__isSplitHalves = isSplitHalves,
+      this.__hyperlink = hyperlink
     }
   
     exportDOM(): DOMExportOutput {
 
       
       const span = document.createElement('span');
-
-      //span.setAttribute("data-lexical-decorator", "true")
-
-      const className = `editor-shell editor-image position-${this.__position}`; // ${this.__isSplitHalves === undefined || this.__isSplitHalves ? 'half' : ''}`;
+      const className = `editor-shell editor-image position-${this.__position} ${this.__isSplitHalves === undefined || this.__isSplitHalves ? 'half' : ''}`;
 
       if (className !== undefined) {
         span.className = className;
       }
-
-
+      
       const element = document.createElement('img');
       element.setAttribute('src', this.__src);
       element.setAttribute('alt', this.__altText);
@@ -195,14 +199,22 @@ import ImageInterface from './ImageInterface';
       element.setAttribute('height', this.__height.toString());
 
       const sizeInherit = this.__width != "inherit" && this.__height != "inherit";
-
       var style = "display: block;"
       style += sizeInherit ?  `width:${this.__width}px; height:${this.__height}px;` : ""
-
+      style += this.__hyperlink ? "cursor: pointer;" : ""
       element.setAttribute("style", style)
       
-      span.appendChild(element)
-      //element.setAttribute("class", className)
+      if(this.__hyperlink){
+        const a = document.createElement('a');
+        a.setAttribute("href", this.__hyperlink)
+        a.setAttribute("target", "_blank")
+        a.setAttribute("rel", "noopener noreferrer")
+        a.appendChild(element)
+        span.appendChild(a)
+
+      }else{
+        span.appendChild(element)
+      }
 
       return {element:span};
     }
@@ -218,7 +230,8 @@ import ImageInterface from './ImageInterface';
         src: this.getSrc(),
         width: this.__width === 'inherit' ? 0 : this.__width,
         imgId: this.__imgId,
-        isSplitHalves: this.__isSplitHalves
+        isSplitHalves: this.__isSplitHalves,
+        hyperlink: this.__hyperlink
       };
     }
   
@@ -290,18 +303,22 @@ import ImageInterface from './ImageInterface';
       return this.__height == "inherit" && this.__width == "inherit";
     }
 
+    getHyperlink(): string | undefined {
+      return this.__hyperlink;
+    }
 
     update(payload: UpdateInlineImagePayload): void {
       const writable = this.getWritable();
-      const {altText, showCaption, position, isSplitInHalves, src, imgId, height, width} = payload;
+      const {altText, showCaption, position, isSplitInHalves, src, imgId, height, width, hyperlink} = payload;
       if (altText) writable.__altText = altText;
       if (showCaption) writable.__showCaption = showCaption;
       if (position) writable.__position = position;
-      if(isSplitInHalves) writable.__isSplitHalves = isSplitInHalves
+      if(isSplitInHalves === true || isSplitInHalves === false) writable.__isSplitHalves = isSplitInHalves
       if(src) writable.__src = src
       if(imgId) writable.__imgId = imgId
       if(height) writable.__height = height
       if(width) writable.__width = width
+      if(hyperlink) writable.__hyperlink = hyperlink
     }
   
     // View
@@ -309,6 +326,7 @@ import ImageInterface from './ImageInterface';
     createDOM(config: EditorConfig): HTMLElement {
       if(!config.theme.inlineImage) console.warn("must set config.theme.inlineImage variable")
 
+      
       const span = document.createElement('span');
 
       const className = `${config.theme.inlineImage} position-${this.__position} ${this.__isSplitHalves === undefined || this.__isSplitHalves ? 'half' : ''}`;
@@ -345,6 +363,7 @@ import ImageInterface from './ImageInterface';
             caption={this.__caption}
             position={this.__position}
             isSplitHalves={this.__isSplitHalves}
+            hyperlink={this.__hyperlink}
           />
         </Suspense>
       );
@@ -361,7 +380,8 @@ import ImageInterface from './ImageInterface';
     caption,
     key,
     imgId,
-    isSplitHalves
+    isSplitHalves,
+    hyperlink
   }: InlineImagePayload): InlineImageNode {
     return $applyNodeReplacement(
       new InlineImageNode(
@@ -374,7 +394,8 @@ import ImageInterface from './ImageInterface';
         caption,
         key,
         imgId,
-        isSplitHalves
+        isSplitHalves,
+        hyperlink
       ),
     );
   }

@@ -31,7 +31,6 @@ export default class PostService {
       console.error(data.error)
       throw new Error("Error while loading tags")
     }
-debugger
     return data as number;
   }
 

@@ -114,6 +114,7 @@ export function UpdateInlineImageDialog({
   const node = editorState.read(
     () => $getNodeByKey(nodeKey) as InlineImageNode,
   );
+
   const [altText, setAltText] = useState(node.getAltText());
   const [showCaption, setShowCaption] = useState(node.getShowCaption());
   const [position, setPosition] = useState<Position>(node.getPosition());
@@ -121,8 +122,10 @@ export function UpdateInlineImageDialog({
   const [height, setHeight] = useState(node.getHeight())
   const [width, setWidth] = useState(node.getWidth())
   const [isSizeInherit, setIsSizeInherit] = useState(node.isSizeInherit())
+  const [hyperlink, setHyperlink] = useState(node.getHyperlink())
 
   const handleIsSplitInHalves = (e: React.ChangeEvent<HTMLInputElement>) => {
+    
     setIsSplitInHalves(e.target.checked);
   };
 
@@ -138,6 +141,11 @@ export function UpdateInlineImageDialog({
     setIsSizeInherit(e.target.checked);
   };
 
+  const handleHyperlinkChange = (e: string) => {
+
+    setHyperlink(e)
+
+  };
   const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     const valAsNumber = Number(e.target.value)
@@ -163,7 +171,7 @@ export function UpdateInlineImageDialog({
     var _width = isSizeInherit ? "inherit" : width
     var _height = isSizeInherit ? "inherit" : height
 
-    const payload = { altText, position, showCaption, isSplitInHalves, width: _width, height: _height };
+    const payload = { altText, position, showCaption, isSplitInHalves, width: _width, height: _height, hyperlink };
 
     if (node) {
       activeEditor.update(() => {
@@ -263,6 +271,17 @@ export function UpdateInlineImageDialog({
             type="checkbox"
             checked={isSplitInHalves}
             onChange={handleIsSplitInHalves}
+          />
+          
+        </div>
+        
+        <div className="Input__wrapper">
+           <TextInput
+            label="hyperlink"
+            placeholder="hyperlink here"
+            onChange={handleHyperlinkChange}
+            value={hyperlink??''}
+            data-test-id="hyper-text"
           />
           
         </div>

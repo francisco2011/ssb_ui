@@ -81,7 +81,7 @@ const allNodes = [HeadingNode,
     TableNode,
     TableCellNode,
     TableRowNode,
-    DrawIOImageNode,
+    //DrawIOImageNode,
     LayoutContainerNode,
     LayoutItemNode,
     SectionNode
@@ -345,7 +345,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
         const dom = parser.parseFromString(content, 'text/html');
         // Generate Lexical nodes from the DOM
         const nodesFromDom = $generateNodesFromDOM(editor, dom);
-
+        debugger
         const firstNodeFromDom = nodesFromDom[0];
         const firstNodeFromDomAs = firstNodeFromDom as ElementNode
         const parentNode = sectionNode.getParent()
@@ -476,7 +476,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
           <InlineImagePlugin />
           <LinkPlugin hasLinkAttributes={false} />
           <LayoutPlugin />
-          <DrawIOPlugin />
+
           <AutoFocusPlugin />
           <CodeHighlightPlugin />
           <LexicalAutoLinkPlugin />

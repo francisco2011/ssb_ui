@@ -601,7 +601,7 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .editor-shell span.editor-image {
-  cursor: default;
+  
   display: inline-block;
   position: relative;
   user-select: none;
@@ -609,7 +609,6 @@ pre::-webkit-scrollbar-thumb {
 
 .editor-shell .editor-image img {
   max-width: 100%;
-  cursor: default;
 }
 
 .editor-shell .editor-image img.focused {
@@ -745,7 +744,6 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .editor-shell span.editor-image {
-  cursor: default;
   display: inline-block;
   position: relative;
   z-index: 1;
