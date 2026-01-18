@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+'use client'
 import { ContentType } from "~/models/ContentType";
 import PostModel from "~/models/PostModel";
 import Link from 'next/link'
 import { format } from 'date-fns'
+import ContentService from "~/services/ContentService";
+import { useEffect, useState } from "react";
 
 type Props = {
     post: PostModel;
@@ -12,28 +14,56 @@ type Props = {
 
 export default function ArticleCard({ post, onTagClickCallback }: Props) {
 
-    const [url, setUrl] = useState<string | null>(null)///TODO REPLACE BY .... BLANK IMG .... 
+    const [titleHtml, setTitleHtml] = useState('')
+    const [descriptionHtml, setDescriptionHtml] = useState('')
+    const [previewUrl, setPreviewUrl] = useState('')
+
+    const service = new ContentService()
 
     useEffect(() => {
+            if (post.contents && post.contents.length > 0){
+            const titleUrl =   post.contents.find(c => c.type == ContentType.titleRender)
+            const descriptionUrl =   post.contents.find(c => c.type == ContentType.descriptionRender)
+            var previewContent = post.contents.find(c => c.type == ContentType.preview);
+         
+            if(titleUrl && titleUrl.url){
+                
+                const getTitle = async () => {
 
-        if (post.contents && post.contents.length > 0)
+                    var titleHtml = await service.GetExternalContentAsStr(titleUrl.url)
+                    setTitleHtml(titleHtml)
+                }
 
+                getTitle()
+            }
+            
+            if(descriptionUrl && descriptionUrl.url){
+                const getDescription = async () => {
 
-            var cntn = post.contents.find(c => c.type == "preview");
+                    var descriptionHtml = await service.GetExternalContentAsStr(descriptionUrl.url)
+                    setDescriptionHtml(descriptionHtml)
+                }
 
-        if (cntn && cntn.url) setUrl(cntn.url)
+                getDescription()
+            }
 
-    }, []);
+            if(previewContent && previewContent.url) setPreviewUrl(previewContent.url)
+            
+        }
+
+    }, [])
+    
+
 
 
     return (
         <div key={post.id} className="card image-full w-28 max-w-28 sm:min-w-36 sm:max-w-36 md:min-w-38 lg:min-w-48 xl:min-w-56 2xl:min-w-56">
 
             {
-                url ?
+                previewUrl ?
                     <figure>
                         <img className="h-auto w-auto"
-                            src={url} />
+                            src={previewUrl} />
                     </figure>
                     : null
             }
@@ -43,10 +73,10 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
                     {format(post.createdAt, "yyyy-MM-dd")}
                 </h6>
                 <h3 className="card-title line-clamp-2">
-                    <Link href={"/home/post/" + post.id} dangerouslySetInnerHTML={{ __html: post._titleHtml?.value ?? '' }}></Link>
+                    <Link href={"/home/post/" + post.id} dangerouslySetInnerHTML={{ __html: titleHtml }}></Link>
                 </h3>
 
-                <p className="line-clamp-4" dangerouslySetInnerHTML={{ __html: post._descriptionHtml?.value ?? '' }}>
+                <p className="line-clamp-4" dangerouslySetInnerHTML={{ __html: descriptionHtml }}>
 
                 </p>
                 <div className="card-actions justify-end line-clamp-3">

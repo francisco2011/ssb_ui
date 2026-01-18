@@ -13,16 +13,18 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     const [state, setState] = useState<ContentMetadaModel>({
         imgModel: null,
         type: null,
-        isPublished: false
+        isPublished: false,
+        name: null
     })
 
     const [postId, setPostId] = useState<number>(0)
 
     const onSetImg = (payload: InsertImagePayload) => {
-        //setImg(payload)
-        // TODO: see that weird payload.imgId??''
-        setState({ ...state, imgModel: { name: payload.imgId ?? '', src: payload.src } })
-        onChange(state)
+        
+        const newState = { ...state, imgModel: { name: payload.imgId ?? '', src: payload.src } }
+
+        setState(newState)
+        onChange(newState)
     };
 
     useEffect(() => {
@@ -44,12 +46,12 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     useEffect(() => {
 
         if (post && post.id) {
-
             var img = post.contents.find(c => c.type == "preview")
             setState({
                 imgModel: img && img.name && img.url ? { name: img.name, src: img.url } : null,
                 type: post.type,
-                isPublished: post.isPublished
+                isPublished: post.isPublished,
+                name: post.name
             })
 
             setPostId(post.id)
@@ -65,20 +67,36 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
             //setSelectedPostType(st)
 
             const newState = { ...state, type: st }
-            setState({ ...newState })
+            setState(newState)
             onChange(newState)
         }
     }
 
+    const handleNameChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const newState = { ...state, name: e.target.value }
+        setState(newState)
+        onChange(newState)
+    }
+
     function onPublishedChange(e) {
         const newState = { ...state, isPublished: e.currentTarget.value == '1' }
-        setState({ ...newState })
+        setState(newState)
         onChange(newState)
     }
 
     return (
         <>
             <div className="bg-base-200">
+
+                <div className="label">
+                    <span className="label-text">Name</span>
+                </div>
+
+                <div className="mr-2 ml-2">
+                    <textarea className="w-auto" onChange={(e) => handleNameChange(e)} value={state?.name??''}>
+                    </textarea>
+                    
+                </div>
 
                 <div className="label">
                     <span className="label-text">Type</span>

@@ -19,12 +19,10 @@ export default function TagSelector({ externalValues, isClean, onNewCallback, on
     }, [isClean])
 
     useEffect(() => {
-
         if (!externalValues) return;
 
-        externalValues.forEach(element => {
-            addValue(element)
-        });
+
+        setValues(externalValues)
 
     }, [externalValues])
 
@@ -88,7 +86,8 @@ export default function TagSelector({ externalValues, isClean, onNewCallback, on
                     }
                 </div>
             </div>
-            <button
+            <div className="text-center">
+                <button
                     className={''}
                     onClick={() => {
                         onSaveCallback()
@@ -99,6 +98,8 @@ export default function TagSelector({ externalValues, isClean, onNewCallback, on
                       className="text-black w-6 h-6"
                     />
                   </button>
+            </div>
+
         </div>
     );
 

@@ -10,6 +10,7 @@ import ContentModel from "~/models/ContentModel";
 import ImgModel from "~/models/ImgModel";
 import { InsertInlineImagePayload } from "./InlineImagePlugin";
 import { v4 as uuidv4 } from 'uuid';
+import { read } from "fs";
 
 export function UploadImageDialogBody({
     onClick,
@@ -43,13 +44,12 @@ export function UploadImageDialogBody({
     };
 
     useEffect(() => {
-
         if (alreadyLoadedImgUrl && alreadyLoadedImgUrl.src && alreadyLoadedImgUrl.name) {
             setSrc(alreadyLoadedImgUrl.src)
             setImgId(alreadyLoadedImgUrl.name)
         }
 
-    }, []);
+    }, [alreadyLoadedImgUrl]);
 
     const isDisabled = src === '';
 
@@ -64,7 +64,10 @@ export function UploadImageDialogBody({
 
         reader.addEventListener("load", () => {
             
-           if(reader.result) setSrc(reader.result as string)
+           if(reader.result){
+            setSrc(reader.result as string)
+            onImageLoaded({ src: reader.result})
+           } 
             
         });
 

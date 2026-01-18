@@ -45,7 +45,8 @@ export default function PostEditor() {
   const [metadata, setMetadata] = useState<ContentMetada>({
     isPublished: false,
     imgModel: null,
-    type: null
+    type: null,
+    name: null
   })
   const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const titleEditorRef = useRef(null);
@@ -64,14 +65,17 @@ export default function PostEditor() {
         const metadata: ContentMetada = {
           isPublished: p.isPublished,
           imgModel: null,// prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
-          type: p.type
+          type: p.type,
+          name: p.name
         }
         setMetadata(metadata)
+        setTags(p.tags)
 
       } else {
         let _post: PostModel = {
           id: undefined,
           title: '',
+          name: '',
           description: '',
           content: null,
           tags: [],
@@ -124,14 +128,14 @@ export default function PostEditor() {
   }
 
 
-  const saveImgs = async (images: ImageInterface[]): Promise<ContentModel[]> => {
+  const saveImgs = async (images: ImageInterface[], contentType: string): Promise<ContentModel[]> => {
 
     const result: ContentModel[] = []
 
     const imagesToSave = images.filter(c => c.src.startsWith("data:image"))
 
     for (var img of imagesToSave) {
-      const newImg = await contentService.UploadFile(img.src, post?.id ?? 0, "imgBody");
+      const newImg = await contentService.UploadFile(img.src, post?.id ?? 0, contentType);
       newImg.previousId = img.imgId
       result.push(newImg)
     }
@@ -150,12 +154,14 @@ export default function PostEditor() {
     //@ts-ignore
     const descriptionEditorState = descriptionEditorRef.current.getState() as ContentState | null;
 
-    // @ts-ignore
-    if (metadata.imgModel) post.contents.push({ name: metadata.imgModel.name, type: ContentType.preview })
-
     //@ts-ignore
     const images = editorRef.current.getAllImages() as ImageInterface[]
-    const newImages = await saveImgs(images)
+    var newImages = await saveImgs( images, "imgBody")  
+
+    if(metadata.imgModel && metadata.imgModel.src && !metadata.imgModel.name){
+      await saveImgs( [{src: metadata.imgModel.src}], "preview")  
+    } 
+
     //@ts-ignore
     editorRef.current.UpdateImages(newImages)
 
@@ -169,6 +175,7 @@ export default function PostEditor() {
     post.title = titleEditorState?.Content ?? ''
     post.description = descriptionEditorState?.Content ?? ''
     post.type = metadata.type
+    post.name = metadata.name ?? ''
 
     ////////////////////////////
 
@@ -179,7 +186,15 @@ export default function PostEditor() {
    const htmlAsFile = contentService.htmltoFile(html, "render.html")
    await contentService.UploadFile(htmlAsFile, post.id, "render")
 
-    ///////////////////
+   //@ts-ignore
+   const titleHtml = titleEditorRef.current.toHtml()
+   const titleHtmlFile = contentService.htmltoFile(titleHtml, "title.html")
+   await contentService.UploadFile(titleHtmlFile, post.id, "titleRender")
+   //@ts-ignore
+   const descriptionHtml = descriptionEditorRef.current.toHtml()
+   const descriptionHtmlFile = contentService.htmltoFile(descriptionHtml, "description.html")
+   await contentService.UploadFile(descriptionHtmlFile, post.id, "descriptionRender")
+  ///////////////////
     
     try {
       const result = await service.Save(post)

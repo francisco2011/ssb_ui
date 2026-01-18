@@ -40,8 +40,6 @@ export default function TagsDisplay({ allTags, rootPath }: Props): JSX.Element {
 
         let url = "?"
 
-        console.log(selectedTags)
-
         selectedTags.forEach(c => { url += "&tag=" + c })
 
         router.push(url)

@@ -1,3 +1,4 @@
+import { ContentType } from "~/models/ContentType";
 import PostModel from "~/models/PostModel";
 import PostModelResponse from "~/models/PostModelResponse";
 
@@ -54,7 +55,7 @@ export default class PostService {
 
   }
 
-  async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean, loadContent?: boolean): Promise<PostModelResponse> {
+  async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean, contents?: ContentType[]): Promise<PostModelResponse> {
 
     var url = "http://localhost:5079/post?limit="+ limit + "&offset=" + offset;
 
@@ -68,8 +69,11 @@ export default class PostService {
       url += "&published=" + published
     }
 
-    if (loadContent) {
-      url += "&loadContent=" + loadContent
+    if (contents) {
+
+      contents.forEach(c => {
+        url += "&contents=" + c.toString()
+      })
     }
 
     if(typeId){

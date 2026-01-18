@@ -2,16 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from "react";
-import PostRow from "~/components/admin/Row/PostRow";
 import CustomPaginator from '~/components/pagination/CustomPaginator';
-import PostModelResponse from '~/models/PostModelResponse';
-import PostTypeModel from '~/models/PostTypeModel';
-import PostService from "~/services/PostService";
-import PostTypeService from '~/services/PostTypeService';
-import TagService from '~/services/TagService';
 import Select, { SelectInstance } from 'react-select';
-import PostModel from '~/models/PostModel';
-import PostServiceArticleTransformSA from '~/services/PostServiceArticleTransformSA';
 import SectionModel, { SectionModelResponse } from '~/models/SectionModel';
 import SectionService from '~/services/SectionService';
 import SectionRow from '~/components/admin/Row/SectionRow';

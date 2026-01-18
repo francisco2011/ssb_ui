@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import PostServiceCodeSnippetTransformSA from "~/services/PostServiceCodeSnippetTransformSA";
 import { useRouter } from 'next/navigation';
 import PostModelResponse from "~/models/PostModelResponse";
+import PostService from "~/services/PostService";
+import { ContentType } from "~/models/ContentType";
 
 type Props = {
     tags: string[],
@@ -19,6 +21,7 @@ export default function CodeSnippetsPreview({ tags, initialPosts }: Props): JSX.
     const [selectedTags, setSelectedTags] = useState<string[]>(tags)
     const [totalElements, setTotalElements] = useState(initialPosts.pagination.totalCount)
     const router = useRouter()
+    const postService = new PostService()
 
     useEffect(() => {
         setPosts(initialPosts.posts)
@@ -28,7 +31,7 @@ export default function CodeSnippetsPreview({ tags, initialPosts }: Props): JSX.
     const loadMorePosts = async () => {
 
         const initialPostsCount = posts.length;
-        const apiPosts = await PostServiceCodeSnippetTransformSA(3, offset, 5, selectedTags, true, true)
+        const apiPosts = await postService.List(3, offset, 5, selectedTags, true, [ContentType.render, ContentType.titleRender])
 
         setPosts((prevPosts) => [...prevPosts, ...apiPosts.posts]);
         setOffset((prevOffset) => prevOffset + 3);

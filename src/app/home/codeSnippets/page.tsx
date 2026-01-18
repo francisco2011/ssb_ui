@@ -2,6 +2,9 @@ import CodeSnippetsPreview from "~/components/home/codeSnippetsPreview/CodeSnipp
 import TagsDisplay from "~/components/tagCloud/TagsDisplay";
 import TagService from "~/services/TagService";
 import PostServiceCodeSnippetTransformSA from "~/services/PostServiceCodeSnippetTransformSA";
+import { ContentType } from "~/models/ContentType";
+import ContentService from "~/services/ContentService";
+import PostService from "~/services/PostService";
 
 
 export default async function CodeSnippets({
@@ -28,9 +31,12 @@ export default async function CodeSnippets({
 
 
     const tagService = new TagService();
+    const postService = new PostService();
     const tags = await tagService.List(5)
 
-    const initialPosts = await PostServiceCodeSnippetTransformSA(3, 0, 5, initialTags, true, true)
+    const initialPosts = await postService.List(3, 0, 5, initialTags, true, [ContentType.render, ContentType.titleRender]);
+
+ //   const initialPosts = await PostServiceCodeSnippetTransformSA(3, 0, 5, initialTags, true, true)
 
     return (
 

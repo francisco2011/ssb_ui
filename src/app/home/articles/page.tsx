@@ -2,8 +2,8 @@
 import ArticlesPreview from "~/components/home/articlePreview/articlesPreview";
 
 import TagsDisplay from "~/components/tagCloud/TagsDisplay";
-import PostServiceArticleTransformSA from "~/services/PostServiceArticleTransformSA";
-import PostServiceCodeSnippetTransformSA from "~/services/PostServiceCodeSnippetTransformSA";
+import { ContentType } from "~/models/ContentType";
+import PostService from "~/services/PostService";
 import TagService from "~/services/TagService";
 
 export default async function Articles({
@@ -28,10 +28,13 @@ export default async function Articles({
 
     }
 
+    const postService = new PostService()
     const tagService = new TagService();
     const tags = await tagService.List(1)
 
-    const initialPosts = await PostServiceArticleTransformSA(6, 0, 1, initialTags, true)
+    console.log("before initial posts ")
+    const initialPosts = await postService.List(6, 0, 1, initialTags, true, [ContentType.descriptionRender, ContentType.preview, ContentType.titleRender]);
+    console.log(initialPosts)
 
     return (
 

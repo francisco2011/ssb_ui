@@ -11,7 +11,7 @@ export default function PostRow({post, onEditClickCallback, onDeleteClickCallbac
 
         <tr className="bg-gray-100">
         <td className="content-center border px-2 py-2">{post.id}</td>  
-        <td className="content-center border px-2 py-2"dangerouslySetInnerHTML={{ __html: post._titleHtml?.value??'' }} ></td>
+        <td className="content-center border px-2 py-2">{post.name}</td>
         <td className="content-center border px-2 py-2">{post.type?.name?? ''}</td>
         <td className="content-center border px-2 py-2">{format(post.createdAt, "yyyy-MM-dd")}</td>
         <td className="content-center border px-2 py-2">

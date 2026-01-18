@@ -5,6 +5,8 @@ import ArticleCard from "../articleCard.tsx/ArticleCard";
 import { useRouter } from "next/navigation";
 import PostServiceArticleTransformSA from "~/services/PostServiceArticleTransformSA";
 import PostModelResponse from "~/models/PostModelResponse";
+import PostService from "~/services/PostService";
+import { ContentType } from "~/models/ContentType";
 
 type Props = {
     tags: string[],
@@ -13,29 +15,31 @@ type Props = {
 
 export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Element {
 
-    const [posts, setPosts] = useState<PostModel[]>([])
+    const [posts, setPosts] = useState<PostModel[]>(initialPosts.posts)
     const [offset, setOffset] = useState(3);
     const [hasMoreData, setHasMoreData] = useState(initialPosts.posts.length != 0 && initialPosts.pagination.totalCount > 6);
     const [selectedTags, setSelectedTags] = useState<string[]>(tags)
     const [totalElements, setTotalElements] = useState(initialPosts.pagination.totalCount)
     const router = useRouter()
 
-    useEffect(() => {
-        setPosts(initialPosts.posts)
-        setSelectedTags(tags)
-      }, [initialPosts]);
+    const postService = new PostService()
+
+    //useEffect(() => {
+    //    setPosts(initialPosts.posts)
+    //    setSelectedTags(tags)
+    //  }, [initialPosts]);
 
     const loadMorePosts = async () => {
 
         const initialPostsCount = posts.length;
 
-        const apiPosts = await PostServiceArticleTransformSA(6, offset, 1, selectedTags, true)
+        var nextPosts = await postService.List(6, offset, 1, selectedTags, false, [ContentType.descriptionRender, ContentType.preview, ContentType.titleRender]);
 
-        setPosts((prevPosts) => [...prevPosts, ...apiPosts.posts]);
+        setPosts((prevPosts) => [...prevPosts, ...nextPosts.posts]);
         setOffset((prevOffset) => prevOffset + 6);
-        setTotalElements(apiPosts.pagination.totalCount)
+        setTotalElements(nextPosts.pagination.totalCount)
 
-        if (apiPosts.posts.length == 0 || initialPostsCount + apiPosts.posts.length == totalElements) {
+        if (nextPosts.posts.length == 0 || initialPostsCount + nextPosts.posts.length == totalElements) {
             setHasMoreData(false);
         }
     };

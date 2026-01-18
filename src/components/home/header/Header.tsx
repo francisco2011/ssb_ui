@@ -1,83 +1,23 @@
 import Link from "next/link";
 import PostService from "~/services/PostService";
-import HeroEditorTheme from '~/themes/HeroEditorTheme';
-import { $generateHtmlFromNodes } from "@lexical/html";
-import { createHeadlessEditor } from '@lexical/headless';
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ListItemNode, ListNode } from "@lexical/list";
-import { HashtagNode } from "@lexical/hashtag";
-import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
-import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
-import { AutoLinkNode, LinkNode } from "@lexical/link";
-import { EditorState, LexicalEditor } from "lexical";
-import { SectionNode } from "~/components/admin/editor/plugins/SectionPlugin/SectionNode";
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+import { ContentType } from "~/models/ContentType";
+import ContentService from "~/services/ContentService";
 
 export default async function Header(): Promise<JSX.Element> {
 
-    function setupDom() {
-        const dom = new JSDOM();
-
-        const _window = global.window;
-        const _document = global.document;
-
-        // @ts-expect-error
-        global.window = dom.window;
-        global.document = dom.window.document;
-
-        return () => {
-            global.window = _window;
-            global.document = _document;
-        };
-    }
 
     let html = ''
 
     const service = new PostService()
-    const pt = await service.List(1, 0, 4, [], true, true)
-    var content = pt && pt.posts && pt.posts.length > 0 && pt.posts[0] ? pt.posts[0].content : null
+    const contentService = new ContentService()
+    const pt = await service.List(1, 0, 4, [], true, [ContentType.render])
 
-    const editor = createHeadlessEditor({
-        namespace: 'Readonly-editor',
-        nodes: [HeadingNode,
-            QuoteNode,
-            ListNode,
-            ListItemNode,
-            TagNode,
-            EmojiNode,
-            HashtagNode,
-            AutoLinkNode,
-            LinkNode,SectionNode],
-        // Handling of errors during update
-        onError(error: Error) {
-            throw error;
-        },
-        theme: HeroEditorTheme
-    });
+    if(pt.posts.length > 0 && pt.posts[0]?.contents.some(c => c.type == ContentType.render && c.url)){
 
-    const cleanup = setupDom();
+        var content = pt.posts[0]?.contents.find(c => c.type == ContentType.render && c.url)
+        html = await contentService.GetExternalContentAsStr(content?.url?? '')
+    }
 
-    
-
-        var editorState: EditorState | null = null
-
-        if(!content)  return 
-        var newState = JSON.parse(content)
-        editorState = editor.parseEditorState(newState.editorState)
-        
-        if (editorState) {
-            editor.setEditorState(editorState);
-            
-            editor.update(() => {
-            html = $generateHtmlFromNodes(editor, null);
-            
-        });
-        }
-
-    cleanup()
-
-    
    
     return (
         <>

@@ -1,5 +1,9 @@
 export enum ContentType{
 
-    preview, imgBody
+        preview = "preview", 
+        imgBody = "imgBody",
+        render = "render",
+        titleRender = "titleRender",
+        descriptionRender = "descriptionRender",
 
 }

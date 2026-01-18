@@ -11,7 +11,6 @@ import PostTypeService from '~/services/PostTypeService';
 import TagService from '~/services/TagService';
 import Select, { SelectInstance } from 'react-select';
 import PostModel from '~/models/PostModel';
-import PostServiceArticleTransformSA from '~/services/PostServiceArticleTransformSA';
 
 type LocalState = {
     selectedTags: string[],
@@ -67,19 +66,14 @@ export default function Posts() {
 
         const offset = state.page == 1 ? 0 : (state.pageSize * (state.page - (state.page == 1 ? 0 : 1)))
 
-        //const data = (await postService.List(state.pageSize, offset));
-        const data = await PostServiceArticleTransformSA(state.pageSize, offset)
+        const data = (await postService.List(state.pageSize, offset));
         setPostResponse(data)
     }
 
     async function loadDataWithParams(_state) {
 
         const offset = _state.page == 1 ? 0 : (_state.pageSize * (_state.page - (_state.page == 1 ? 0 : 1)))
-
-        //const data = (await postService.List(_state.pageSize, offset, _state.type?.id ?? null, _state.selectedTags));
-
-
-        const data = await PostServiceArticleTransformSA(_state.pageSize, offset, _state.type?.id ?? null, _state.selectedTags)
+        const data = await await postService.List(_state.pageSize, offset, _state.type?.id ?? null, _state.selectedTags)
 
         setPostResponse(data)
     }
@@ -179,6 +173,7 @@ export default function Posts() {
     const onNewClicked = async () => {
         const _post: PostModel = {
             id: null,
+            name: '',
             title: '',
             description: '',
             content: null,
@@ -262,7 +257,7 @@ export default function Posts() {
                     <thead>
                         <tr>
                             <th className="w-16">ID</th>
-                            <th className="w-48">Title</th>
+                            <th className="w-48">Name</th>
                             <th className="w-48">Type</th>
                             <th className="w-32">Date</th>
                             <th className="w-96">Tags</th>

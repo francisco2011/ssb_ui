@@ -66,7 +66,6 @@ export default async function PostServiceArticleTransformSA(limit: number,
 
   posts.posts.forEach(c => {
 
-    console.log(c.title)
     if (c.title) {
       let editorState: EditorState | null = null
 

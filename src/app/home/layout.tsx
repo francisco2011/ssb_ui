@@ -21,21 +21,21 @@ export default function RootLayout({
         </head>
 
         <main className="flex overflow-x-scroll   bg-gray-50">
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-4 w-max">
 
-          <div className="col-span-1  h-full border-r0">
-          <Header />
+            <div className="col-span-1  h-full border-r0">
+              <Header />
+
+            </div>
+            <div className="col-span-3">
+              <div className="items-center justify-center flex-col text-gray-900">
+                {children}
+              </div>
+            </div>
 
           </div>
-          <div className="col-span-3 w-[50rem]">
-          <div className="items-center justify-center flex-col text-gray-900">
-            {children}
-          </div>
-          </div>
 
-          </div>
 
-         
 
 
         </main>

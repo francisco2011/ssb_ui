@@ -10,6 +10,7 @@ export interface HtmlContent{
 export default interface PostModel{
 
     id?: number;
+    name: string;
     title: string;
     description: string;
     content: string | null;
