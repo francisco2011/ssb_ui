@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import PostModel from "~/models/PostModel";
 import ArticleCard from "../articleCard.tsx/ArticleCard";
 import { useRouter } from "next/navigation";
-import PostServiceArticleTransformSA from "~/services/PostServiceArticleTransformSA";
 import PostModelResponse from "~/models/PostModelResponse";
 import PostService from "~/services/PostService";
 import { ContentType } from "~/models/ContentType";
@@ -24,10 +23,10 @@ export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Elem
 
     const postService = new PostService()
 
-    //useEffect(() => {
-    //    setPosts(initialPosts.posts)
-    //    setSelectedTags(tags)
-    //  }, [initialPosts]);
+    useEffect(() => {
+        setPosts(initialPosts.posts)
+        setSelectedTags(tags)
+      }, [initialPosts]);
 
     const loadMorePosts = async () => {
 
@@ -52,7 +51,7 @@ export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Elem
 
     return (
         <>
-        <div className="grid gap-5 place-items-stretch grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols4 2xl:grid-cols4">
+        <div className="grid grid-rows-none  place-items-stretch sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3  gap-8 gap-y-16">
         {
             posts.map( c => <ArticleCard key={c.id} onTagClickCallback={onTagClicked} post={c} />)
         }
@@ -65,9 +64,7 @@ export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Elem
                     >
                         Load More
                     </button>
-                ) : (
-                    <p >No more to load ... &#128517;</p>
-                )}
+                ) : null}
             </div>
         
         </>

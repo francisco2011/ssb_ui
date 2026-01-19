@@ -32,21 +32,21 @@ export default async function Articles({
     const tagService = new TagService();
     const tags = await tagService.List(1)
 
-    console.log("before initial posts ")
     const initialPosts = await postService.List(6, 0, 1, initialTags, true, [ContentType.descriptionRender, ContentType.preview, ContentType.titleRender]);
-    console.log(initialPosts)
-
+    
     return (
 
-        <div id="parent" className="relative h-screen">
-            <div className="grid grid-cols-4 gap-4">
-            <div  className="col-span-3 ">
-                <ArticlesPreview initialPosts={initialPosts} tags={[]} />
+        <div id="parent" className="relative">
+            <div className="grid lg:grid-cols-4 xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
+                <div  className="lg:col-span-3 xl:col-span-3 md:col-span-2 sm:col-span-1">
+                    <ArticlesPreview initialPosts={initialPosts} tags={[]} />
+                </div>
+                <div className="lg:col-span-1 xl:col-span-1 md:col-span-1 sm:col-span-1">
+                    <TagsDisplay rootPath="/home/articles" allTags={tags} />
+                </div>
             </div>
-            <div className="col-span-1">
-                <TagsDisplay rootPath="/home/articles" allTags={tags} />
-            </div>
-            </div>
+            
+            
 
 
         </div>

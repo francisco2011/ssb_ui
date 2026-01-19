@@ -57,7 +57,7 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
 
 
     return (
-        <div key={post.id} className="card image-full w-28 max-w-28 sm:min-w-36 sm:max-w-36 md:min-w-38 lg:min-w-48 xl:min-w-56 2xl:min-w-56">
+        <div key={post.id} className="card  image-full w-max-56 h-max-56 2xl:w-[18rem] 2xl:h-56 xl:w-[16rem] xl:h-52 lg:w-48 lg:h-48 md:w-40 md:h-40 sm:w-36 sm:h-36 m-4">
 
             {
                 previewUrl ?
@@ -68,18 +68,16 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
                     : null
             }
 
-            <div className="card-body w-28 max-w-28 sm:min-w-36 sm:max-w-36 md:min-w-38 lg:min-w-48 xl:min-w-56 2xl:min-w-56">
+            <div className="card-body">
                 <h6 className="text-right">
                     {format(post.createdAt, "yyyy-MM-dd")}
                 </h6>
-                <h3 className="card-title line-clamp-2">
-                    <Link href={"/home/post/" + post.id} dangerouslySetInnerHTML={{ __html: titleHtml }}></Link>
-                </h3>
+                <div className="card-title">
+                    <Link className="line-clamp-2 break-all" href={"/home/post/" + post.id} dangerouslySetInnerHTML={{ __html: titleHtml }}></Link>
+                </div>
 
-                <p className="line-clamp-4" dangerouslySetInnerHTML={{ __html: descriptionHtml }}>
-
-                </p>
-                <div className="card-actions justify-end line-clamp-3">
+                <div className="line-clamp-2 text-xs" dangerouslySetInnerHTML={{ __html: descriptionHtml }}></div>
+                <div className="card-actions justify-end line-clamp-1">
 
                     {
                         post.tags.map(c => <div key={c} onClick={() => onTagClickCallback([c])} className="badge badge-outline cursor-pointer">{c}</div>)

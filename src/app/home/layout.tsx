@@ -20,24 +20,18 @@ export default function RootLayout({
           <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
         </head>
 
-        <main className="flex overflow-x-scroll   bg-gray-50">
-          <div className="grid grid-cols-4 gap-4 w-max">
+        <main className="flex overflow-x-scroll bg-gray-50 sm:text-sm md:text-lg xl:text-xl">
+          <div className="w-full grid grid-cols-12">
 
-            <div className="col-span-1  h-full border-r0">
+            <div className="col-span-2  h-full border-r0">
               <Header />
 
             </div>
-            <div className="col-span-3">
-              <div className="items-center justify-center flex-col text-gray-900">
+            <div className="col-span-10 m-4  text-gray-900 items-center justify-center">
+
                 {children}
-              </div>
             </div>
-
           </div>
-
-
-
-
         </main>
 
 

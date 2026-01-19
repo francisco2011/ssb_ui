@@ -44,9 +44,9 @@ export function UploadImageDialogBody({
     };
 
     useEffect(() => {
-        if (alreadyLoadedImgUrl && alreadyLoadedImgUrl.src && alreadyLoadedImgUrl.name) {
+        if (alreadyLoadedImgUrl && alreadyLoadedImgUrl.src) {
             setSrc(alreadyLoadedImgUrl.src)
-            setImgId(alreadyLoadedImgUrl.name)
+            if(alreadyLoadedImgUrl.name) setImgId(alreadyLoadedImgUrl.name)
         }
 
     }, [alreadyLoadedImgUrl]);

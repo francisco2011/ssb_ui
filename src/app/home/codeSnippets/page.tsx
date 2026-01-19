@@ -1,9 +1,7 @@
 import CodeSnippetsPreview from "~/components/home/codeSnippetsPreview/CodeSnippetsPreview";
 import TagsDisplay from "~/components/tagCloud/TagsDisplay";
 import TagService from "~/services/TagService";
-import PostServiceCodeSnippetTransformSA from "~/services/PostServiceCodeSnippetTransformSA";
 import { ContentType } from "~/models/ContentType";
-import ContentService from "~/services/ContentService";
 import PostService from "~/services/PostService";
 
 
@@ -26,27 +24,25 @@ export default async function CodeSnippets({
         if(typeof filters == typeof ''){
             initialTags.push(filters as string)
         }
-
     }
-
 
     const tagService = new TagService();
     const postService = new PostService();
     const tags = await tagService.List(5)
 
-    const initialPosts = await postService.List(3, 0, 5, initialTags, true, [ContentType.render, ContentType.titleRender]);
-
- //   const initialPosts = await PostServiceCodeSnippetTransformSA(3, 0, 5, initialTags, true, true)
+    const initialPosts = await postService.List(3, 0, 5, initialTags, true, [ContentType.render, ContentType.titleRender, ContentType.descriptionRender]);
 
     return (
 
-        <div id="parent" className="relative h-screen">
-            <div id="child-bottom" className="w-[1000] z-40">
-                <TagsDisplay rootPath="/home/codeSnippets" allTags={tags} />
-            </div>
-
-            <div id="child-top" className="absolute">
-                <CodeSnippetsPreview initialPosts={initialPosts} tags={initialTags} />
+        <div id="parent" className="relative">
+            <div className="grid grid-cols-3">
+                <div  className="col-span-2">
+                     <CodeSnippetsPreview initialPosts={initialPosts} tags={initialTags} />
+                    
+                </div>
+                <div className="col-span-1">
+                   <TagsDisplay rootPath="/home/codeSnippets" allTags={tags} />
+                </div>
             </div>
         </div>
 

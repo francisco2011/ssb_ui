@@ -5,6 +5,7 @@ import PostTypeModel from "~/models/PostTypeModel";
 import { InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import ContentMetadaModel from "~/models/ContentMetadata";
 import PostModel from "~/models/PostModel";
+import { ContentType } from "~/models/ContentType";
 
 export default function PostPreview({ onChange, post }: { onChange: any, post: PostModel | null }): JSX.Element {
 
@@ -46,14 +47,14 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     useEffect(() => {
 
         if (post && post.id) {
-            var img = post.contents.find(c => c.type == "preview")
+            var img = post.contents.find(c => c.type == ContentType.preview)
+            
             setState({
-                imgModel: img && img.name && img.url ? { name: img.name, src: img.url } : null,
+                imgModel: img && img.url ? { name: img.name??'', src: img.url } : null,
                 type: post.type,
                 isPublished: post.isPublished,
                 name: post.name
             })
-
             setPostId(post.id)
         }
 

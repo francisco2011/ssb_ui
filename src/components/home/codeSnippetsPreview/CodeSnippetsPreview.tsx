@@ -31,7 +31,7 @@ export default function CodeSnippetsPreview({ tags, initialPosts }: Props): JSX.
     const loadMorePosts = async () => {
 
         const initialPostsCount = posts.length;
-        const apiPosts = await postService.List(3, offset, 5, selectedTags, true, [ContentType.render, ContentType.titleRender])
+        const apiPosts = await postService.List(3, offset, 5, selectedTags, true, [ContentType.render, ContentType.titleRender, ContentType.descriptionRender])
 
         setPosts((prevPosts) => [...prevPosts, ...apiPosts.posts]);
         setOffset((prevOffset) => prevOffset + 3);
@@ -64,9 +64,7 @@ export default function CodeSnippetsPreview({ tags, initialPosts }: Props): JSX.
                     >
                         Load More
                     </button>
-                ) : (
-                    <p >No more to load ... &#128517;</p>
-                )}
+                ) : null}
             </div>
 
         </>
