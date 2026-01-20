@@ -12,7 +12,7 @@ type Props = {
 }
 
 
-export default function ArticleCard({ post, onTagClickCallback }: Props) {
+export default function ArticlePanel({ post, onTagClickCallback }: Props) {
 
     const [titleHtml, setTitleHtml] = useState('')
     const [descriptionHtml, setDescriptionHtml] = useState('')
@@ -57,18 +57,18 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
 
 
     return (
-        <div key={post.id} className="card card-side m-4 sm:h-24 md:h-32 lg:h-44 xl:h-56">
+        <div key={post.id} className="card card-side image-full w-max-56 h-max-56 2xl:w-[18rem] 2xl:h-56 xl:w-[16rem] xl:h-52 lg:w-48 lg:h-48 md:w-40 md:h-40 sm:w-36 sm:h-36 m-4">
 
             {
                 previewUrl ?
-                    <figure className="h-full w-[30%] object-cover">
-                        <img 
+                    <figure>
+                        <img className="h-auto w-auto"
                             src={previewUrl} />
                     </figure>
                     : null
             }
 
-            <div className="card-body w-[70%]">
+            <div className="card-body">
                 <h6 className="text-right">
                     {format(post.createdAt, "yyyy-MM-dd")}
                 </h6>
@@ -76,8 +76,8 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
                     <Link className="line-clamp-2 break-all" href={"/home/post/" + post.id} dangerouslySetInnerHTML={{ __html: titleHtml }}></Link>
                 </div>
 
-                <div className="line-clamp-2" dangerouslySetInnerHTML={{ __html: descriptionHtml }}></div>
-                <div className="card-actions justify-end line-clamp-2">
+                <div className="line-clamp-2 text-xs" dangerouslySetInnerHTML={{ __html: descriptionHtml }}></div>
+                <div className="card-actions justify-end line-clamp-1">
 
                     {
                         post.tags.map(c => <div key={c} onClick={() => onTagClickCallback([c])} className="badge badge-outline cursor-pointer">{c}</div>)

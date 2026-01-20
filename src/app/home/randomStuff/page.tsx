@@ -6,7 +6,7 @@ import { ContentType } from "~/models/ContentType";
 import PostService from "~/services/PostService";
 import TagService from "~/services/TagService";
 
-export default async function Articles({
+export default async function RandomStuff({
     searchParams,
 }: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -30,16 +30,16 @@ export default async function Articles({
 
     const postService = new PostService()
     const tagService = new TagService();
-    const tags = await tagService.List(1)
+    const tags = await tagService.List(2)
 
-    const initialPosts = await postService.List(6, 0, 1, initialTags, true, [ContentType.descriptionRender, ContentType.preview, ContentType.titleRender]);
+    const initialPosts = await postService.List(6, 0, 2, initialTags, true, [ContentType.descriptionRender, ContentType.preview, ContentType.titleRender]);
     
     return (
 
         <div id="parent" className="relative">
             <div className="grid lg:grid-cols-4 xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
                 <div  className="lg:col-span-3 xl:col-span-3 md:col-span-2 sm:col-span-1">
-                    <ArticlesPreview initialPosts={initialPosts} tags={[]}  articleTypeId={1} />
+                    <ArticlesPreview initialPosts={initialPosts} tags={[]} articleTypeId={2} />
                 </div>
                 <div className="lg:col-span-1 xl:col-span-1 md:col-span-1 sm:col-span-1">
                     <TagsDisplay rootPath="/home/articles" allTags={tags} />

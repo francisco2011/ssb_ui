@@ -9,10 +9,11 @@ import { ContentType } from "~/models/ContentType";
 
 type Props = {
     tags: string[],
-    initialPosts: PostModelResponse
+    initialPosts: PostModelResponse,
+    articleTypeId: number
 }
 
-export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Element {
+export default function ArticlesPreview({ tags, initialPosts, articleTypeId }: Props): JSX.Element {
 
     const [posts, setPosts] = useState<PostModel[]>(initialPosts.posts)
     const [offset, setOffset] = useState(3);
@@ -32,7 +33,7 @@ export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Elem
 
         const initialPostsCount = posts.length;
 
-        var nextPosts = await postService.List(6, offset, 1, selectedTags, false, [ContentType.descriptionRender, ContentType.preview, ContentType.titleRender]);
+        var nextPosts = await postService.List(6, offset, articleTypeId, selectedTags, false, [ContentType.descriptionRender, ContentType.preview, ContentType.titleRender]);
 
         setPosts((prevPosts) => [...prevPosts, ...nextPosts.posts]);
         setOffset((prevOffset) => prevOffset + 6);
@@ -51,7 +52,7 @@ export default function ArticlesPreview({ tags, initialPosts }: Props): JSX.Elem
 
     return (
         <>
-        <div className="grid grid-rows-none  place-items-stretch sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3  gap-8 gap-y-16">
+        <div className="place-items-stretch sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3  gap-8 gap-y-16">
         {
             posts.map( c => <ArticleCard key={c.id} onTagClickCallback={onTagClicked} post={c} />)
         }
