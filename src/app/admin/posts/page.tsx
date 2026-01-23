@@ -89,10 +89,10 @@ export default function Posts() {
         }
     }
 
-    const loadTags = async () => {
+    const loadTags = async (postTypeId: number) => {
 
         try {
-            const tags = await new TagService().List()
+            const tags = await new TagService().List(postTypeId)
             const options = tags.map(c => { return { value: c.term, label: c.term } })
 
             setTags(options)
@@ -105,11 +105,10 @@ export default function Posts() {
     function handleTypeSelected(e) {
         const st = postTypes.find(c => c.name == e.target.value)
         if (st) {
-            //setSelectedPostType(st)
-
             const newState = { ...state, type: st }
             setState({ ...newState })
-
+            
+            loadTags(st.id)
         }
     }
 
@@ -134,7 +133,6 @@ export default function Posts() {
         const load = async () => {
             await loadData();
             await loadPostTypes()
-            await loadTags()
         }
 
         load()

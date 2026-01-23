@@ -1,53 +1,43 @@
-'use client'
-
-import React, { createRef, forwardRef, useEffect, useRef, useState } from 'react';
-import PostModel from '~/models/PostModel';
+import React from 'react';
 import PostService from '~/services/PostService';
-import { useParams, useSearchParams } from 'next/navigation';
-import PostReadonlyEditor from '~/components/home/readonlyEditor/postReadOnlyEditor';
+import { notFound } from 'next/navigation';
 import ContentService from '~/services/ContentService';
+import { NextRequest } from 'next/server';
 
-export default function PostEditor() {
+export  default async function Post(request: NextRequest) {
 
-  const params = useParams<{ id: string; }>()
+  //@ts-ignore
+  const id = (await request.params).id
   const service = new PostService();
   const contentService = new ContentService();
+  let htmlContent = ""
 
-  const [post, setPost] = useState<PostModel | null> (null)
-  const [htmlContent, setHtmlContent] = useState<string | null> (null)
+  const getPost = async () => {
 
-  useEffect(() => {
-    
-    const getPost = async () => {
+      if(id){
+        const p = await service.Get(id)
 
-      if(params?.id && params.id != 'none'){
-        const p = await service.Get(params.id)
+        if(!p) notFound()
         
         const render = p.contents.find(c => c.type == "render")
 
         //TODO: ONLY HTML WILL BE ALLOWED
         if(render && render.url){
-          const htmlContent = await contentService.GetExternalContentAsStr(render.url)
-          setHtmlContent(htmlContent)
-        }else{
-          setPost(p)
+          const _htmlContent = await contentService.GetExternalContentAsStr(render.url)
+          
+          htmlContent = _htmlContent
+          //setHtmlContent(htmlContent)
         }
 
       }
     }
-    getPost()
-    
-  }, []);
+    await getPost()
 
   return (
     <>
 
     {
-        post ? <PostReadonlyEditor post={post} /> : null
-    }
-
-    {
-        htmlContent ? <div className='editor-shell' >
+        <div className='editor-shell' >
           <div className='editor-container' >
             <div >
               <div className=''  dangerouslySetInnerHTML={{ __html: htmlContent }}>
@@ -55,7 +45,7 @@ export default function PostEditor() {
               </div>
             </div>
         </div>
-        </div> : null
+        </div>
     }
     
     </>

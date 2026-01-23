@@ -1,21 +1,26 @@
+import { error } from "console";
+import { notFound } from "next/navigation";
 import { ContentType } from "~/models/ContentType";
 import PostModel from "~/models/PostModel";
 import PostModelResponse from "~/models/PostModelResponse";
 
 export default class PostService {
 
-  async Get(id: string): Promise<PostModel> {
-    var url = "http://localhost:5079/post/" + id;
+  async Get(id: string): Promise<PostModel | null> {
 
-    const response = await fetch(url);
-    const data = await response.json();
+    try{
 
-    if (data.error) {
-      console.error(data.error)
-      throw new Error("Error while loading data")
+      var url = "http://localhost:5079/post/" + id;
+      const response = await fetch(url);
+
+      const data = await response.json();
+      return data;
+
+    }catch(error){
+      debugger
     }
 
-    return data;
+
   }
 
   async Clone(id: number): Promise<number> {
