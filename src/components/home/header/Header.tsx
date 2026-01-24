@@ -21,7 +21,7 @@ export default async function Header(): Promise<JSX.Element> {
    
     return (
         <>
-            <ul className="menu bg-base-200 h-full sticky top-0 left-0 float-start w-20 sm:w-28 md:w-32 lg:w-38 xl:w-48 2xl:w-52 m:text-sm md:text-lg xl:text-xl">
+            <ul className="menu bg-base-200 min-h-screen sticky top-0 left-0 float-start w-20 sm:w-28 md:w-32 lg:w-38 xl:w-48 2xl:w-52 m:text-sm md:text-lg xl:text-xl">
                 <img className="mask mask-circle w-auto" src="https://64.media.tumblr.com/babc8de29c294b0b95adb2842c45df20/79b134f59e9d213e-62/s500x750/e81261d5840d3bcb4d3b6143c0ed8db41d2c5334.jpg" />
 
                 <div className="text-emerald-100 sm:w-auto md:w-auto lg:w-auto xl:w-auto 2xl::w-auto">
@@ -30,21 +30,18 @@ export default async function Header(): Promise<JSX.Element> {
                     }
                 </div>
 
-                <li className="w-auto">
-
+                <li >
                     <Link href="/home/articles">Articles</Link>
-
                 </li>
 
-                <li className="w-auto">
+                <li >
 
                     <Link href="/home/codeSnippets/">Code Snippets</Link>
 
                 </li>
 
-                <li className="w-auto">
-
-                    <Link href="/home/randomStuff/">Random Stuff</Link>
+                <li>
+                     <Link href="/home/randomStuff/">Random Stuff</Link>
 
                 </li>
 

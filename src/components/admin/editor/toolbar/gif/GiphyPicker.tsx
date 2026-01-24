@@ -49,13 +49,6 @@ export default function GiphyPicker({ OnGifSelected }: PickerConfig) {
         
     }
 
-    //useEffect(() => {
-
-    //    if(clearInput) setClearInput(false)
-
-
-   // }, [clearInput])
-
     return (
         <>
             <select value={gType} onChange={setGType}>
