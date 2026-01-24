@@ -346,7 +346,6 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, d
     }, [editor, setIsLinkEditMode, isLink]);
 
     const insertGif = useCallback((payload: InsertImagePayload) => {
-
         editor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload);
 
     }, [editor])

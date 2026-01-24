@@ -21,12 +21,9 @@ export  default async function Post(request: NextRequest) {
         
         const render = p.contents.find(c => c.type == "render")
 
-        //TODO: ONLY HTML WILL BE ALLOWED
         if(render && render.url){
           const _htmlContent = await contentService.GetExternalContentAsStr(render.url)
-          
           htmlContent = _htmlContent
-          //setHtmlContent(htmlContent)
         }
 
       }

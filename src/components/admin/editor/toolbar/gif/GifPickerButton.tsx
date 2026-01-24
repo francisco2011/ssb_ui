@@ -1,18 +1,19 @@
 import { faCopy, faFaceSmile, faGift, faPaintBrush, faPaintRoller } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import  { createRef, useRef }  from "react";
-import GifPicker, { TenorImage } from 'gif-picker-react';
+import { createRef, useRef } from "react";
 import { InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import Popover from "~/components/popover/Popover";
+import GiphyPicker, { Gif } from "./GiphyPicker";
+import { SearchContextManager } from "@giphy/react-components";
 
 function GifPickerButton({ onClickCallback }: { onClickCallback: (data: InsertImagePayload) => void }) {
 
     const popoverRef = useRef(null);
 
-    const onSelected = (data: TenorImage) => {
-        onClickCallback({ altText: data.description, src: data.url, captionsEnabled: false, showCaption: false})
+    const onSelected = (data: Gif) => {
+        onClickCallback({ altText: data.description, src: data.url, captionsEnabled: false, showCaption: false })
 
-        if(popoverRef?.current){
+        if (popoverRef?.current) {
             popoverRef.current.close();
         }
     }
@@ -21,18 +22,15 @@ function GifPickerButton({ onClickCallback }: { onClickCallback: (data: InsertIm
         <>
             <div>
 
-            <Popover ref={popoverRef} buttonClass={"px-1 bg-gray-400 hover:bg-gray-700 transition-colors duration-100 ease-in"}
-                        content={ <GifPicker  
-                                    onGifClick={onSelected} 
-                                    tenorApiKey={"AIzaSyBck_LbIlITJQTkQ9EDoYE2TJJ2gZ-nmXg"}   />}>
-                        <FontAwesomeIcon
-                            icon={faGift}
-                            className="text-white w-3.5 h-3.5" />
-                    </Popover>
-
-
-
-                
+                <Popover ref={popoverRef} buttonClass={"px-1 bg-gray-400 hover:bg-gray-700 transition-colors duration-100 ease-in"}
+                    content={<>
+                        <SearchContextManager shouldDefaultToTrending={false} apiKey={"Zs4DT1qq2nC8ePu5Uovt3alak14atCCS"}>
+                            <GiphyPicker OnGifSelected={onSelected} />
+                        </SearchContextManager></>}>
+                    <FontAwesomeIcon
+                        icon={faGift}
+                        className="text-white w-3.5 h-3.5" />
+                </Popover>
             </div>
 
         </>
