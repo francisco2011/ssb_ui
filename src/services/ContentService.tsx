@@ -1,46 +1,47 @@
 import ContentModel from "~/models/ContentModel";
+import { StorageObjectModel } from "~/models/Storage/StorageObjectModel";
 
 export default class ContentService {
 
 
-    dataURLtoBlob(dataurl: string, fileName: string ): File | null {
+    dataURLtoBlob(dataurl: string, fileName: string): File | null {
 
-        if(!dataurl) throw new Error("dataurl cant be empty, undefined or null")
+        if (!dataurl) throw new Error("dataurl cant be empty, undefined or null")
 
-        var arr = dataurl.split(',') 
-        
-        if(!arr || arr.length < 2) throw new Error("dataurl is not well formated")
-        
+        var arr = dataurl.split(',')
+
+        if (!arr || arr.length < 2) throw new Error("dataurl is not well formated")
+
         //@ts-ignore
         var mime = arr[0].match(/:(.*?);/)[1];
 
         //@ts-ignore
-        var  bstr = atob(arr[1]) 
-        var n = bstr.length 
+        var bstr = atob(arr[1])
+        var n = bstr.length
         var u8arr = new Uint8Array(n);
-        while(n--){
+        while (n--) {
             u8arr[n] = bstr.charCodeAt(n);
         }
-        return new File([new Blob([u8arr], {type:mime})], fileName) ;
+        return new File([new Blob([u8arr], { type: mime })], fileName);
     }
 
     htmltoFile(htmlString: string, fileName: string): File {
 
-        if(!htmlString) throw new Error("dataurl cant be empty, undefined or null")
+        if (!htmlString) throw new Error("dataurl cant be empty, undefined or null")
 
         const blob = new Blob([htmlString], { type: 'text/html' });
-        
-        return new File([blob], fileName) ;
+
+        return new File([blob], fileName);
     }
 
-    async UploadFile(file: File|string, postId: number, contentType: string ): Promise<ContentModel> {
+    async UploadFile(file: File | string, postId: number, contentType: string): Promise<ContentModel> {
 
-        if( typeof file === 'string'){
+        if (typeof file === 'string') {
 
             const newFile = this.dataURLtoBlob(file, "no_name")
 
-            if(newFile) file = newFile
-         }
+            if (newFile) file = newFile
+        }
 
         var url = 'http://localhost:5079/post/' + postId + '/contentType/' + contentType;
 
@@ -61,7 +62,7 @@ export default class ContentService {
         return data;
     }
 
-    async UpdateFileContent(file: any, postId: number, fileName: string ): Promise<ContentModel> {
+    async UpdateFileContent(file: any, postId: number, fileName: string): Promise<ContentModel> {
         var url = 'http://localhost:5079/post/' + postId + '/content/' + fileName;
 
         const formData = new FormData();
@@ -96,20 +97,33 @@ export default class ContentService {
     }
 
     async GetExternalContentAsStr(url: string): Promise<string> {
-        
+
         const response = await fetch(url);
         const data = await response.text();
-
-        //if (data.error) {
-        //    console.error(data.error)
-        //    throw new Error("Error while loading data")
-        //}
-
         return data;
     }
 
+    async Traverse(bucket?: string, folders?: string[]): Promise<StorageObjectModel[]> {
+        var url = "http://localhost:5079/content/storage/traverse?";
 
+        if (folders && folders.length > 0) {
+            folders.forEach(c => {
+                url += "&folders=" + c
+            })
+        }
 
+        if (bucket) {
+            url += "&bucket=" + bucket
+        }
 
+        const response = await fetch(url);
+        const data = await response.json();
 
+        if (data.error) {
+            console.error(data.error)
+            throw new Error("Error while loading data")
+        }
+
+        return data;
+    }
 }

@@ -27,7 +27,7 @@ export default function VerticalMenu(): JSX.Element {
 
             <li>
 
-                <Link href="/admin/storage">Post Types</Link>
+                <Link href="/admin/files">Files</Link>
 
             </li>
 

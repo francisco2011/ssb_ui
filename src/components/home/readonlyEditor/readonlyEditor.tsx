@@ -25,7 +25,6 @@ import { LayoutContainerNode } from '~/components/admin/editor/plugins/LayoutPlu
 import { LayoutItemNode } from '~/components/admin/editor/plugins/LayoutPlugin/LayoutItemNode';
 import { SectionNode } from '~/components/admin/editor/plugins/SectionPlugin/SectionNode';
 import SectionService from '~/services/SectionService';
-import ContentToHtmlUtil from '~/services/ContentToHtmlUtil';
 import SectionModel from '~/models/SectionModel';
 import { createHeadlessEditor } from '@lexical/headless';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
