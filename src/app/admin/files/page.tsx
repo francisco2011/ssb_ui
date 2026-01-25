@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ContentService from "~/services/ContentService";
 import { StorageObjectType } from "~/models/Storage/StorageObjectType";
 
-import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider, TreeItem } from 'react-complex-tree';
+import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider, TreeItem, TreeItemIndex } from 'react-complex-tree';
 import 'react-complex-tree/lib/style-modern.css';
 
 type File = {
@@ -12,6 +12,7 @@ type File = {
     isDirectory: boolean;
     type: StorageObjectType;
     parent: Node | null;
+    url: string,
     path?: string;
     updatedAt?: string;
     size?: number;
@@ -32,6 +33,7 @@ type Tree = {
 
 export default function Files() {
 
+    const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [treeData, setTreeData] = useState({
         root: {
             index: 'root',
@@ -77,6 +79,21 @@ export default function Files() {
 
     }, [])
 
+    //onSelectItems?: (items: TreeItemIndex[], treeId: string) => void;
+    const onSelectedFile = (items: TreeItemIndex[], treeId: string) => {
+        if(!items || items.length == 0) return
+
+        var selected = items[0]
+
+        if(!selected) return
+
+        var node = treeData[selected]
+
+        if(!node || node.data.type != StorageObjectType.file) return
+
+        setSelectedFile(node.data)
+    }
+
     const fileSelected = async (item: TreeItem<File>, treeId: string) => {
 
         if (item && item.isFolder) {
@@ -119,6 +136,7 @@ export default function Files() {
                         name: c.name,
                         isDirectory: isFolder,
                         parent: item,
+                        url: c.url,
                         type: c.type
                     },
                 }
@@ -136,11 +154,12 @@ export default function Files() {
 
     return (
         <>
-            <div className="grid grid-rows-2">
+            <div className="grid grid-cols-2 w-full">
                 <div className="grid-cols-1">
 
                     <UncontrolledTreeEnvironment
                         onExpandItem={fileSelected}
+                        onSelectItems={onSelectedFile}
                         dataProvider={
                             new StaticTreeDataProvider(treeData, (item, data) => ({ ...item, data }))
                         }
@@ -153,6 +172,12 @@ export default function Files() {
                 </div>
 
                 <div className="grid-cols-1">
+                    <div className="w-[50%]">
+                        {
+                            selectedFile?.url ?
+                            <img className="w-auto h-auto" src={selectedFile?.url}></img> : null
+                        } 
+                    </div>
 
                 </div>
             </div>
