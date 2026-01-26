@@ -1,5 +1,3 @@
-import PostModel from "~/models/PostModel";
-import PostModelResponse from "~/models/PostModelResponse";
 import SectionModel, { SectionModelResponse } from "~/models/SectionModel";
 
 export default class SectionService {

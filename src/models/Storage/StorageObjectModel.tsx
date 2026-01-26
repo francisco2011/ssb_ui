@@ -5,4 +5,7 @@ export interface StorageObjectModel {
         name: string
         url: string
         type: StorageObjectType
+        updatedOn?: string;
+        size?: number;
+        mimeType: string
 }
