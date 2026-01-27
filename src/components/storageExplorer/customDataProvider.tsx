@@ -1,7 +1,4 @@
-import ContentService from "~/services/ContentService";
 import { StorageObjectType } from "~/models/Storage/StorageObjectType";
-
-import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider, TreeItem, TreeItemIndex } from 'react-complex-tree';
 
 export class CustomDataProviderImplementation {
         data = {

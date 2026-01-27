@@ -11,6 +11,8 @@ import ImgModel from "~/models/ImgModel";
 import { InsertInlineImagePayload } from "./InlineImagePlugin";
 import { v4 as uuidv4 } from 'uuid';
 import { read } from "fs";
+import StorageExplorerModal from "~/components/storageExplorer/storageExplorerModal";
+import { FileFromStorage } from "~/components/storageExplorer/storageExplorer";
 
 export function UploadImageDialogBody({
     onClick,
@@ -55,6 +57,10 @@ export function UploadImageDialogBody({
 
     const service = new ContentService()
 
+    const loadImageFromStorage = (file: FileFromStorage) => {
+        debugger
+    }
+
     const loadImage = async (files: FileList | null) => {
 
         if (!files) return
@@ -96,6 +102,9 @@ export function UploadImageDialogBody({
             </div>
 
 
+            <div>
+                <StorageExplorerModal onContentCallback={loadImageFromStorage}/>
+            </div>
 
             <FileInput
                 onChange={loadImage}
@@ -142,6 +151,8 @@ export function UploadImageDialogBody({
                     </Button>
                 </DialogActions> : null
             }
+
+            
 
 
         </>

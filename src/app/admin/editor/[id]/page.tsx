@@ -1,30 +1,16 @@
 'use client'
 
-
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ListItemNode, ListNode } from "@lexical/list";
-import { HashtagNode } from "@lexical/hashtag";
-
 import React, { createRef, forwardRef, useEffect, useRef, useState } from 'react';
 
-
-import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
-import { TagNode } from '~/components/admin/editor/plugins/tagsPlugin/TagNode';
-import { EmojiNode } from '~/components/admin/editor/plugins/EmojisPlugin/EmojiNode';
-import { CodeHighlightNode, CodeNode } from '@lexical/code'
-import { AutoLinkNode, LinkNode } from "@lexical/link";
 import PostModel from '~/models/PostModel';
 import PostService from '~/services/PostService';
-import editorTheme from '~/themes/EditorTheme';
 import { useParams } from 'next/navigation';
 import Editor, { ContentState } from '~/components/admin/editor/Editor';
-import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/InlineImageNode';
 import ContentMetada from '~/models/ContentMetadata';
 import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
 import TagSelector from "~/components/admin/tagSelector/TagSelector";
 import PostPreview from "~/components/admin/editor/PostPreview";
 import TagService from "~/services/TagService";
-import { $getRoot, LexicalNode } from "lexical";
 import ImageInterface from "~/components/admin/editor/plugins/imagePlugin/ImageInterface";
 import ContentService from "~/services/ContentService";
 import ContentModel from "~/models/ContentModel";
