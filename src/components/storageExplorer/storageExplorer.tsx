@@ -7,7 +7,7 @@ import { StorageObjectType } from "~/models/Storage/StorageObjectType";
 import { UncontrolledTreeEnvironment, Tree, TreeItem, TreeItemIndex } from 'react-complex-tree';
 import 'react-complex-tree/lib/style-modern.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faAdd, faDownload, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { CustomDataProviderImplementation } from "./customDataProvider";
 
 export type FileFromStorage = {
@@ -148,12 +148,19 @@ export default function StorageExplorer({ allowUpload, onFileSelected }: StoraEx
 
         if (node.data.type != StorageObjectType.file) {
             setSelectedFolder(node.data);
-            if (onFileSelected) onFileSelected(node.data)
         } else {
             setSelectedFile(node.data)
             setSelectedFolder(null);
         }
 
+    }
+
+    const OnFileSelectedToAdd = async () => {
+        if(!selectedFile || !onFileSelected) return
+
+        
+
+        onFileSelected(selectedFile)
     }
 
     const fileSelected = async (item: TreeItem<FileFromStorage>, treeId: string) => {
@@ -212,9 +219,11 @@ export default function StorageExplorer({ allowUpload, onFileSelected }: StoraEx
 
     }
 
+
+
     return (
         <>
-            <div className="grid grid-cols-[30%_70%] ">
+            <div className="grid grid-cols-[30%_70%] h-full">
                 <div className="m-2 col-span-1">
 
                     <div>
@@ -242,6 +251,15 @@ export default function StorageExplorer({ allowUpload, onFileSelected }: StoraEx
                                         className="hidden w-[0.1px] h-[0.1px]" />
 
                                 </div> : null
+                        }
+                        {
+                            onFileSelected ? <button onClick={OnFileSelectedToAdd} disabled={!selectedFile} className="m-1 bg-gray-400">
+                            <FontAwesomeIcon
+                                icon={faAdd}
+                                className="text-white w-4 h-4"
+                            />
+
+                        </button>: null
                         }
 
 
@@ -274,9 +292,9 @@ export default function StorageExplorer({ allowUpload, onFileSelected }: StoraEx
                             <><div>
                                 <h1 className="font-extrabold">Metadata</h1>
                             </div>
-                                <div className="grid grid-cols-1 grid-rows-[20%_80%] w-full h-full m-2">
+                                <div className="grid grid-cols-1 auto-rows-auto  w-full h-full m-4">
 
-                                    <div className="row-span-1">
+                                    <div className="row-span-1 max-h-[30%] h-fit" >
 
                                         <div className="grid float-right grid-cols-6 grid-rows-3 min-w-full">
 
@@ -311,9 +329,6 @@ export default function StorageExplorer({ allowUpload, onFileSelected }: StoraEx
                                             </div>
 
                                         </div>
-                                        <button>
-                                            Select
-                                        </button>
                                     </div>
                                     <div className="row-span-1">
 

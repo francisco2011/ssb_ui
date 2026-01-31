@@ -3,66 +3,33 @@ import { notFound } from "next/navigation";
 import { ContentType } from "~/models/ContentType";
 import PostModel from "~/models/PostModel";
 import PostModelResponse from "~/models/PostModelResponse";
+import FetchBase from "./FetchBase";
 
-export default class PostService {
+export default class PostService extends FetchBase {
 
-  async Get(id: string): Promise<PostModel | null> {
+  async Get(id: string): Promise<PostModel> {
 
-    try{
-
-      var url = "http://localhost:5079/post/" + id;
-      const response = await fetch(url);
-
-      const data = await response.json();
-      return data;
-
-    }catch(error){
-      debugger
-    }
-
-
+    var url = "http://localhost:5079/post/" + id;
+    return this.GetBase(url) 
   }
 
   async Clone(id: number): Promise<number> {
-    var url = "http://localhost:5079/post/" + id +"/clone"; 
+    var url = "http://localhost:5079/post/" + id + "/clone";
 
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: new Headers({ 'content-type': 'application/json' }),
-    });
-    const data = await response.json();
-
-    if (data.error) {
-      console.error(data.error)
-      throw new Error("Error while loading tags")
-    }
-    return data as number;
+    return this.PostBase<Number, number>(id, url);
   }
 
-  async Delete(id: number){
+  async Delete(id: number) {
     var url = "http://localhost:5079/post/" + id;
 
-    const response = await fetch(url, {
-      method: "DELETE",
-      headers: new Headers({ 'content-type': 'application/json' }),
-    });
-
-
-    if (response.status != 204) {
-
-      var error = await response.text();
-
-      console.error('Fetch error:', error);
-      throw error;
-    }
+    return this.DeleteBase(url)
 
 
   }
 
   async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean, contents?: ContentType[]): Promise<PostModelResponse> {
 
-    var url = "http://localhost:5079/post?limit="+ limit + "&offset=" + offset;
+    var url = "http://localhost:5079/post?limit=" + limit + "&offset=" + offset;
 
     if (tags != undefined && tags.length > 0) {
       tags.forEach(c => {
@@ -70,7 +37,7 @@ export default class PostService {
       })
     }
 
-    if(published){
+    if (published) {
       url += "&published=" + published
     }
 
@@ -81,51 +48,27 @@ export default class PostService {
       })
     }
 
-    if(typeId){
+    if (typeId) {
       url += "&typeId=" + typeId
     }
 
-    const response = await fetch(url);
-    const data = await response.json();
+    return this.GetBase(url)
 
-    if (data.error) {
-      console.error(data.error)
-      throw new Error("Error while loading data")
-    }
-
-    return data;
   }
 
   async Save(post: PostModel): Promise<PostModel> {
 
     var url = "http://localhost:5079/post";
-
-
-    const response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(post),
-      headers: new Headers({ 'content-type': 'application/json' }),
-    });
-    const data = await response.json();
-
-    if (data.error) {
-      console.error(data.error)
-      throw new Error("Error while loading tags")
-    }
-
-    return data;
+    return await this.PostBase<PostModel, PostModel>(post, url)
   }
+
+
 
   async changePublishState(id: number) {
 
     var url = "http://localhost:5079/post/" + id + "/changePublishState";
 
-    const response = await fetch(url, {
-      method: "PUT"
-    });
-    if (!response.ok) {
-      throw new Error("Error while changing state")
-    }
+    return this.PutBase(url, undefined)
   }
 
 

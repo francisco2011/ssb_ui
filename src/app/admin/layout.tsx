@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import VerticalMenu from "~/components/admin/verticalMenu/VerticalMenu";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Francisco Contreras Olea",
@@ -21,7 +22,7 @@ export default function RootLayout({
         <main className=" bg-white text-black overflow-h-scroll h-auto w-auto">
         
           <div className="flex flex-col items-center justify-center">
-
+            <Toaster richColors position="top-right" />
             {children}
           </div>
         </main>

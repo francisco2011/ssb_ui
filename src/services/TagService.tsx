@@ -1,39 +1,24 @@
 import TagModel from "~/models/TagModel";
 import TagUpdateModel from "~/models/TagUpdateModel";
+import FetchBase from "./FetchBase";
 
 
-export default class TagService{
+export default class TagService extends FetchBase{
 
-    async List(postTypeId: number): Promise<TagModel[]> {
+  async List(postTypeId: number): Promise<TagModel[]> {
 
-      let url = 'http://localhost:5079/tags'
+    let url = 'http://localhost:5079/tags'
 
-      url += '?postTypeId=' + postTypeId
-      
-      const response = await fetch(url);
+    url += '?postTypeId=' + postTypeId
 
-      const data = await response.json();
+    return await this.GetBase(url)
+  }
 
-        if (data.error) {
-            console.error(data.error)
-            throw new Error("Error while loading tags")
-          }
-        
-        return data;
-      }
+  async updateTags(id: number, model: TagUpdateModel) {
 
-      async updateTags(id: number, model: TagUpdateModel) {
+    var url = "http://localhost:5079/tags/" + id;
 
-        var url = "http://localhost:5079/tags/" + id;
-    
-        const response = await fetch(url, {
-          method: "PUT",
-          body: JSON.stringify(model),
-          headers: new Headers({ 'content-type': 'application/json' }),
-        });
-        if (!response.ok) {
-          throw new Error("Error while changing state")
-        }
-      }
+    await this.PutBase<TagUpdateModel>(url, model)
+  }
 }
 

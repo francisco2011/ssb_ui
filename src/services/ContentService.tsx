@@ -34,6 +34,30 @@ export default class ContentService {
         return new File([blob], fileName);
     }
 
+    async UploadFileWithUrl(fileUrl: string, postId: number, contentType, fileName: string){
+        var url = 'http://localhost:5079/post/' + postId + '/content/'
+
+        const model: ContentModel = {
+            name: fileName,
+            type: contentType,
+            url: fileUrl
+        }
+
+        const response = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(model),
+        headers: new Headers({ 'content-type': 'application/json' }),
+        });
+        const data = await response.json();
+
+        if (data.error) {
+            console.error(data.error)
+            throw new Error("Error while loading tags")
+        }
+
+        return data;
+    }
+
     async UploadFile(file: File | string, postId: number, contentType: string): Promise<ContentModel> {
 
         if (typeof file === 'string') {

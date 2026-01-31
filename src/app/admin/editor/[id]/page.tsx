@@ -16,6 +16,7 @@ import ContentService from "~/services/ContentService";
 import ContentModel from "~/models/ContentModel";
 import SectionService from "~/services/SectionService";
 import SectionModel, { SectionModelResponse } from "~/models/SectionModel";
+import { Toaster, toast } from 'sonner'
 
 
 export default function PostEditor() {
@@ -45,17 +46,19 @@ export default function PostEditor() {
 
       if (params?.id && params.id != 'none') {
         const p = await service.Get(params.id)
+          .then( data => { 
+            setPost(data);         
+            const metadata: ContentMetada = {
+              isPublished: data.isPublished,
+              imgModel: null,// prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
+              type: data.type,
+              name: data.name
+          }
+          setMetadata(metadata)
+          setTags(data.tags) 
+          toast.success('Post found!')})
+          .catch(error => toast.error('Post not found!'))
 
-        setPost(p)
-
-        const metadata: ContentMetada = {
-          isPublished: p.isPublished,
-          imgModel: null,// prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
-          type: p.type,
-          name: p.name
-        }
-        setMetadata(metadata)
-        setTags(p.tags)
 
       } else {
         let _post: PostModel = {
@@ -71,8 +74,12 @@ export default function PostEditor() {
           isPublished: false
         };
 
-        const p = await service.Save(_post)
-        setPost(p)
+        await service.Save(_post)
+        .then(post => {
+          setPost(post)
+          toast.success('Post saved!')
+        })
+        .catch(error => toast.error('Post not found!'))
       }
     }
     getPost()
@@ -86,6 +93,10 @@ export default function PostEditor() {
 
     if (!isPublishedStateSame && post?.id) {
       await service.changePublishState(post?.id)
+       .then(ok => {
+          toast.success('Post updated!')
+        })
+        .catch(error => toast.error('Post not updated!'))
     }
 
   }
@@ -109,8 +120,12 @@ export default function PostEditor() {
     if (!editorRef?.current) return;
 
     var model = { tags: tags };
-
-    await tagService.updateTags(post.id, model);
+    
+    await tagService.updateTags(post.id, model)
+          .then( ok => toast.success('Tags saved!'))
+          .catch(error => toast.error('Error tags not saved'))
+      
+      
   }
 
 
@@ -118,10 +133,25 @@ export default function PostEditor() {
 
     const result: ContentModel[] = []
 
+    
     const imagesToSave = images.filter(c => c.src.startsWith("data:image"))
-
     for (var img of imagesToSave) {
       const newImg = await contentService.UploadFile(img.src, post?.id ?? 0, contentType);
+      newImg.previousId = img.imgId
+      result.push(newImg)
+    }
+
+
+    return result
+  }
+
+  const saveImgsWithUrl = async (images: ImageInterface[], contentType: string): Promise<ContentModel[]> => {
+    const result: ContentModel[] = []
+
+    const imagesToSaveWithUrl = images.filter(c => c.src.startsWith("http") && c.imgId)
+
+    for (var img of imagesToSaveWithUrl) {
+      const newImg = await contentService.UploadFileWithUrl(img.src, post?.id ?? 0, contentType, img.imgId??'');
       newImg.previousId = img.imgId
       result.push(newImg)
     }
@@ -144,8 +174,8 @@ export default function PostEditor() {
     const images = editorRef.current.getAllImages() as ImageInterface[]
     var newImages = await saveImgs( images, "imgBody")  
 
-    if(metadata.imgModel && metadata.imgModel.src && !metadata.imgModel.name){
-      await saveImgs( [{src: metadata.imgModel.src}], "preview")  
+    if(metadata.imgModel && metadata.imgModel.src && metadata.imgModel.name){
+      await saveImgsWithUrl( [{src: metadata.imgModel.src, imgId: metadata.imgModel.name}], "preview")  
     } 
 
     //@ts-ignore
@@ -182,14 +212,13 @@ export default function PostEditor() {
    await contentService.UploadFile(descriptionHtmlFile, post.id, "descriptionRender")
   ///////////////////
     
-    try {
       const result = await service.Save(post)
-      setPost({ ...post, id: result.id, content: post.content })
-
-    } catch (error) {
-
-    }
-
+      .then( result =>
+      {
+        setPost({ ...post, id: result.id, content: post.content })
+        toast.success('Post saved!')
+      })
+        .catch(error => toast.error('Error Post not saved'))
 
   }
 

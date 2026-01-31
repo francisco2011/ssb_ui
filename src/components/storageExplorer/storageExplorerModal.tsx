@@ -6,11 +6,12 @@ import StorageExplorer, { FileFromStorage } from "./storageExplorer";
 
 function StorageExplorerModal({ onContentCallback}:{ onContentCallback: (response: FileFromStorage) => void}) {
 
-    const [modal, showModal] = useModal();
+    const [modal, showModal, onClose] = useModal();
 
     const onFile =  useCallback((file: FileFromStorage ) => {
         if(file){
             onContentCallback(file)
+            onClose()
         }
     }, [])
 
@@ -23,7 +24,7 @@ function StorageExplorerModal({ onContentCallback}:{ onContentCallback: (respons
           }
         onClick={() => {
                         showModal('Storage Explorer', (onClose) => (
-                            <div className="z-50 w-[70rem] h-[30rem]">
+                            <div className="z-50 w-[70rem] h-[30rem] overflow-auto">
                                 <StorageExplorer allowUpload={false} onFileSelected={onFile}/>
                                 </div>
                           

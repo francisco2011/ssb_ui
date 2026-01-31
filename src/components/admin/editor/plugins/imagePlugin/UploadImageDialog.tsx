@@ -5,12 +5,9 @@ import TextInput from "~/components/TextInput";
 import { DialogActions } from "~/components/Dialog";
 import Button from "~/components/Button";
 import ContentService from "~/services/ContentService";
-import { ContentType } from "~/models/ContentType";
-import ContentModel from "~/models/ContentModel";
 import ImgModel from "~/models/ImgModel";
 import { InsertInlineImagePayload } from "./InlineImagePlugin";
 import { v4 as uuidv4 } from 'uuid';
-import { read } from "fs";
 import StorageExplorerModal from "~/components/storageExplorer/storageExplorerModal";
 import { FileFromStorage } from "~/components/storageExplorer/storageExplorer";
 
@@ -21,7 +18,6 @@ export function UploadImageDialogBody({
     showAlternativeText,
     onImageLoaded,
     imgClassname,
-    contentType,
     alreadyLoadedImgUrl,
     allowLoadInline
 }: {
@@ -58,7 +54,11 @@ export function UploadImageDialogBody({
     const service = new ContentService()
 
     const loadImageFromStorage = (file: FileFromStorage) => {
-        debugger
+        
+        if(!file.url) return
+        
+        setSrc(file.url)
+        onImageLoaded({ src: file.url, imgId: file.name, altText: ""})
     }
 
     const loadImage = async (files: FileList | null) => {
@@ -72,7 +72,7 @@ export function UploadImageDialogBody({
             
            if(reader.result){
             setSrc(reader.result as string)
-            onImageLoaded({ src: reader.result})
+            onImageLoaded({ src: reader.result, altText: ''})
            } 
             
         });

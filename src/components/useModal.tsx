@@ -14,6 +14,7 @@ import Modal from './modal/Modal';
 export default function useModal(): [
   JSX.Element | null,
   (title: string, showModal: (onClose: () => void) => JSX.Element) => void,
+  onClose: () => void
 ] {
   const [modalContent, setModalContent] = useState<null | {
     closeOnClickOutside: boolean;
@@ -56,5 +57,5 @@ export default function useModal(): [
     [onClose],
   );
 
-  return [modal, showModal];
+  return [modal, showModal, onClose];
 }

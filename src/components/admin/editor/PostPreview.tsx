@@ -135,7 +135,7 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
                     <span className="label-text">Background img</span>
                 </div>
                 <div className="mr-2 ml-2">
-                    <UploadImageDialogBody alreadyLoadedImgUrl={state.imgModel} contentType={'preview'} imgClassname="h-46 w-48" onImageLoaded={onSetImg} showDialogAction={false} showAlternativeText={false} onClick={() => { }} />
+                    <UploadImageDialogBody alreadyLoadedImgUrl={state.imgModel} imgClassname="h-46 w-48" onImageLoaded={onSetImg} showDialogAction={false} showAlternativeText={false} onClick={() => { }} />
                 </div>
             </div>
 
