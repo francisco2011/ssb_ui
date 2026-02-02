@@ -1,8 +1,10 @@
 import ContentModel from "~/models/ContentModel";
 import { StorageObjectModel } from "~/models/Storage/StorageObjectModel";
+import FetchBase from "./FetchBase";
 
-export default class ContentService {
+export default class ContentService extends FetchBase {
 
+    BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
     dataURLtoBlob(dataurl: string, fileName: string): File | null {
 
@@ -34,8 +36,8 @@ export default class ContentService {
         return new File([blob], fileName);
     }
 
-    async UploadFileWithUrl(fileUrl: string, postId: number, contentType, fileName: string){
-        var url = 'http://localhost:5079/post/' + postId + '/content/'
+    async UploadFileWithUrl(fileUrl: string, postId: number, contentType, fileName: string): Promise<ContentModel>{
+        var url = this.BACKEND_API_URL + '/post/' + postId + '/content/'
 
         const model: ContentModel = {
             name: fileName,
@@ -43,19 +45,7 @@ export default class ContentService {
             url: fileUrl
         }
 
-        const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify(model),
-        headers: new Headers({ 'content-type': 'application/json' }),
-        });
-        const data = await response.json();
-
-        if (data.error) {
-            console.error(data.error)
-            throw new Error("Error while loading tags")
-        }
-
-        return data;
+        return this.PostBase<ContentModel, ContentModel>(model, url, { ContentType: "application/json"})
     }
 
     async UploadFile(file: File | string, postId: number, contentType: string): Promise<ContentModel> {
@@ -67,47 +57,26 @@ export default class ContentService {
             if (newFile) file = newFile
         }
 
-        var url = 'http://localhost:5079/post/' + postId + '/contentType/' + contentType;
+        var url = this.BACKEND_API_URL + '/post/' + postId + '/contentType/' + contentType;
 
         const formData = new FormData();
         formData.append("file", file);
-
-        const response = await fetch(url, {
-            method: "POST",
-            body: formData,
-        });
-        const data = await response.json();
-
-        if (data.error) {
-            console.error(data.error)
-            throw new Error("Error while loading data")
-        }
-
-        return data;
+        return this.PostBase<FormData, ContentModel>(formData, url, undefined)
     }
 
     async UpdateFileContent(file: any, postId: number, fileName: string): Promise<ContentModel> {
-        var url = 'http://localhost:5079/post/' + postId + '/content/' + fileName;
+        var url = this.BACKEND_API_URL + '/post/' + postId + '/content/' + fileName;
 
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch(url, {
-            method: "PUT",
-            body: formData,
-        });
-        const data = await response.json();
 
-        if (data.error) {
-            console.error(data.error)
-            throw new Error("Error while loading data")
-        }
+        return this.PutBase<FormData, ContentModel>(url, formData, undefined)
 
-        return data;
     }
 
     async Upload(file: any, bucket: string, path: string, fileName: string): Promise<StorageObjectModel> {
-        var url = 'http://localhost:5079/content/bucket/' + bucket + "/" + fileName;
+        var url = this.BACKEND_API_URL + '/content/bucket/' + bucket + "/" + fileName;
 
         if(path){
             url += "?path=" + path
@@ -116,44 +85,23 @@ export default class ContentService {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch(url, {
-            method: "POST",
-            body: formData,
-        });
-        const data = await response.json();
+        return this.PostBase<FormData, StorageObjectModel>(formData,url, undefined)
 
-        if (data.error) {
-            console.error(data.error)
-            throw new Error("Error while loading data")
-        }
-
-        return data;
     }
 
 
     async GetDownloadUrl(fileName: string): Promise<ContentModel> {
-        var url = "http://localhost:5079/content/" + fileName;
+        var url = this.BACKEND_API_URL + "/content/" + fileName;
 
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.error) {
-            console.error(data.error)
-            throw new Error("Error while loading data")
-        }
-
-        return data;
+        return this.GetBase(url)
     }
 
     async GetExternalContentAsStr(url: string): Promise<string> {
-
-        const response = await fetch(url);
-        const data = await response.text();
-        return data;
+        return this.GetBase(url)
     }
 
     async Traverse(bucket?: string, folders?: string[]): Promise<StorageObjectModel[]> {
-        var url = "http://localhost:5079/content/storage/traverse?";
+        var url = this.BACKEND_API_URL + "/content/storage/traverse?";
 
         if (folders && folders.length > 0) {
             folders.forEach(c => {
@@ -165,14 +113,6 @@ export default class ContentService {
             url += "&bucket=" + bucket
         }
 
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.error) {
-            console.error(data.error)
-            throw new Error("Error while loading data")
-        }
-
-        return data;
+        return this.GetBase(url)
     }
 }

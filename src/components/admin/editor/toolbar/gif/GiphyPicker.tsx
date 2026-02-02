@@ -3,7 +3,6 @@ import { Carousel, Grid, SearchBar, SearchContext, SearchContextManager } from '
 import { GiphyFetch, MediaType } from '@giphy/js-fetch-api'
 import { IGif, IUser, GifID, IChannel } from '@giphy/js-types';
 import { SyntheticEvent, useContext, useEffect, useRef, useState } from 'react';
-import { faL } from '@fortawesome/free-solid-svg-icons';
 
 export type Gif = {
     url: string,
@@ -23,16 +22,16 @@ export default function GiphyPicker({ OnGifSelected }: PickerConfig) {
     const gridRef = useRef<Grid>(null)
     const { fetchGifs, searchKey } = useContext(SearchContext)
 
+    const G_API_KEY = process.env.NEXT_PUBLIC_GIF_API_KEY
+    const gf = new GiphyFetch(G_API_KEY)
+
+    //type MediaType = 'stickers' | 'gifs' | 'text' | 'videos';
+    const _fetchGifs = (offset: number) => { return gf.search(searchTerm, { offset, limit: 10, type: gType }) }
+
     function onClick(gif: IGif, e: SyntheticEvent<HTMLElement, Event>) {
         e.preventDefault()
         OnGifSelected({ url: gif.images.original.url, description: gif.alt_text ?? '' })
     }
-
-    const gf = new GiphyFetch('Zs4DT1qq2nC8ePu5Uovt3alak14atCCS')
-
-
-//type MediaType = 'stickers' | 'gifs' | 'text' | 'videos';
-    const _fetchGifs = (offset: number) => { return gf.search(searchTerm, { offset, limit: 10, type: gType }) }
 
     function onSearchEnter(term: string) {
         setSearchTerm(term)

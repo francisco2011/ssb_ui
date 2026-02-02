@@ -1,11 +1,12 @@
 import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PostTypeService from "~/services/PostTypeService";
 import PostTypeModel from "~/models/PostTypeModel";
 import { InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import ContentMetadaModel from "~/models/ContentMetadata";
 import PostModel from "~/models/PostModel";
 import { ContentType } from "~/models/ContentType";
+import { toast } from "sonner";
 
 export default function PostPreview({ onChange, post }: { onChange: any, post: PostModel | null }): JSX.Element {
 
@@ -18,26 +19,29 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
         name: null
     })
 
-    const [postId, setPostId] = useState<number>(0)
+    const onSetImg = useCallback((payload: InsertImagePayload) => {
 
-    const onSetImg = (payload: InsertImagePayload) => {
-        
-        const newState = { ...state, imgModel: { name: payload.imgId ?? '', src: payload.src } }
+        if (!post) return
 
+        const newState = {
+            type: post?.type, isPublished: post?.isPublished,
+            name: post?.name, imgModel: { name: payload.imgId ?? '', src: payload.src }
+        }
         setState(newState)
         onChange(newState)
-    };
+    }, [post]);
 
     useEffect(() => {
         const loadPostTypes = async () => {
 
-            try {
-                const pt = await new PostTypeService().Get()
-                if (pt) setPostTypes(pt)
+            new PostTypeService().Get()
+                .then(data => {
+                    if (data) setPostTypes(data)
+                })
+                .catch(error => toast.error('Post types not loaded!'))
 
-            } catch (error) {
-                console.error(error)
-            }
+
+
         }
 
         loadPostTypes()
@@ -45,17 +49,14 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     }, []);
 
     useEffect(() => {
-
         if (post && post.id) {
             var img = post.contents.find(c => c.type == ContentType.preview)
-            
             setState({
-                imgModel: img && img.url ? { name: img.name??'', src: img.url } : null,
+                imgModel: img && img.url ? { name: img.name ?? '', src: img.url } : null,
                 type: post.type,
                 isPublished: post.isPublished,
                 name: post.name
             })
-            setPostId(post.id)
         }
 
 
@@ -65,7 +66,6 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     function handleTypeSelected(e) {
         const st = postTypes.find(c => c.name == e.target.value)
         if (st) {
-            //setSelectedPostType(st)
 
             const newState = { ...state, type: st }
             setState(newState)
@@ -94,9 +94,9 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
                 </div>
 
                 <div className="mr-2 ml-2">
-                    <textarea className="w-auto" onChange={(e) => handleNameChange(e)} value={state?.name??''}>
+                    <textarea className="w-auto" onChange={(e) => handleNameChange(e)} value={state?.name ?? ''}>
                     </textarea>
-                    
+
                 </div>
 
                 <div className="label">
@@ -105,7 +105,7 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
 
                 <div className="mr-2 ml-2">
                     <select onChange={(e) => handleTypeSelected(e)} value={state.type ? state.type.name : 'DEFAULT'} className="select select-xs select-bordered w-full max-w">
-                        <option value="DEFAULT" disabled>Choose a type</option>
+                        <option value="DEFAULT" key={0} defaultValue={0}>Choose a type</option>
                         {
                             postTypes.map(c => <option key={c.id}>{c.name}</option>)
                         }

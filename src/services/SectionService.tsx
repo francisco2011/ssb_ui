@@ -1,59 +1,34 @@
 import SectionModel, { SectionModelResponse } from "~/models/SectionModel";
+import FetchBase from "./FetchBase";
 
-export default class SectionService {
+export default class SectionService extends FetchBase{
+
+  BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
   async Get(id: string): Promise<SectionModel> {
-    var url = "http://localhost:5079/section/" + id;
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.error) {
-      console.error(data.error)
-      throw new Error("Error while loading data")
-    }
-
-    return data;
+    var url = this.BACKEND_API_URL + "/section/" + id;
+    return this.GetBase(url)
   }
 
  
   async Save(model: SectionModel): Promise<SectionModel> {
 
-    var url = "http://localhost:5079/section";
+    var url = this.BACKEND_API_URL + "/section";
 
+    return this.PostBase<SectionModel, SectionModel>(model, url, { ContentType: "application/json"})
 
-    const response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(model),
-      headers: new Headers({ 'content-type': 'application/json' }),
-    });
-    const data = await response.json();
-
-    if (data.error) {
-      console.error(data.error)
-      throw new Error("Error while loading tags")
-    }
-
-    return data;
   }
 
   async Update(id: number, model: SectionModel) {
 
-    var url = "http://localhost:5079/section/" + id;
+    var url = this.BACKEND_API_URL + "/section/" + id;
 
-    const response = await fetch(url, {
-      method: "PUT",
-      body: JSON.stringify(model),
-      headers: new Headers({ 'content-type': 'application/json' })
-    });
-    if (!response.ok) {
-      throw new Error("Error while changing state")
-    }
+    return this.PutBase<SectionModel, SectionModel>(url, model, { ContentType: "application/json"})
   }
 
   async List(limit: number, offset: number, tags?: string[], includeContent?: boolean): Promise<SectionModelResponse> {
   
-      var url = "http://localhost:5079/section?limit=" + limit + "&offset=" + offset;
+      var url = this.BACKEND_API_URL + "/section?limit=" + limit + "&offset=" + offset;
 
       if(tags && tags.length > 0){
 
@@ -67,35 +42,13 @@ export default class SectionService {
         url += "&includeContent=" + includeContent
       }
 
-      var response: Response = await fetch(url);
-      
-      const data = await response.json();
-      
-      if (data.error) {
-        console.error(data.error)
-        throw new Error("Error while loading data")
-      }
-  
-      
-      return data;
+      return this.GetBase(url)
     }
 
     async Delete(id: number){
-      var url = "http://localhost:5079/section/" + id;
+      var url = this.BACKEND_API_URL + "/section/" + id;
   
-      const response = await fetch(url, {
-        method: "DELETE",
-        headers: new Headers({ 'content-type': 'application/json' }),
-      });
-  
-  
-      if (response.status != 204) {
-  
-        var error = await response.text();
-  
-        console.error('Fetch error:', error);
-        throw error;
-      }
+      this.DeleteBase(url)
   
   
     }

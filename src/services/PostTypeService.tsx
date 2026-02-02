@@ -1,19 +1,13 @@
 import PostTypeModel from "~/models/PostTypeModel";
+import FetchBase from "./FetchBase";
 
-export default class PostTypeService {
+export default class PostTypeService extends FetchBase {
 
-    async Get(): Promise<PostTypeModel[] | never> {
+    BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
-        var url = "http://localhost:5079/postType";
+    async Get(): Promise<PostTypeModel[]> {
 
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.error) {
-            console.error(data.error)
-            throw new Error("Error while loading tags")
-        }
-
-        return data;
+        var url = this.BACKEND_API_URL + "/postType";
+        return this.GetBase(url)
     }
 }

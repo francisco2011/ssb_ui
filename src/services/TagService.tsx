@@ -5,20 +5,22 @@ import FetchBase from "./FetchBase";
 
 export default class TagService extends FetchBase{
 
+  BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
+
   async List(postTypeId: number): Promise<TagModel[]> {
 
-    let url = 'http://localhost:5079/tags'
+    let url = this.BACKEND_API_URL + '/tags'
 
     url += '?postTypeId=' + postTypeId
 
-    return await this.GetBase(url)
+    return this.GetBase(url)
   }
 
   async updateTags(id: number, model: TagUpdateModel) {
 
-    var url = "http://localhost:5079/tags/" + id;
+    var url = this.BACKEND_API_URL + "/tags/" + id;
 
-    await this.PutBase<TagUpdateModel>(url, model)
+    await this.PutBaseNoResult<TagUpdateModel>(url, model, undefined)
   }
 }
 

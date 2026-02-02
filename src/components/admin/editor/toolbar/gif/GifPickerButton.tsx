@@ -24,7 +24,7 @@ function GifPickerButton({ onClickCallback }: { onClickCallback: (data: InsertIm
 
                 <Popover ref={popoverRef} buttonClass={"px-1 bg-gray-400 hover:bg-gray-700 transition-colors duration-100 ease-in"}
                     content={<>
-                        <SearchContextManager shouldDefaultToTrending={false} apiKey={"Zs4DT1qq2nC8ePu5Uovt3alak14atCCS"}>
+                        <SearchContextManager shouldDefaultToTrending={false} apiKey={""}>
                             <GiphyPicker OnGifSelected={onSelected} />
                         </SearchContextManager></>}>
                     <FontAwesomeIcon

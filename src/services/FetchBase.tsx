@@ -1,19 +1,51 @@
+interface FOptions {
+    ContentType: string | undefined
+}
+
 export default class FetchBase {
 
-    async PutBase<T>(url: string, body: T) {
+    async PutBaseNoResult<T>(url: string, body: T, options: FOptions | undefined) {
         try {
             const response = await fetch(url, {
                 method: "PUT",
                 body: body? JSON.stringify(body) : undefined,
-                headers: new Headers({ 'content-type': 'application/json' })
+                headers: options?.ContentType? new Headers({ 'content-type': options.ContentType }):undefined
             });
             if (!response.ok) throw response
-            const data = await response.json();
 
         } catch (error) {
             console.error(error)
             throw error
         }
+
+    }
+
+    async PutBase<T, K>(url: string, body: T, foptions: FOptions | undefined) : Promise<K> {
+        try {
+
+            const isFormData = this.isFormData(body)
+
+            const options = {
+                method: "PUT",
+                body:isFormData ? body : JSON.stringify(body),
+            }
+
+            if(!isFormData && foptions?.ContentType) {
+                options["headers"] = new Headers({ 'content-type': foptions.ContentType })
+            }
+
+            const response = await fetch(url, options);
+            
+            if (!response.ok) throw response
+
+            //204 = no content
+            return await response.json();
+
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
+
     }
 
     async GetBase<T>(url: string): Promise<T> {
@@ -35,8 +67,7 @@ export default class FetchBase {
         try {
 
             const response = await fetch(url, {
-                method: "DELETE",
-                headers: new Headers({ 'content-type': 'application/json' }),
+                method: "DELETE"
             });
 
             if (!response.ok) throw response;
@@ -47,19 +78,32 @@ export default class FetchBase {
         }
     }
 
-    async PostBase<T, K>(data: T, url: string): Promise<K> {
+    isFormData(data: any): boolean {
+        return data instanceof FormData;
+    }
+
+    async PostBase<T, K>(data: T, url: string, foptions: FOptions | undefined): Promise<K> {
 
         try {
-            const response = await fetch(url, {
+
+            const isFormData = this.isFormData(data)
+
+            const options = {
                 method: "POST",
-                body: JSON.stringify(data),
-                headers: new Headers({ 'content-type': 'application/json' }),
-            });
+                body: isFormData? data : JSON.stringify(data),
+            }
+
+            if(!isFormData && foptions?.ContentType) {
+                options["headers"] = new Headers({ 'content-type': foptions.ContentType })
+            }
+
+            
+            const response = await fetch(url, options);
 
             if (!response.ok) throw response
 
-            const data = await response.json();
-            return data;
+            const result = await response.json();
+            return result;
         } catch (error) {
             console.error(error)
             throw error

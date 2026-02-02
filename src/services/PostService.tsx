@@ -7,20 +7,22 @@ import FetchBase from "./FetchBase";
 
 export default class PostService extends FetchBase {
 
+  BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
+
   async Get(id: string): Promise<PostModel> {
 
-    var url = "http://localhost:5079/post/" + id;
+    var url = this.BACKEND_API_URL + "/post/" + id;
     return this.GetBase(url) 
   }
 
   async Clone(id: number): Promise<number> {
-    var url = "http://localhost:5079/post/" + id + "/clone";
+    var url = this.BACKEND_API_URL + "/post/" + id + "/clone";
 
-    return this.PostBase<Number, number>(id, url);
+    return this.PostBase<Number, number>(id, url, { ContentType: "application/json"});
   }
 
   async Delete(id: number) {
-    var url = "http://localhost:5079/post/" + id;
+    var url = this.BACKEND_API_URL + "/post/" + id;
 
     return this.DeleteBase(url)
 
@@ -29,7 +31,7 @@ export default class PostService extends FetchBase {
 
   async List(limit: number, offset: number, typeId?: number, tags?: string[], published?: boolean, contents?: ContentType[]): Promise<PostModelResponse> {
 
-    var url = "http://localhost:5079/post?limit=" + limit + "&offset=" + offset;
+    var url =  this.BACKEND_API_URL + "/post?limit=" + limit + "&offset=" + offset;
 
     if (tags != undefined && tags.length > 0) {
       tags.forEach(c => {
@@ -51,24 +53,23 @@ export default class PostService extends FetchBase {
     if (typeId) {
       url += "&typeId=" + typeId
     }
-
     return this.GetBase(url)
 
   }
 
   async Save(post: PostModel): Promise<PostModel> {
 
-    var url = "http://localhost:5079/post";
-    return await this.PostBase<PostModel, PostModel>(post, url)
+    var url = this.BACKEND_API_URL + "/post";
+    return this.PostBase<PostModel, PostModel>(post, url, { ContentType: "application/json"})
   }
 
 
 
   async changePublishState(id: number) {
 
-    var url = "http://localhost:5079/post/" + id + "/changePublishState";
+    var url = this.BACKEND_API_URL + "/post/" + id + "/changePublishState";
 
-    return this.PutBase(url, undefined)
+    return this.PutBaseNoResult(url, undefined, { ContentType: "application/json"})
   }
 
 

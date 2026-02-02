@@ -44,43 +44,25 @@ export default function PostEditor() {
 
     const getPost = async () => {
 
+      if(post) return
+
       if (params?.id && params.id != 'none') {
-        const p = await service.Get(params.id)
-          .then( data => { 
-            setPost(data);         
+        await service.Get(params.id)
+          .then(data => {
+            setPost(data);
             const metadata: ContentMetada = {
               isPublished: data.isPublished,
               imgModel: null,// prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
               type: data.type,
               name: data.name
-          }
-          setMetadata(metadata)
-          setTags(data.tags) 
-          toast.success('Post found!')})
+            }
+            setMetadata(metadata)
+            setTags(data.tags)
+            toast.success('Post found!')
+          })
           .catch(error => toast.error('Post not found!'))
 
-
-      } else {
-        let _post: PostModel = {
-          id: undefined,
-          title: '',
-          name: '',
-          description: '',
-          content: null,
-          tags: [],
-          type: null,
-          contents: [] = [],
-          createdAt: new Date(),
-          isPublished: false
-        };
-
-        await service.Save(_post)
-        .then(post => {
-          setPost(post)
-          toast.success('Post saved!')
-        })
-        .catch(error => toast.error('Post not found!'))
-      }
+      } 
     }
     getPost()
 
@@ -93,7 +75,7 @@ export default function PostEditor() {
 
     if (!isPublishedStateSame && post?.id) {
       await service.changePublishState(post?.id)
-       .then(ok => {
+        .then(ok => {
           toast.success('Post updated!')
         })
         .catch(error => toast.error('Post not updated!'))
@@ -120,12 +102,12 @@ export default function PostEditor() {
     if (!editorRef?.current) return;
 
     var model = { tags: tags };
-    
+
     await tagService.updateTags(post.id, model)
-          .then( ok => toast.success('Tags saved!'))
-          .catch(error => toast.error('Error tags not saved'))
-      
-      
+      .then(ok => toast.success('Tags saved!'))
+      .catch(error => toast.error('Error tags not saved'))
+
+
   }
 
 
@@ -133,14 +115,20 @@ export default function PostEditor() {
 
     const result: ContentModel[] = []
 
-    
-    const imagesToSave = images.filter(c => c.src.startsWith("data:image"))
-    for (var img of imagesToSave) {
-      const newImg = await contentService.UploadFile(img.src, post?.id ?? 0, contentType);
-      newImg.previousId = img.imgId
-      result.push(newImg)
-    }
 
+    const imagesToSave = images.filter(c => c.src.startsWith("data:image"))
+
+
+    try {
+
+      for (var img of imagesToSave) {
+        const newImg = await contentService.UploadFile(img.src, post?.id ?? 0, contentType);
+        newImg.previousId = img.imgId
+        result.push(newImg)
+      }
+    } catch (error) {
+      toast.error('Error while saving images')
+    }
 
     return result
   }
@@ -150,12 +138,15 @@ export default function PostEditor() {
 
     const imagesToSaveWithUrl = images.filter(c => c.src.startsWith("http") && c.imgId)
 
-    for (var img of imagesToSaveWithUrl) {
-      const newImg = await contentService.UploadFileWithUrl(img.src, post?.id ?? 0, contentType, img.imgId??'');
-      newImg.previousId = img.imgId
-      result.push(newImg)
+    try {
+      for (var img of imagesToSaveWithUrl) {
+        const newImg = await contentService.UploadFileWithUrl(img.src, post?.id ?? 0, contentType, img.imgId ?? '');
+        newImg.previousId = img.imgId
+        result.push(newImg)
+      }
+    } catch (error) {
+      toast.error('Error while saving images')
     }
-
     return result
   }
 
@@ -172,11 +163,11 @@ export default function PostEditor() {
 
     //@ts-ignore
     const images = editorRef.current.getAllImages() as ImageInterface[]
-    var newImages = await saveImgs( images, "imgBody")  
+    var newImages = await saveImgs(images, "imgBody")
 
-    if(metadata.imgModel && metadata.imgModel.src && metadata.imgModel.name){
-      await saveImgsWithUrl( [{src: metadata.imgModel.src, imgId: metadata.imgModel.name}], "preview")  
-    } 
+    if (metadata.imgModel && metadata.imgModel.src && metadata.imgModel.name) {
+      await saveImgsWithUrl([{ src: metadata.imgModel.src, imgId: metadata.imgModel.name }], "preview")
+    }
 
     //@ts-ignore
     editorRef.current.UpdateImages(newImages)
@@ -196,52 +187,62 @@ export default function PostEditor() {
     ////////////////////////////
 
     /////Save HTML/////
-    
-   const html = await generateHtml()
-   
-   const htmlAsFile = contentService.htmltoFile(html, "render.html")
-   await contentService.UploadFile(htmlAsFile, post.id, "render")
 
-   //@ts-ignore
-   const titleHtml = titleEditorRef.current.toHtml()
-   const titleHtmlFile = contentService.htmltoFile(titleHtml, "title.html")
-   await contentService.UploadFile(titleHtmlFile, post.id, "titleRender")
-   //@ts-ignore
-   const descriptionHtml = descriptionEditorRef.current.toHtml()
-   const descriptionHtmlFile = contentService.htmltoFile(descriptionHtml, "description.html")
-   await contentService.UploadFile(descriptionHtmlFile, post.id, "descriptionRender")
-  ///////////////////
+    const html = await generateHtml()
+
+    const htmlAsFile = contentService.htmltoFile(html, "render.html")
+    contentService.UploadFile(htmlAsFile, post.id, "render")
+      .then(ok => toast.success('Render saved!'))
+      .catch(error => toast.error('Error render not saved'))
+
+    //@ts-ignore
+    const titleHtml = titleEditorRef.current.toHtml()
+    const titleHtmlFile = contentService.htmltoFile(titleHtml, "title.html")
+    contentService.UploadFile(titleHtmlFile, post.id, "titleRender")
+      .then(ok => toast.success('Title render saved!'))
+      .catch(error => toast.error('Error title render not saved'))
     
-      const result = await service.Save(post)
-      .then( result =>
-      {
+    //@ts-ignore
+    const descriptionHtml = descriptionEditorRef.current.toHtml()
+    const descriptionHtmlFile = contentService.htmltoFile(descriptionHtml, "description.html")
+    contentService.UploadFile(descriptionHtmlFile, post.id, "descriptionRender")
+    .then(ok => toast.success('Description render saved!'))
+    .catch(error => toast.error('Error description render not saved'))
+
+
+    ///////////////////
+
+    service.Save(post)
+      .then(result => {
         setPost({ ...post, id: result.id, content: post.content })
         toast.success('Post saved!')
       })
-        .catch(error => toast.error('Error Post not saved'))
+      .catch(error => toast.error('Error Post not saved'))
 
   }
 
 
-const loadSections = async (): Promise<SectionModelResponse> => {
+  const loadSections = async (): Promise<SectionModelResponse> => {
 
-      if (!editorRef || !titleEditorRef.current) throw new Error("Editor ref can not be null");
+    if (!editorRef || !titleEditorRef.current) throw new Error("Editor ref can not be null");
 
-        //@ts-ignore
-      var allSections = editorRef.current.getAllSections() as string[]
-      var sections = await sectionService.List(allSections.length, 0, allSections, true)
-      return sections
-}
+    //@ts-ignore
+    var allSections = editorRef.current.getAllSections() as string[]
+
+    var sections = (await sectionService.List(allSections.length, 0, allSections, true))
+    return sections
+    
+  }
 
 
-   const generateHtml = async (): Promise<string> => {
+  const generateHtml = async (): Promise<string> => {
     if (!post) throw new Error("Post can not be null");
     if (!editorRef || !editorRef.current) throw new Error("Editor ref can not be null");
     if (!titleEditorRef || !titleEditorRef.current) throw new Error("titleEditorRef ref can not be null");
     if (!descriptionEditorRef || !descriptionEditorRef.current) throw new Error("titleEditorRef ref can not be null");
 
     const sections = await loadSections()
-    
+
     //Needed because the state will change during this freaking operation :S
     //@ts-ignore
     editorRef.current.freezeState()
@@ -251,21 +252,21 @@ const loadSections = async (): Promise<SectionModelResponse> => {
     const sectionTitle = sections.sections.find(c => c.tag == "{{title}}")
     const sectionDescription = sections.sections.find(c => c.tag == "{{description}}")
 
-    if(sectionTitle){
+    if (sectionTitle) {
       // @ts-ignore
       var titleHtml = titleEditorRef.current.toHtml() as string
       sectionTitle.contentHtml = titleHtml
     }
 
-    if(sectionDescription){
-       //@ts-ignore
+    if (sectionDescription) {
+      //@ts-ignore
       var descriptionHtml = descriptionEditorRef.current.toHtml() as string
       sectionDescription.contentHtml = descriptionHtml
     }
- 
+
     //@ts-ignore
-    editorRef.current.replaceContent(sections.sections.map(c => c.contentHtml), 
-                                      sections.sections.map(c => c.tag));
+    editorRef.current.replaceContent(sections.sections.map(c => c.contentHtml),
+      sections.sections.map(c => c.tag));
 
     ///replace content from external sections 
 

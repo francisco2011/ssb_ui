@@ -66,7 +66,9 @@ export default function TagSelector({ externalValues, isClean, onNewCallback, on
 
     return (
         <div className="bg-base-200 rounded-box">
-            <h4 className="text-black text-center">Tags</h4>
+            <div className="label">
+                <span className="label-text">Tags</span>
+            </div>
             <div className="m-2">
                 <label className="input flex items-center ">
                     <input
@@ -92,12 +94,12 @@ export default function TagSelector({ externalValues, isClean, onNewCallback, on
                     onClick={() => {
                         onSaveCallback()
                     }}
-                  >
+                >
                     <FontAwesomeIcon
-                      icon={faSave}
-                      className="text-black w-6 h-6"
+                        icon={faSave}
+                        className="text-black w-6 h-6"
                     />
-                  </button>
+                </button>
             </div>
 
         </div>

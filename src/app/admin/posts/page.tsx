@@ -11,6 +11,7 @@ import PostTypeService from '~/services/PostTypeService';
 import TagService from '~/services/TagService';
 import Select, { SelectInstance } from 'react-select';
 import PostModel from '~/models/PostModel';
+import { toast } from 'sonner';
 
 type LocalState = {
     selectedTags: string[],
@@ -57,6 +58,8 @@ export default function Posts() {
 
     const postService = new PostService();
 
+    var postToDelete: PostModel  | null = null
+
     async function goTo(id: number) {
 
         router.push('/admin/editor/' + id, undefined,)
@@ -91,15 +94,14 @@ export default function Posts() {
 
     const loadTags = async (postTypeId: number) => {
 
-        try {
-            const tags = await new TagService().List(postTypeId)
-            const options = tags.map(c => { return { value: c.term, label: c.term } })
+        new TagService().List(postTypeId)
+            .then(data => {
 
-            setTags(options)
-        } catch (error) {
-            console.error(error)
-        }
+                const options = data.map(c => { return { value: c.term, label: c.term } })
+                setTags(options)
 
+            })
+            .catch(error => toast.error('Tags not loaded!'))
     }
 
     function handleTypeSelected(e) {
@@ -107,7 +109,7 @@ export default function Posts() {
         if (st) {
             const newState = { ...state, type: st }
             setState({ ...newState })
-            
+
             loadTags(st.id)
         }
     }
@@ -158,9 +160,41 @@ export default function Posts() {
         await loadDataWithParams(newState)
     }
 
+    const executeDelete = async () => {
+        
+        if(!postToDelete || !postToDelete.id) return
+
+        postService.Delete(postToDelete?.id)
+            .then(data => {
+                onClearClicked()
+            })
+            .catch(error => toast.error('Post not deleted!'))
+    }
+
     const onDeleteClicked = async (id: number) => {
-        const p = await postService.Delete(id)
-        await onClearClicked()
+
+        var post = postResponse.posts.find(c => c.id == id)
+
+        if (!post) return
+
+        postToDelete = post
+
+        toast("Are you sure you want to delete " + post.name + "?",
+            {
+                action: {
+                    label: 'YES',
+                    onClick: (id) => executeDelete(),
+                },
+                cancel: {
+                    label: 'NO',
+                    onClick: () => { },
+                }
+
+            }
+        )
+
+
+
     }
 
     const onCloneClicked = async (id: number) => {
@@ -170,7 +204,7 @@ export default function Posts() {
 
     const onNewClicked = async () => {
         const _post: PostModel = {
-            id: null,
+            id: undefined,
             name: '',
             title: '',
             description: '',
@@ -180,10 +214,16 @@ export default function Posts() {
             contents: [] = [],
             createdAt: new Date(),
             isPublished: false
-          };
-  
-          const p = await postService.Save(_post)
-          if(p?.id)await goTo(p.id)
+        };
+
+        postService.Save(_post)
+            .then(post => {
+            if (post?.id) goTo(post.id)
+            toast.success('Post created!')
+          })
+          .catch(error => toast.error('Post not created!'))
+
+        
     }
 
     const onTagSelected = (tags: option[]) => {
@@ -207,7 +247,7 @@ export default function Posts() {
 
                     <div className="mr-2 ml-2">
                         <select onChange={(e) => handleTypeSelected(e)} value={state.type ? state.type.name : 'DEFAULT'} className="select select-sm select-bordered">
-                            <option value="DEFAULT" disabled>Choose a type</option>
+                            <option value="DEFAULT" selected={true}>Choose a type</option>
                             {
                                 postTypes.map(c => <option key={c.id}>{c.name}</option>)
                             }
@@ -223,17 +263,17 @@ export default function Posts() {
 
                     <div className="mr-2 ml-2">
 
-                            {
-                                isClient ?                         <Select
+                        {
+                            isClient ? <Select
                                 onChange={onTagSelected}
                                 options={tags}
                                 isMulti
                                 ref={selectInputRef}
-                                className='size-xs'
+                                className='select-bordered'
                             /> : null
-                            }
+                        }
 
- 
+
 
 
 
