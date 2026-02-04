@@ -84,8 +84,8 @@ export default function Posts() {
     const loadPostTypes = async () => {
 
         try {
-            const pt = await new PostTypeService().Get()
-            if (pt) setPostTypes(pt)
+            const pt = await new PostTypeService().Get(1000,0)
+            if (pt && pt.data) setPostTypes(pt.data)
 
         } catch (error) {
             console.error(error)

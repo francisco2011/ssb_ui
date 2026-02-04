@@ -7,8 +7,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    NODE_ENV: z.enum(["development", "test", "production"]),
-    BACKEND_API_URL: z.string()
+    //NODE_ENV: z.enum(["development", "test", "production"]),
   },
 
   /**
