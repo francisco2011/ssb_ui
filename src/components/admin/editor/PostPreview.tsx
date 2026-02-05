@@ -34,9 +34,9 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     useEffect(() => {
         const loadPostTypes = async () => {
 
-            new PostTypeService().Get()
+            new PostTypeService().Get(1000,0)
                 .then(data => {
-                    if (data) setPostTypes(data)
+                    if (data) setPostTypes(data.data)
                 })
                 .catch(error => toast.error('Post types not loaded!'))
 

@@ -226,9 +226,6 @@ export default function StorageExplorer({ allowUpload, onFileSelected }: StoraEx
             <div className="grid grid-cols-[30%_70%] h-full">
                 <div className="m-2 col-span-1">
 
-                    <div>
-                        <h1 className="font-extrabold">Storage</h1>
-                    </div>
                     <div className="flex items-start">
                         <button onClick={downloadFile} disabled={!selectedFile} className="m-1 bg-gray-400">
                             <FontAwesomeIcon

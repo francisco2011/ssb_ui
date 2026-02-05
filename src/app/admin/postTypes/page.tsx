@@ -45,11 +45,10 @@ export default function Posts() {
     })
 
     const [state, setState] = useState<LocalState>(getEmptyState())
-
-    const [postTypes, setPostTypes] = useState<PostTypeModel[]>([])
     const router = useRouter()
 
     const service = new PostTypeService();
+
 
     async function goTo(id: number) {
 
@@ -107,14 +106,6 @@ export default function Posts() {
         await loadDataWithParams(emptyState)
     }
 
-    const onSearchClicked = async () => {
-        const newState = { ...state, pageSize: 10, page: 1 }
-        setState({ ...newState })
-
-        setState(newState)
-        await loadDataWithParams(newState)
-    }
-
     const executeDelete = async () => {
 
        // if (!postToDelete || !postToDelete.id) return
@@ -149,10 +140,15 @@ export default function Posts() {
        // )
 
     }
-
     const onNewClicked = async () => {
         
-
+        var newPostType ={name: "New post type dont forget to change its name", id: 0}
+        service.Save(newPostType)
+        .then(postType => {
+            if (postType?.id) goTo(postType.id)
+            toast.success('Post Type created!')
+          })
+          .catch(error => toast.error('Post Type not created!'))
     }
 
     return (
@@ -162,11 +158,8 @@ export default function Posts() {
                 <h1 className='font-extrabold text-4xl mt-4'>Post Types</h1>
             </div>
 
-            <div className='flex flex-row m-8 items-end'>
+            <div className='flex flex-row m-8 justify-end'>
                 <button onClick={() => onClearClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Clear</button>
-                <div className='ml-1'>
-                    <button onClick={() => onSearchClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Search</button>
-                </div>
                 <div className='ml-1'>
                     <button onClick={() => onNewClicked()} className="btn btn-sm sm:btn-sm md:btn-md">New</button>
                 </div>

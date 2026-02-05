@@ -3,7 +3,7 @@ import Tag from "./Tag";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faShare } from "@fortawesome/free-solid-svg-icons";
 
-export default function TagSelector({ externalValues, isClean, onNewCallback, onSaveCallback }): JSX.Element {
+export default function TagSelector({ externalValues, isClean, onNewCallback, onSaveCallback , onDeletedCallBack}): JSX.Element {
 
     const [values, setValues] = useState<string[]>([])
     const input = useRef<HTMLInputElement>(null);
@@ -28,6 +28,7 @@ export default function TagSelector({ externalValues, isClean, onNewCallback, on
 
     const deleteValue = useCallback((value) => {
         setValues(values.filter(c => c != value));
+        onDeletedCallBack(value)
 
     }, [values])
 

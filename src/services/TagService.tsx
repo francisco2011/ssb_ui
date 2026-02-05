@@ -20,7 +20,7 @@ export default class TagService extends FetchBase{
 
     var url = this.BACKEND_API_URL + "/tags/" + id;
 
-    await this.PutBaseNoResult<TagUpdateModel>(url, model, undefined)
+    await this.PutBaseNoResult<TagUpdateModel>(url, model, {ContentType: "application/json"})
   }
 }
 

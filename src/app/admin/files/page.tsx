@@ -7,8 +7,16 @@ export default function Files() {
 
     return (
         <>
-            <div className="m-4  min-w-full min-h-screen h-dvh">
-               <StorageExplorer allowUpload={true}/>
+
+            <div>
+                <h1 className='font-extrabold text-4xl mt-4'>Storage</h1>
+            </div>
+
+
+            <div className="m-4  w-[70%] min-h-screen h-dvh">
+
+
+                <StorageExplorer allowUpload={true} />
             </div>
 
         </>

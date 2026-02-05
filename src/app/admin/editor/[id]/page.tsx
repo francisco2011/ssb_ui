@@ -44,7 +44,7 @@ export default function PostEditor() {
 
     const getPost = async () => {
 
-      if(post) return
+      if (post) return
 
       if (params?.id && params.id != 'none') {
         await service.Get(params.id)
@@ -62,7 +62,7 @@ export default function PostEditor() {
           })
           .catch(error => toast.error('Post not found!'))
 
-      } 
+      }
     }
     getPost()
 
@@ -88,10 +88,18 @@ export default function PostEditor() {
   }
 
   const addTag = val => {
+    //only done to generate a copy .... 
     var string_copy = (' ' + val).slice(1);
 
     if (tags.indexOf(string_copy) == -1) {
       setTags([...tags, string_copy])
+    }
+  }
+
+  const deleteTag = val => {
+
+    if (tags.indexOf(val) != -1) {
+      setTags([...tags.filter(c => c != val)])
 
     }
   }
@@ -106,19 +114,13 @@ export default function PostEditor() {
     await tagService.updateTags(post.id, model)
       .then(ok => toast.success('Tags saved!'))
       .catch(error => toast.error('Error tags not saved'))
-
-
   }
 
 
   const saveImgs = async (images: ImageInterface[], contentType: string): Promise<ContentModel[]> => {
 
     const result: ContentModel[] = []
-
-
     const imagesToSave = images.filter(c => c.src.startsWith("data:image"))
-
-
     try {
 
       for (var img of imagesToSave) {
@@ -201,13 +203,13 @@ export default function PostEditor() {
     contentService.UploadFile(titleHtmlFile, post.id, "titleRender")
       .then(ok => toast.success('Title render saved!'))
       .catch(error => toast.error('Error title render not saved'))
-    
+
     //@ts-ignore
     const descriptionHtml = descriptionEditorRef.current.toHtml()
     const descriptionHtmlFile = contentService.htmltoFile(descriptionHtml, "description.html")
     contentService.UploadFile(descriptionHtmlFile, post.id, "descriptionRender")
-    .then(ok => toast.success('Description render saved!'))
-    .catch(error => toast.error('Error description render not saved'))
+      .then(ok => toast.success('Description render saved!'))
+      .catch(error => toast.error('Error description render not saved'))
 
 
     ///////////////////
@@ -231,7 +233,7 @@ export default function PostEditor() {
 
     var sections = (await sectionService.List(allSections.length, 0, allSections, true))
     return sections
-    
+
   }
 
 
@@ -343,7 +345,7 @@ export default function PostEditor() {
               <div className='w-64 ml-2 mt-4'>
 
                 <div className='sticky top-3'>
-                  <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} onSaveCallback={onSaveTags} />
+                  <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} onDeletedCallBack={deleteTag} onSaveCallback={onSaveTags} />
                 </div>
 
 

@@ -239,7 +239,7 @@ export default function Posts() {
                 <h1 className='font-extrabold text-4xl mt-4'>Posts</h1>
             </div>
 
-            <div className='flex flex-row m-8 items-end'>
+            <div className='flex flex-row m-8 justify-end'>
                 <div>
                     <div className="label">
                         <span className="label-text">Type</span>

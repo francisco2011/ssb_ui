@@ -114,8 +114,11 @@ export default function SectionEditor() {
 
           <main className="flex min-h-screen flex-col">
             
+            <div>
+                <h1 className='font-extrabold text-4xl m-4'>{name}</h1>
+            </div>
 
-            <div className="w-[50rem]">
+            <div className="w-[50rem] m-4">
               <TextInput onChange={setName} value={name} label="Name"></TextInput>
             </div>
 
