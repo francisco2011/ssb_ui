@@ -31,12 +31,11 @@ const CodeSelect = ({ selectedOption, callback }: SelectProps<string, any>) => {
   return (
     <>
       <SelectBase
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm block w-20 p-1.3"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm block w-auto"
         onChange={onSelect}
         options={getCodeLanguageOptions()}
         value={selectedOption}
       />
-      <i className="chevron-down inside" />
     </>
   );
 };

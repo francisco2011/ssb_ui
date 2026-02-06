@@ -292,7 +292,7 @@ export default function PostEditor() {
 
           <main className="flex min-h-screen flex-col">
 
-            <div className="grid grid-cols-[5%_70%_25%] w-[75rem]">
+            <div className="grid grid-cols-[5%_70%_25%] global_w_full">
 
               <div>
                 <VerticalToolbar onsaveCallback={onsave} />
@@ -308,7 +308,7 @@ export default function PostEditor() {
                       content={post.title ?? ''}
                       contents={[]}
                       onContentDeletedCallback={() => { }}
-                      config={{ heightRem: '2rem', allowedToolBarOptions: { allowEmogis: true, allowWidthRule: true } }}></Editor>
+                      config={{ heightRem: '2rem', allowedToolBarOptions: { allowEmogis: true } }}></Editor>
                   </div>
                 </div>
                 <div className="collapse bg-base-200 my-1" >
@@ -319,7 +319,7 @@ export default function PostEditor() {
                       content={post.description ?? ''}
                       contents={[]}
                       onContentDeletedCallback={() => { }}
-                      config={{ heightRem: '5rem', allowedToolBarOptions: { allowEmogis: true, allowWidthRule: true } }}></Editor>
+                      config={{ heightRem: '5rem', allowedToolBarOptions: { allowEmogis: true} }}></Editor>
                   </div>
                 </div>
                 <div>
@@ -332,7 +332,7 @@ export default function PostEditor() {
                         allowCode: true, allowColumn: true,
                         allowDiagram: true, allowEmogis: true,
                         allowGif: true, allowImages: true,
-                        allowTable: true, allowWidthRule: true,
+                        allowTable: true, 
                         allowSection: true
                       }
                     }}></Editor>

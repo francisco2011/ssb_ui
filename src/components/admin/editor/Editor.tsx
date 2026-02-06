@@ -190,16 +190,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
-  const [contentWidth, setContentWidthRem] = useState('50rem')
 
-  const addTag = val => {
-    var string_copy = (' ' + val).slice(1);
-
-    if (tags.indexOf(string_copy) == -1) {
-      setTags([...tags, string_copy])
-
-    }
-  }
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
@@ -217,7 +208,6 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       let initialEditorState: EditorState | null = null
       var newState = JSON.parse(props.content)
       var w = newState.width
-      setContentWidthRem(w)
       initialEditorState = editor.current.parseEditorState(newState.editorState)
 
       if (!initialEditorState) return
@@ -292,7 +282,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
 
     const extendedState = {
-      width: contentWidth,
+      width: '0rem',
       editorState: editorState.toJSON()
     }
 
@@ -313,18 +303,9 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   }
 
   const onToolbarProperties = (data: ToolBarProperties) => {
-    if (data.MaxLength) setContentWidthRem(data.MaxLength)
   }
 
 
-
-  const addOffsetContentWidthrem = (val) => {
-    if (typeof val == typeof '' && val.indexOf('rem') != -1) {
-      val = val.replace('rem', '')
-    }
-
-    return (Number(val) + 2) + 'rem'
-  }
 
   const replaceContent = (externalContentHtml: string[], tags: string[], editor: LexicalEditor) => {
 
@@ -464,7 +445,6 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
           <EditorRefPlugin editorRef={editor} />
           <ToolbarPlugin 
-            defaultWidth={contentWidth}
             setIsLinkEditMode={setIsLinkEditMode}
             onPropertiesChange={onToolbarProperties}
             onEditorClearCallback={props.onContentDeletedCallback}
@@ -486,7 +466,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
           <TableCellResizerPlugin />
 
           <div className='editor-container'>
-            <div style={{ minHeight: props.config.heightRem, height: 'auto', width: addOffsetContentWidthrem(contentWidth) }} ref={ref}>
+            <div style={{ minHeight: props.config.heightRem, height: 'auto', width: 'inherit' }} ref={ref}>
 
               {floatingAnchorElem && !isSmallWidthViewport && (
                 <>

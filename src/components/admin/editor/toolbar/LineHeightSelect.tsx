@@ -29,7 +29,6 @@ const LineHeightSelect = ({ selectedOption, callback }: SelectProps<string, any>
         options={defaultOptions}
         value={selectedOption}
       />
-      <i className="chevron-down inside" />
     </>
   );
 };

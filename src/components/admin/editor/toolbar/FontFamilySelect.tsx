@@ -36,7 +36,7 @@ const FontFamilySelect = ({ selectedOption, callback }: SelectProps<string>) => 
     <>
 
 
-<select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm block w-full p-1.0 m-w-1" 
+<select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm block w-auto p-1.0 m-w-1" 
             onChange={onSelect} value={selectedOption}>
 
       {defaultFontFamilyOptions.map(([option, text]) => (
@@ -46,7 +46,6 @@ const FontFamilySelect = ({ selectedOption, callback }: SelectProps<string>) => 
       ))}
     </select>
 
-      <i className="chevron-down inside" />
     </>
   );
 };

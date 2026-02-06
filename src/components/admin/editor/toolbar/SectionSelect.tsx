@@ -44,12 +44,11 @@ useEffect(() => {
   return (
     <>
       <SelectBase
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm block w-full p-1.3"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm block w-auto p-1.3"
         onChange={onFontSizeSelect}
         options={options}
         value={selectedOption}
       />
-      <i className="chevron-down inside" />
     </>
   );
 };

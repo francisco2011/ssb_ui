@@ -17,13 +17,23 @@ export default function RootLayout({
   return (
     <html data-theme="lofi" lang="en" className={`${GeistSans.variable}`}>
       <body>
-      
-      <VerticalMenu />
-        <main className=" bg-white text-black overflow-h-scroll h-auto w-auto">
-        
-          <div className="flex flex-col items-center justify-center">
-            <Toaster richColors position="top-right" />
-            {children}
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        </head>
+
+
+        <main className="flex overflow-x-scroll min-h-screen bg-gray-50 sm:text-sm md:text-lg xl:text-xl">
+          <div className="w-full grid grid-cols-12 ">
+
+            <div className="col-span-2 border-r0 ">
+              <VerticalMenu />
+
+            </div>
+
+            <div className="col-span-10 m-4 text-gray-900 items-center justify-center">
+              <Toaster richColors position="top-right" />
+              {children}
+            </div>
           </div>
         </main>
 

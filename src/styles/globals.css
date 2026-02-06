@@ -19,6 +19,15 @@
  *
  */
 
+ @layer components {
+  .global_w_post {
+    @apply 2xl:w-[70rem] xl:w-[63rem] lg:w-[56rem] md:w-[49rem] sm:w-[42rem]
+  }
+
+  .global_w_full{
+    @apply 2xl:w-[100rem] xl:w-[90rem] lg:w-[80rem] md:w-[70rem] sm:w-[60rem]
+  }
+}
 
 
   .ContentEditable__root {

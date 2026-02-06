@@ -23,7 +23,7 @@ export default async function HomePage() {
       <div className='editor-shell'>
         <div className="editor-container">
 
-          <div className="content-center w-[50rem]">
+          <div className="content-center global_w_post">
                <div dangerouslySetInnerHTML={{ __html: html }}></div>
           </div>
 
