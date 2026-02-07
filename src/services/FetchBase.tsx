@@ -50,13 +50,25 @@ export default class FetchBase {
 
     async GetBase<T>(url: string): Promise<T> {
         try {
-
             const response = await fetch(url);
             if (!response.ok) throw response;
             
             const data = await response.json();
             return data;
 
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
+    }
+
+    async GetBaseRawResult(url: string): Promise<String> {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw response;
+            
+            return await response.text();
+            
         } catch (error) {
             console.error(error)
             throw error
@@ -80,6 +92,10 @@ export default class FetchBase {
 
     isFormData(data: any): boolean {
         return data instanceof FormData;
+    }
+
+    isString(data: any): boolean {
+        return data instanceof String;
     }
 
     async PostBase<T, K>(data: T, url: string, foptions: FOptions | undefined): Promise<K> {

@@ -52,9 +52,10 @@ export default function Posts() {
     const [state, setState] = useState<LocalState>(getEmptyState())
 
     const [isClient, setIsClient] = useState(false)
+        const router = useRouter()
 
     const selectInputRef = useRef<SelectInstance<option | null>>(null)
-    const router = useRouter()
+
 
     const postService = new PostService();
 

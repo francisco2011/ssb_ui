@@ -5,9 +5,10 @@ import { faEye, faSave } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
     onsaveCallback: () => Promise<void>,
+    onPreview: () => Promise<void>
 }
 
-export default function VerticalToolbar({ onsaveCallback }: Props) {
+export default function VerticalToolbar({ onsaveCallback, onPreview }: Props) {
 
     return (
         <div className="menu bg-base-200 mt-4 mr-1 rounded-box sticky top-3">
@@ -31,7 +32,7 @@ export default function VerticalToolbar({ onsaveCallback }: Props) {
                 <button
                     className={''}
                     onClick={() => {
-
+                        onPreview()
                     }}
                 >
                     <FontAwesomeIcon

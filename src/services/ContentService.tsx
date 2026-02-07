@@ -96,8 +96,8 @@ export default class ContentService extends FetchBase {
         return this.GetBase(url)
     }
 
-    async GetExternalContentAsStr(url: string): Promise<string> {
-        return this.GetBase(url)
+    async GetExternalContentAsStr(url: string): Promise<String> {
+        return this.GetBaseRawResult(url)
     }
 
     async Traverse(bucket?: string, folders?: string[]): Promise<StorageObjectModel[]> {

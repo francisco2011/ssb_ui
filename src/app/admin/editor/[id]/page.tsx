@@ -17,6 +17,7 @@ import ContentModel from "~/models/ContentModel";
 import SectionService from "~/services/SectionService";
 import SectionModel, { SectionModelResponse } from "~/models/SectionModel";
 import { Toaster, toast } from 'sonner'
+import { useRouter } from 'next/navigation';
 
 
 export default function PostEditor() {
@@ -39,6 +40,7 @@ export default function PostEditor() {
   const titleEditorRef = useRef(null);
   const editorRef = useRef(null);
   const descriptionEditorRef = useRef(null);
+  const router = useRouter()
 
   useEffect(() => {
 
@@ -52,7 +54,7 @@ export default function PostEditor() {
             setPost(data);
             const metadata: ContentMetada = {
               isPublished: data.isPublished,
-              imgModel: null,// prevImg?.name && prevImg?.url ? { name: prevImg.name, src: prevImg.url } : null,
+              imgModel: null,
               type: data.type,
               name: data.name
             }
@@ -282,6 +284,15 @@ export default function PostEditor() {
     return mainContentAsHtml as string
   }
 
+
+
+  async function goToPreview() {
+
+    if (!post?.id) return
+
+    router.push('/admin/preview/' + post?.id, undefined,)
+  }
+
   return (
     <>
 
@@ -295,7 +306,7 @@ export default function PostEditor() {
             <div className="grid grid-cols-[5%_70%_25%] global_w_full">
 
               <div>
-                <VerticalToolbar onsaveCallback={onsave} />
+                <VerticalToolbar onsaveCallback={onsave} onPreview={goToPreview} />
               </div>
 
               <div>
@@ -319,7 +330,7 @@ export default function PostEditor() {
                       content={post.description ?? ''}
                       contents={[]}
                       onContentDeletedCallback={() => { }}
-                      config={{ heightRem: '5rem', allowedToolBarOptions: { allowEmogis: true} }}></Editor>
+                      config={{ heightRem: '5rem', allowedToolBarOptions: { allowEmogis: true } }}></Editor>
                   </div>
                 </div>
                 <div>
@@ -332,7 +343,7 @@ export default function PostEditor() {
                         allowCode: true, allowColumn: true,
                         allowDiagram: true, allowEmogis: true,
                         allowGif: true, allowImages: true,
-                        allowTable: true, 
+                        allowTable: true,
                         allowSection: true
                       }
                     }}></Editor>
@@ -342,7 +353,7 @@ export default function PostEditor() {
 
 
 
-              <div className='w-64 ml-2 mt-4'>
+              <div className='px-2 hidden lg:block 2xl:block xl:block w-auto' >
 
                 <div className='sticky top-3'>
                   <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} onDeletedCallBack={deleteTag} onSaveCallback={onSaveTags} />
