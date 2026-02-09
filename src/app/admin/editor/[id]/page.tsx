@@ -18,6 +18,8 @@ import SectionService from "~/services/SectionService";
 import SectionModel, { SectionModelResponse } from "~/models/SectionModel";
 import { Toaster, toast } from 'sonner'
 import { useRouter } from 'next/navigation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faSave } from '@fortawesome/free-solid-svg-icons';
 
 
 export default function PostEditor() {
@@ -169,8 +171,13 @@ export default function PostEditor() {
     const images = editorRef.current.getAllImages() as ImageInterface[]
     var newImages = await saveImgs(images, "imgBody")
 
-    if (metadata.imgModel && metadata.imgModel.src && metadata.imgModel.name) {
-      await saveImgsWithUrl([{ src: metadata.imgModel.src, imgId: metadata.imgModel.name }], "preview")
+    if (metadata.imgModel && metadata.imgModel.src) {
+      if(metadata.imgModel.src.startsWith('http')){
+        await saveImgsWithUrl([{ src: metadata.imgModel.src, imgId: metadata.imgModel.name }], "preview")
+      }else{
+        await saveImgs([{ src: metadata.imgModel.src, imgId: metadata.imgModel.name }], "preview")
+      } 
+
     }
 
     //@ts-ignore
@@ -195,28 +202,28 @@ export default function PostEditor() {
     const html = await generateHtml()
 
     const htmlAsFile = contentService.htmltoFile(html, "render.html")
-    contentService.UploadFile(htmlAsFile, post.id, "render")
+    await contentService.UploadFile(htmlAsFile, post.id, "render")
       .then(ok => toast.success('Render saved!'))
       .catch(error => toast.error('Error render not saved'))
 
     //@ts-ignore
     const titleHtml = titleEditorRef.current.toHtml()
     const titleHtmlFile = contentService.htmltoFile(titleHtml, "title.html")
-    contentService.UploadFile(titleHtmlFile, post.id, "titleRender")
+    await contentService.UploadFile(titleHtmlFile, post.id, "titleRender")
       .then(ok => toast.success('Title render saved!'))
       .catch(error => toast.error('Error title render not saved'))
 
     //@ts-ignore
     const descriptionHtml = descriptionEditorRef.current.toHtml()
     const descriptionHtmlFile = contentService.htmltoFile(descriptionHtml, "description.html")
-    contentService.UploadFile(descriptionHtmlFile, post.id, "descriptionRender")
+    await contentService.UploadFile(descriptionHtmlFile, post.id, "descriptionRender")
       .then(ok => toast.success('Description render saved!'))
       .catch(error => toast.error('Error description render not saved'))
 
 
     ///////////////////
 
-    service.Save(post)
+    await service.Save(post)
       .then(result => {
         setPost({ ...post, id: result.id, content: post.content })
         toast.success('Post saved!')
@@ -303,13 +310,53 @@ export default function PostEditor() {
 
           <main className="flex min-h-screen flex-col">
 
-            <div className="grid grid-cols-[5%_70%_25%] global_w_full">
 
-              <div>
-                <VerticalToolbar onsaveCallback={onsave} onPreview={goToPreview} />
-              </div>
+            <div className="grid grid-cols-[75%_25%]">
 
-              <div>
+
+
+              <div className=''>
+
+                <div className='grid grid-cols-[85%_15%]'>
+                  <h1 className='font-extrabold text-4xl'>{post.name}</h1>
+
+                  <div className="flex justify-end">
+
+                    <div className="m-1 tooltip tooltip-left" data-tip="preview">
+
+                      <button
+                        className={''}
+                        onClick={() => {
+                          goToPreview()
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={faEye}
+                          className="text-black w-8 h-8"
+                        />
+                      </button>
+
+                    </div>
+                    <div className="m-1 tooltip tooltip-left" data-tip="save">
+                      <button
+                        className=""
+                        onClick={() => {
+
+                          onsave()
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={faSave}
+                          className="text-black w-8 h-8"
+                        />
+                      </button>
+                    </div>
+
+
+
+
+                  </div>
+                </div>
 
                 <div className="collapse bg-base-200 my-1" >
                   <input type="checkbox" />
@@ -353,7 +400,7 @@ export default function PostEditor() {
 
 
 
-              <div className='px-2 hidden lg:block 2xl:block xl:block w-auto' >
+              <div className='px-2 w-auto' >
 
                 <div className='sticky top-3'>
                   <TagSelector externalValues={tags} isClean={isClearAll} onNewCallback={addTag} onDeletedCallBack={deleteTag} onSaveCallback={onSaveTags} />

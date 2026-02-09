@@ -22,7 +22,7 @@ export default function RootLayout({
         </head>
 
 
-        <main className="flex overflow-x-scroll min-h-screen bg-gray-50 sm:text-sm md:text-lg xl:text-xl">
+        <main className="flex min-h-screen bg-gray-50 sm:text-sm md:text-lg xl:text-xl">
           <div className="w-full grid grid-cols-12 ">
 
             <div className="col-span-2 border-r0 ">

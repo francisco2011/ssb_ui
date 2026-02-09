@@ -11,6 +11,10 @@ export default {
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
       },
+      screens: {
+        'x': '320px',
+        'xs': '480px', // or '320px' for smaller devices
+      },
     },
   },
   plugins: [

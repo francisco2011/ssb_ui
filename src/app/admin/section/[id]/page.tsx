@@ -14,10 +14,11 @@ import editorTheme from '~/themes/EditorTheme';
 import { useParams } from 'next/navigation';
 import Editor, { ContentState } from '~/components/admin/editor/Editor';
 import { InlineImageNode } from '~/components/admin/editor/plugins/imagePlugin/InlineImageNode';
-import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
 import SectionService from "~/services/SectionService";
 import SectionModel from "~/models/SectionModel";
 import TextInput from "~/components/TextInput";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faSave } from "@fortawesome/free-solid-svg-icons";
 
 const editorConfig = {
   namespace: 'Main Editor',
@@ -89,18 +90,18 @@ export default function SectionEditor() {
     const editorState = editorRef.current.getState() as ContentState;
     //@ts-ignore
     const contentHtml = editorRef.current.toHtml() as string
-    
+
     section.content = editorState.Content
     section.name = name
     section.contentHtml = contentHtml
 
-      ////////////////////////////
+    ////////////////////////////
 
-      
 
-  await service.Update(section.id, section)
-  setSection({ ...section, content: section.content })
-    
+
+    await service.Update(section.id, section)
+    setSection({ ...section, content: section.content })
+
 
   }
 
@@ -113,33 +114,58 @@ export default function SectionEditor() {
         <>
 
           <main className="flex min-h-screen flex-col">
-            
+
             <div>
-                <h1 className='font-extrabold text-4xl m-4'>{name}</h1>
+              <h1 className='font-extrabold text-4xl m-4'>{name}</h1>
             </div>
 
-            <div className="w-[50rem] m-4">
+            <div className="m-4">
               <TextInput onChange={setName} value={name} label="Name"></TextInput>
             </div>
 
-            <div className="grid grid-cols-[5%_70%_25%] w-[75rem]">
+            <div className="">
+
+
 
               <div>
-                <VerticalToolbar onsaveCallback={onsave} />
-              </div>
 
-              <div>
+                <div className='grid grid-cols-[85%_15%]'>
+                  <h1 className='font-extrabold text-4xl'>{section.name}</h1>
+
+                  <div className="flex justify-end">
+
+                    <div className="m-1 tooltip tooltip-left" data-tip="save">
+                      <button
+                        className=""
+                        onClick={() => {
+
+                          onsave()
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={faSave}
+                          className="text-black w-8 h-8"
+                        />
+                      </button>
+                    </div>
+
+
+
+
+                  </div>
+                </div>
+
                 <div>
                   <Editor ref={editorRef}
                     content={section.content ?? ''}
                     contents={[]}
-                    onContentDeletedCallback={() => {}}
+                    onContentDeletedCallback={() => { }}
                     config={{
                       heightRem: '50rem', allowedToolBarOptions: {
                         allowCode: true, allowColumn: true,
                         allowDiagram: true, allowEmogis: true,
                         allowGif: true, allowImages: true,
-                        allowTable: true, allowWidthRule: true
+                        allowTable: true
                       }
                     }}></Editor>
                 </div>

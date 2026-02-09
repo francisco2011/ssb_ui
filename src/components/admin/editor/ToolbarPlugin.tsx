@@ -591,9 +591,9 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
     }
 
     return (
-        <div style={{ "zIndex": 999 }} className="sticky top-3 bg-white h-auto px-2 py-2 mb-4 space-x-2 flex items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
+        <div style={{ "zIndex": 999 }}  className=" sticky top-3  bg-white h-auto px-2 py-2 mb-4 space-x-2 items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
-            <div className="flex flex-wrap gap-[2px] space-x-1">
+            <div  className="flex flex-wrap gap-[2px] space-x-1">
                 <ClearEditorButton onClickCallback={onEditorClearCallback} />
                 <StrikethroughButton isActive={isStrikethrough} />
 

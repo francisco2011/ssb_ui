@@ -1,8 +1,12 @@
-import "~/styles/globals.css";
+import "~/styles/public_global.css";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-import Header from "~/components/home/header/Header";
+import Header from "~/components/home/sidebar/sidebar";
+import Sidebar from "~/components/home/sidebar/sidebar";
+import PostService from "~/services/PostService";
+import ContentService from "~/services/ContentService";
+import { ContentType } from "~/models/ContentType";
 
 export const metadata: Metadata = {
   title: "Francisco Contreras Olea",
@@ -10,26 +14,42 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+
+  let html = ''
+  let mainImgSrc = ''
+
+  const service = new PostService()
+  const contentService = new ContentService()
+  const pt = await service.List(1, 0, 4, [], true, [ContentType.render, ContentType.preview])
+
+  if (pt.posts.length > 0 && pt.posts[0]?.contents.some(c => c.type == ContentType.render && c.url)) {
+
+    var content = pt.posts[0]?.contents.find(c => c.type == ContentType.render && c.url)
+    mainImgSrc = pt.posts[0]?.contents.find(c => c.type == ContentType.preview)?.url;
+    html = await contentService.GetExternalContentAsStr(content?.url ?? '')
+  }
+
   return (
     <html data-theme="dracula" lang="en" className={`${GeistSans.variable}`}>
-      <body>
-        <head>
+      <head>
           <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
         </head>
+      <body>
+        
 
-        <main className="flex overflow-x-scroll min-h-screen bg-gray-50 sm:text-sm md:text-lg xl:text-xl">
+        <main className="flex overflow-x-scroll min-h-screen bg-gray-50 xs:text-xs sm:text-sm md:text-lg xl:text-xl 2xl:text-2xl">
           <div className="w-full grid grid-cols-12 ">
 
-            <div className="col-span-2 border-r0 ">
-              <Header />
+            <div className="border-r0  md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
+              <Sidebar contentHtml={html} imgSrc={mainImgSrc} />
 
             </div>
-            <div className="col-span-10 m-4 text-gray-900 items-center justify-center">
+            <div className="m-4 text-gray-900 items-center justify-center x:col-span-12 xs:col-span-12 sm:col-span-12 md:col-span-10 lg:col-span-10 xl:col-span-10 2xl:col-span-10">
 
-                {children}
+              {children}
             </div>
           </div>
         </main>
