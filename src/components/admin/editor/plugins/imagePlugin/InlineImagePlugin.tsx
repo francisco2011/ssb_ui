@@ -33,6 +33,10 @@ import * as React from 'react';
 import {useEffect, useRef, useState} from 'react';
 import { $createInlineImageNode, $isInlineImageNode, InlineImageNode, InlineImagePayload } from './InlineImageNode';
 
+export interface props{
+  onImageSelected: (image: InlineImagePayload) => void
+}
+
 export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
 
 export const INSERT_INLINE_IMAGE_COMMAND: LexicalCommand<InlineImagePayload> =

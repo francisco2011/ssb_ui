@@ -48,7 +48,7 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import TableCellResizerPlugin from './plugins/TableCellResizer';
 import TableActionMenuPlugin from './plugins/TableActionMenu';
 import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
-import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIOImageNode';
+import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIOImageNode_old';
 import DrawIOPlugin from './plugins/DrawIOPlugin';
 import LayoutPlugin from './plugins/LayoutPlugin';
 import { LayoutContainerNode } from './plugins/LayoutPlugin/LayoutContainerNode';
@@ -66,36 +66,36 @@ type EditorConfiguration = {
 }
 
 const allNodes = [HeadingNode,
-    QuoteNode,
-    ListNode,
-    ListItemNode,
-    ImageNode,
-    EmojiNode,
-    CodeNode,
-    CodeHighlightNode,
-    HashtagNode,
-    AutoLinkNode,
-    LinkNode,
-    HorizontalRuleNode,
-    InlineImageNode,
-    TableNode,
-    TableCellNode,
-    TableRowNode,
-    //DrawIOImageNode,
-    LayoutContainerNode,
-    LayoutItemNode,
-    SectionNode
-  ]
+  QuoteNode,
+  ListNode,
+  ListItemNode,
+  ImageNode,
+  EmojiNode,
+  CodeNode,
+  CodeHighlightNode,
+  HashtagNode,
+  AutoLinkNode,
+  LinkNode,
+  HorizontalRuleNode,
+  InlineImageNode,
+  TableNode,
+  TableCellNode,
+  TableRowNode,
+ // DrawIOImageNode,
+  LayoutContainerNode,
+  LayoutItemNode,
+  SectionNode
+]
 
-  const sectionEditor = createHeadlessEditor({
-    namespace: 'Readonly-editor',
-    nodes: allNodes,
-    // Handling of errors during update
-    onError(error: Error) {
-      throw error;
-    },
-    theme: editorTheme
-  });
+const sectionEditor = createHeadlessEditor({
+  namespace: 'Readonly-editor',
+  nodes: allNodes,
+  // Handling of errors during update
+  onError(error: Error) {
+    throw error;
+  },
+  theme: editorTheme
+});
 
 
 const editorConfig = {
@@ -153,13 +153,13 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       return getActualState()
     },
 
-    getStateAsString: (): string  => {
+    getStateAsString: (): string => {
       return getActualState()?.Content
     },
-    
+
 
     clearAll: () => {
-      if(!editor || !editor.current) throw new Error("Editor can not be null!"); 
+      if (!editor || !editor.current) throw new Error("Editor can not be null!");
       editor.current.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
     },
 
@@ -184,9 +184,9 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     restoreState: () => {
       restoreStateFromPreviousFreezedState()
     }
-}));
+  }));
 
-  
+
 
   const { width, ref } = useObserveElementWidth<HTMLDivElement>();
 
@@ -199,7 +199,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     }
   };
 
-  
+
 
   useEffect(() => {
 
@@ -316,12 +316,12 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       const sectionNodes = $nodesOfType(SectionNode);
 
       for (let i = 0; i < tags.length; i++) {
-        
+
         var tag = tags[i]
         var content = externalContentHtml[i]
         const sectionNode = sectionNodes.find(c => c.__text == tag)
 
-        if(!content || !tag || !sectionNode) continue
+        if (!content || !tag || !sectionNode) continue
 
         const dom = parser.parseFromString(content, 'text/html');
         // Generate Lexical nodes from the DOM
@@ -329,7 +329,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
         const firstNodeFromDom = nodesFromDom[0];
         const firstNodeFromDomAs = firstNodeFromDom as ElementNode
         const parentNode = sectionNode.getParent()
-        if(parentNode){
+        if (parentNode) {
           const format = parentNode.getFormatType()
           firstNodeFromDomAs.setFormat(format)
           sectionNode.replace(firstNodeFromDomAs)
@@ -341,7 +341,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   }
 
   const UpdateImages = (images: ContentModel[]) => {
-    if(!editor || !editor?.current) throw new Error("Editor can not be null")
+    if (!editor || !editor?.current) throw new Error("Editor can not be null")
 
     let imageNodes: ImageNode[] = []
     let imageInLineNodes: InlineImageNode[] = []
@@ -351,29 +351,29 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     })
 
     editor?.current.update(() => {
-      for(var img of images){
+      for (var img of images) {
         var foundedImgNode = imageNodes.find(c => c.__imgId == img.previousId)
         var foundedImgInLineNode = imageInLineNodes.find(c => c.__imgId == img.previousId)
-  
+
         //if(foundedImgNode){
         //  if(img.name) foundedImgNode.__imgId = img.name
         //  if(img.url) foundedImgNode.__src = img.url
 
         //} 
-        if(foundedImgInLineNode){
-          
+        if (foundedImgInLineNode) {
+
           var updateObj: UpdateInlineImagePayload = {}
-          if(img.name) updateObj.imgId = img.name
-          if(img.url) updateObj.src = img.url
+          if (img.name) updateObj.imgId = img.name
+          if (img.url) updateObj.src = img.url
           foundedImgInLineNode.update(updateObj)
         }
       }
-    }, {discrete: true})
+    }, { discrete: true })
 
   }
-  
+
   const getAllImages = (): ImageInterface[] => {
-    if(!editor || !editor?.current) throw new Error("Editor can not be null")
+    if (!editor || !editor?.current) throw new Error("Editor can not be null")
 
     let imageNodes: ImageNode[] = []
     let imageInLineNodes: InlineImageNode[] = []
@@ -382,21 +382,21 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
       imageInLineNodes = $nodesOfType(InlineImageNode)
     })
 
-    return [...imageNodes.map(c => c.toImageInterface()), 
-            ...imageInLineNodes.map(c => c.toImageInterface())] 
-    
+    return [...imageNodes.map(c => c.toImageInterface()),
+    ...imageInLineNodes.map(c => c.toImageInterface())]
+
   }
 
-    const getAllSections = (): string[] => {
-    if(!editor || !editor.current) throw new Error("Editor can not be null")
+  const getAllSections = (): string[] => {
+    if (!editor || !editor.current) throw new Error("Editor can not be null")
 
-   let sectionNodes: SectionNode[] = []
-        editor.current.read(() => {
-          sectionNodes = $nodesOfType(SectionNode)
-        })
+    let sectionNodes: SectionNode[] = []
+    editor.current.read(() => {
+      sectionNodes = $nodesOfType(SectionNode)
+    })
 
     return sectionNodes.map(c => c.__text)
-    
+
   }
 
   const toHtml = (): string => {
@@ -421,7 +421,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
   const restoreStateFromPreviousFreezedState = () => {
 
-    if(!FreezedState) throw new Error("Freezed state is null!")
+    if (!FreezedState) throw new Error("Freezed state is null!")
     const editor = getEditor()
 
     editor.update(() => {
@@ -431,9 +431,9 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   }
 
   const getEditor = (): LexicalEditor => {
-    if(!editor || !editor?.current) throw new Error("Editor can not be null")
+    if (!editor || !editor?.current) throw new Error("Editor can not be null")
 
-      return (editor.current as LexicalEditor)
+    return (editor.current as LexicalEditor)
   }
 
   return (
@@ -444,7 +444,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
         <LexicalComposer initialConfig={editorConfig}>
 
           <EditorRefPlugin editorRef={editor} />
-          <ToolbarPlugin 
+          <ToolbarPlugin
             setIsLinkEditMode={setIsLinkEditMode}
             onPropertiesChange={onToolbarProperties}
             onEditorClearCallback={props.onContentDeletedCallback}
@@ -455,13 +455,12 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
           <InlineImagePlugin />
           <LinkPlugin hasLinkAttributes={false} />
           <LayoutPlugin />
-
           <AutoFocusPlugin />
           <CodeHighlightPlugin />
           <LexicalAutoLinkPlugin />
           <ClickableLinkPlugin />
           <OnChangePlugin onChange={onChange} />
-          <SectionPlugin/>
+          <SectionPlugin />
           <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
           <TableCellResizerPlugin />
 

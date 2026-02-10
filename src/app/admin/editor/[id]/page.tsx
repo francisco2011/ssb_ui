@@ -7,7 +7,6 @@ import PostService from '~/services/PostService';
 import { useParams } from 'next/navigation';
 import Editor, { ContentState } from '~/components/admin/editor/Editor';
 import ContentMetada from '~/models/ContentMetadata';
-import VerticalToolbar from "~/components/admin/editor/VerticalToolbar";
 import TagSelector from "~/components/admin/tagSelector/TagSelector";
 import PostPreview from "~/components/admin/editor/PostPreview";
 import TagService from "~/services/TagService";
@@ -351,10 +350,6 @@ export default function PostEditor() {
                         />
                       </button>
                     </div>
-
-
-
-
                   </div>
                 </div>
 
@@ -407,7 +402,7 @@ export default function PostEditor() {
                 </div>
 
 
-                <div className=' sticky top-32'>
+                <div className='sticky top-32'>
                   <PostPreview post={post} onChange={updateMetadata} />
                 </div>
 

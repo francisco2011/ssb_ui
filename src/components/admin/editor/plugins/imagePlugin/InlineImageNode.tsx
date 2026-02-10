@@ -250,6 +250,10 @@ import ImageInterface from './ImageInterface';
     getSrc(): string {
       return this.__src;
     }
+
+    getId(): string | undefined {
+      return this.__imgId;
+    }
   
     getAltText(): string {
       return this.__altText;

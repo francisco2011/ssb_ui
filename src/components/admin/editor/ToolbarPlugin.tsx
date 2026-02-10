@@ -21,6 +21,7 @@ import {
     $isElementNode,
     $createTextNode,
     COMMAND_PRIORITY_EDITOR,
+    CLICK_COMMAND,
 } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
@@ -112,6 +113,7 @@ import { INSERT_LAYOUT_COMMAND } from "./plugins/LayoutPlugin";
 import SectionSelect, { SelectionResult } from "./toolbar/SectionSelect";
 import { $createHorizontalRuleNode, INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/extension";
 import { $createSectionNode } from "./plugins/SectionPlugin/SectionNode";
+import { $isInlineImageNode } from "./plugins/imagePlugin/InlineImageNode";
 
 export type ToolbarConfig = {
     allowImages?: boolean,
@@ -552,33 +554,14 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
         clearFormatting(editor)
     }
 
-    const onMaxWidthChanged = (value: number) => {
-        onPropertiesChange({ MaxLength: value + 'rem' })
-    }
 
     /////////////////////DRAWIO/////////////////
 
     const service = new ContentService()
 
-    const loadImage = async (file: File | null): Promise<ContentModel | null> => {
-
-        //if (file && post.id) {
-        //const result = await service.UploadFile(file, post.id, 'imgBody')
-        //return result
-        //}
-
-        return null
-
-    };
-
     const onDrawIO = async (data: DrawIOResponse | null) => {
         if (data && data.Content) {
-            const img = await loadImage(data.Content)
-            if (img && img.url && img.name) {
-
-                editor.dispatchCommand(INSERT_DRAW_IO_IMAGE_COMMAND, { src: img.url, position: 'full', imgId: img.name });
-            }
-
+            editor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, { src: data.Content, position: 'full', imgId: data.name });
         }
     }
 
@@ -591,9 +574,9 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
     }
 
     return (
-        <div style={{ "zIndex": 999 }}  className=" sticky top-3  bg-white h-auto px-2 py-2 mb-4 space-x-2 items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
+        <div style={{ "zIndex": 999 }} className=" sticky top-3  bg-white h-auto px-2 py-2 mb-4 space-x-2 items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
-            <div  className="flex flex-wrap gap-[2px] space-x-1">
+            <div className="flex flex-wrap gap-[2px] space-x-1">
                 <ClearEditorButton onClickCallback={onEditorClearCallback} />
                 <StrikethroughButton isActive={isStrikethrough} />
 

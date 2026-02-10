@@ -5,12 +5,19 @@ import EmbededDrawIOComponent from "../plugins/DrawIOPlugin/EmbededDrawIOCompone
 import DrawIOResponse from "../plugins/DrawIOPlugin/DrawIOResponse";
 import {useCallback} from 'react'
 
-function DrawIOModalButton({ onContentCallback}:{ onContentCallback: (response: DrawIOResponse) => void}) {
+export interface props{
+  onContentCallback: (response: DrawIOResponse) => void
+  src: string | undefined,
+  id: string | undefined
+}
+
+function DrawIOModalButton({ onContentCallback, src, id}:props) {
 
     const [modal, showModal] = useModal();
 
     const onData =  useCallback((data: DrawIOResponse | null) => {
         if(data){
+
             onContentCallback(data)
         }
     }, [])
@@ -24,7 +31,7 @@ function DrawIOModalButton({ onContentCallback}:{ onContentCallback: (response: 
           }
         onClick={() => {
                         showModal('Draw IO', (onClose) => (
-                          <EmbededDrawIOComponent imageContext={null} onClose={onClose} onData={onData}/>
+                          <EmbededDrawIOComponent imageContext={{ src: src, id: id }} onClose={onClose} onData={onData}/>
                           
                         ));
                       }}

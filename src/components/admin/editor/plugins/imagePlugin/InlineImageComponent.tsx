@@ -45,6 +45,8 @@ import useModal from '~/components/useModal';
 import ContentEditable from '~/components/ContentEditable';
 import ImageResizer from '~/components/ImageResizer';
 import $isImageNode from './IsImageNode';
+import DrawIOModalButton from '../../toolbar/DrawIOModalButton';
+import DrawIOResponse from '../DrawIOPlugin/DrawIOResponse';
 
 const imageCache = new Set();
 
@@ -181,9 +183,27 @@ export function UpdateInlineImageDialog({
     onClose();
   };
 
+  function onDrawIO(response: DrawIOResponse): void {
+    
+    var _width = isSizeInherit ? "inherit" : width
+    var _height = isSizeInherit ? "inherit" : height
+
+    //TODO what to do with previous?
+    const payload = { altText, position, showCaption, isSplitInHalves, width: _width, height: _height, hyperlink, src: response.Content};
+
+    if (node) {
+      activeEditor.update(() => {
+        node.update(payload);
+      });
+    }
+    onClose();
+
+
+  }
+
   return (
     <>
-
+      
       <div className='w-auto'>
         <div style={{ marginBottom: '1em' }}>
           <TextInput
@@ -220,6 +240,11 @@ export function UpdateInlineImageDialog({
           />
           
         </div>
+
+      <div>
+        <DrawIOModalButton src={node.getSrc()} id={node.getId()} onContentCallback={onDrawIO} />
+      </div>
+        
 
         {
           isSizeInherit == false ?
@@ -423,6 +448,7 @@ export default function InlineImageComponent({
         (payload) => {
           const event = payload;
           if (event.target === imageRef.current) {
+            
             if (event.shiftKey) {
               setSelected(!isSelected);
             } else {

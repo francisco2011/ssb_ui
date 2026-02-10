@@ -90,8 +90,8 @@ export default class ContentService extends FetchBase {
     }
 
 
-    async GetDownloadUrl(fileName: string): Promise<ContentModel> {
-        var url = this.BACKEND_API_URL + "/content/" + fileName;
+    async GetDownloadUrl(fileName: string): Promise<string> {
+        var url = this.BACKEND_API_URL + "/content?name=" + fileName;
 
         return this.GetBase(url)
     }
