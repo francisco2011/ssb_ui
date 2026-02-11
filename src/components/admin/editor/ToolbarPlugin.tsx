@@ -114,6 +114,8 @@ import SectionSelect, { SelectionResult } from "./toolbar/SectionSelect";
 import { $createHorizontalRuleNode, INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/extension";
 import { $createSectionNode } from "./plugins/SectionPlugin/SectionNode";
 import { $isInlineImageNode } from "./plugins/imagePlugin/InlineImageNode";
+import { $createCustomTableOfContentNode, CustomTableOfContentsNode } from "./plugins/TableOfContents/CustomTableOfContentsNode";
+import { TableOfContentsEntry } from "./plugins/TableOfContents/CustomTableOfContentsPlugin";
 
 export type ToolbarConfig = {
     allowImages?: boolean,
@@ -130,10 +132,11 @@ type Props = {
     setIsLinkEditMode: Dispatch<boolean>,
     onPropertiesChange: Dispatch<ToolBarProperties>
     onEditorClearCallback: () => void,
-    config?: ToolbarConfig
+    config?: ToolbarConfig,
+    headerTags: TableOfContentsEntry[]
 }
 
-export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, onEditorClearCallback, config }: Props) {
+export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, onEditorClearCallback, config, headerTags }: Props) {
 
     const defaultFontSize = '15px';
     const defaultFontFamily = 'Arial';
@@ -573,6 +576,22 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
 
     }
 
+    /////////TEST//////////////////
+
+    const addTableOfContents = () => {
+
+        console.log(headerTags)
+
+        editor.update(() => {
+
+             const newNode = $createCustomTableOfContentNode({ entries: headerTags});
+            $insertNodeToNearestRoot(newNode);
+        },
+        );
+    }
+
+    ///////////////////////////////
+
     return (
         <div style={{ "zIndex": 999 }} className=" sticky top-3  bg-white h-auto px-2 py-2 mb-4 space-x-2 items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
@@ -589,14 +608,13 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
                 <span className="w-[2px] bg-black block h-full">'</span>
 
                 <LeftButton isActive={alignment == 'left'} />
-                <RightButton isActive={alignment == 'right'} />
                 <CenterButton isActive={alignment == 'center'} />
                 <JustifyButton isActive={alignment == 'justify'} />
-
+                <RightButton isActive={alignment == 'right'} />
                 <span className="w-[2px] bg-black block h-full">'</span>
 
-                <IndentButton isActive={true} />
                 <OutdentButton isActive={true} />
+                <IndentButton isActive={true} />
 
                 <span className="w-[2px] bg-black block h-full">'</span>
 
@@ -676,7 +694,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
 
                 {
                     config && config.allowDiagram ?
-                        <DrawIOModalButton onContentCallback={onDrawIO} />
+                        <DrawIOModalButton id={undefined} src={undefined} onContentCallback={onDrawIO} />
                         : null
                 }
 
@@ -685,6 +703,8 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
                         <SectionSelect selectedOption={section} callback={insertSection} />
                         : null
                 }
+
+                <button onClick={addTableOfContents}>ADD TABLE OF CONTENT</button>
 
 
             </div>

@@ -31,12 +31,11 @@ import LinkPlugin from '~/components/admin/editor/plugins/LinkPlugin/LinkPlugin'
 import { LexicalEditor } from 'node_modules/lexical/LexicalEditor';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin'
-import { $applyNodeReplacement, $copyNode, $createParagraphNode, $getRoot, $insertNodes, $nodesOfType, CLEAR_EDITOR_COMMAND, EditorState, ElementFormatType, ElementNode, LexicalNode, ParagraphNode, TextNode } from 'lexical';
+import { $applyNodeReplacement, $copyNode, $createParagraphNode, $getRoot, $getSelection, $insertNodes, $nodesOfType, BaseSelection, CLEAR_EDITOR_COMMAND, EditorState, ElementFormatType, ElementNode, LexicalNode, ParagraphNode, TextNode } from 'lexical';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import editorTheme from '~/themes/EditorTheme';
 import ToolbarPlugin, { ToolbarConfig } from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
-import PostModel from '~/models/PostModel';
 import { ContentType } from '~/models/ContentType';
 import ContentEditable from '~/components/ContentEditable';
 import ToolBarProperties from './ToolbarProperties';
@@ -48,8 +47,6 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import TableCellResizerPlugin from './plugins/TableCellResizer';
 import TableActionMenuPlugin from './plugins/TableActionMenu';
 import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
-import { DrawIOImageNode } from './plugins/DrawIOPlugin/DrawIOImageNode_old';
-import DrawIOPlugin from './plugins/DrawIOPlugin';
 import LayoutPlugin from './plugins/LayoutPlugin';
 import { LayoutContainerNode } from './plugins/LayoutPlugin/LayoutContainerNode';
 import { LayoutItemNode } from './plugins/LayoutPlugin/LayoutItemNode';
@@ -59,6 +56,11 @@ import ImageInterface from './plugins/imagePlugin/ImageInterface';
 import { SectionNode } from './plugins/SectionPlugin/SectionNode';
 import SectionPlugin from './plugins/SectionPlugin/SectionPlugin';
 import { createHeadlessEditor } from '@lexical/headless';
+import { SelectionAlwaysOnDisplay } from "@lexical/react/LexicalSelectionAlwaysOnDisplay";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin"
+import { CustomTableOfContentsPlugin, TableOfContentsEntry } from './plugins/TableOfContents/CustomTableOfContentsPlugin';
+import { CustomTableOfContentsNode } from './plugins/TableOfContents/CustomTableOfContentsNode';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 
 type EditorConfiguration = {
   allowedToolBarOptions: ToolbarConfig,
@@ -81,10 +83,11 @@ const allNodes = [HeadingNode,
   TableNode,
   TableCellNode,
   TableRowNode,
- // DrawIOImageNode,
+  // DrawIOImageNode,
   LayoutContainerNode,
   LayoutItemNode,
-  SectionNode
+  SectionNode,
+  CustomTableOfContentsNode
 ]
 
 const sectionEditor = createHeadlessEditor({
@@ -121,18 +124,18 @@ type props = {
   content: string,
   contents: ContentModel[],
   onContentDeletedCallback: () => void,
-  config: EditorConfiguration
+  config: EditorConfiguration,
+  
 }
 
 const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
-  const [tags, setTags] = useState<string[]>([])
+  const [headers, setHeaders] = useState<TableOfContentsEntry[]>([])
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
   const [isSmallWidthViewport, setIsSmallWidthViewport] =
     useState<boolean>(false);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
-  //const [isClearAll, setIsClearAll] = useState<boolean>(false);
   const editor = useRef<LexicalEditor>(null);
 
   var FreezedState: EditorState | null = null;
@@ -448,7 +451,9 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
             setIsLinkEditMode={setIsLinkEditMode}
             onPropertiesChange={onToolbarProperties}
             onEditorClearCallback={props.onContentDeletedCallback}
-            config={props.config.allowedToolBarOptions} />
+            config={props.config.allowedToolBarOptions}  
+            headerTags={headers}
+            />
           <ClearEditorPlugin />
           <ListPlugin />
           <ImagesPlugin />
@@ -463,6 +468,10 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
           <SectionPlugin />
           <TablePlugin hasCellBackgroundColor={true} hasCellMerge={true} hasHorizontalScroll={true} hasTabHandler={true} />
           <TableCellResizerPlugin />
+          <SelectionAlwaysOnDisplay />
+          <TabIndentationPlugin />
+          <CustomTableOfContentsPlugin onHeadersChange={(content: TableOfContentsEntry[]) => { setHeaders(content); console.log(content) }} />
+
 
           <div className='editor-container'>
             <div style={{ minHeight: props.config.heightRem, height: 'auto', width: 'inherit' }} ref={ref}>
