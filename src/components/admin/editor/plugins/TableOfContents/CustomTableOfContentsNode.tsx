@@ -1,11 +1,4 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
+import './CustomTableOfContentsNode.css'
 import type {
     DOMConversionMap,
     DOMConversionOutput,
@@ -23,6 +16,7 @@ import type {
 import {
     $applyNodeReplacement,
     DecoratorNode,
+    isHTMLElement,
 } from 'lexical';
 import { TableOfContentsEntry } from './CustomTableOfContentsPlugin';
 import CustomTableOfContentsHelper from './CustomTableOfContentsHelper';
@@ -40,6 +34,9 @@ export interface UpdateCustomTableOfContentsPayload {
     entries: TableOfContentsEntry[];
 }
 
+function $convertCustomTableOfContentElement(domNode: Node): null | DOMConversionOutput {
+    return null;
+  }
 
 export class CustomTableOfContentsNode extends DecoratorNode<Element> {
     __entries: TableOfContentsEntry[];
@@ -52,6 +49,7 @@ export class CustomTableOfContentsNode extends DecoratorNode<Element> {
     static clone(node: CustomTableOfContentsNode): CustomTableOfContentsNode {
         return new CustomTableOfContentsNode(
             node.__entries,
+            node.__key,
         );
     }
 
@@ -85,14 +83,15 @@ export class CustomTableOfContentsNode extends DecoratorNode<Element> {
 
     getLiElement(entry: TableOfContentsEntry): HTMLLIElement {
 
-        var node = entry[0]
         var content = entry[1]
-        var type = entry[2]
 
-        const element = document.createElement("li");
-        element.innerText = content
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        //<a href="#section-2">2. Core Concepts</a>
+        li.appendChild(a)
+        a.innerText = content
 
-        return element
+        return li
     }
 
     getUlElement(): HTMLUListElement {
@@ -106,47 +105,7 @@ export class CustomTableOfContentsNode extends DecoratorNode<Element> {
 
     exportDOM(): DOMExportOutput {
 
-        var tree = new CustomTableOfContentsHelper().toTree(this.__entries)
-
-        debugger
-        const div = document.createElement('div');
-        const lastUl = this.getUlElement()
-        div.appendChild(lastUl)
-
-        //all roots
-        var allNodes = [...tree.Children]
-
-        allNodes.forEach(c => {
-            if (c.Entry) {
-                const li = this.getLiElement(c.Entry)
-                c.Li = li
-                lastUl.appendChild(li)
-            }
-        })
-
-        while (allNodes.length > 0) {
-
-            var root = allNodes.shift()
-
-            if (!root) continue
-
-
-            if (root.Children.length > 0) {
-
-                allNodes.unshift(...root.Children)
-                const newUl = this.getUlElement()
-                root.Li.appendChild(newUl)
-
-                root.Children.forEach(c => {
-                    if (c.Entry) {
-                        const li = this.getLiElement(c.Entry)
-                        c.Li = li
-                        lastUl.appendChild(li)
-                    }
-                })
-            }
-
-        }
+        const div = this.createTree()
 
         return { element: div };
 
@@ -159,9 +118,6 @@ export class CustomTableOfContentsNode extends DecoratorNode<Element> {
         };
     }
 
-
-
-
     update(payload: UpdateCustomTableOfContentsPayload): void {
         const writable = this.getWritable();
         const { entries } = payload;
@@ -169,17 +125,30 @@ export class CustomTableOfContentsNode extends DecoratorNode<Element> {
 
     }
 
-    // View
+    static importDOM(): DOMConversionMap | null {
+        return {
+            div: (node: Node) => ({
+                conversion: $convertCustomTableOfContentElement,
+                priority: 0,
+            }),
+        };
+    }
 
-    createDOM(config: EditorConfig): HTMLElement {
-        // if (!config.theme.inlineImage) console.warn("must set config.theme.inlineImage variable")
-
-
+    createTree(): HTMLElement {
         var tree = new CustomTableOfContentsHelper().toTree(this.__entries)
 
         const div = document.createElement('div');
+        div.className = "toc_div"
+        const nav = document.createElement('nav')
+        nav.id = "toc_container"
+        const title = document.createElement('p')
+        title.className = "toc_title"
+        title.innerText = "Contents"
+        nav.appendChild(title)
         let lastUl = this.getUlElement()
-        div.appendChild(lastUl)
+        lastUl.className = "toc_list"
+        div.appendChild(nav)
+        nav.appendChild(lastUl)
 
         //all roots
         var allNodes = [...tree.Children]
@@ -220,26 +189,30 @@ export class CustomTableOfContentsNode extends DecoratorNode<Element> {
         return div;
     }
 
-    updateDOM(prevNode: this, dom: HTMLElement, config: EditorConfig): false {
-       // if (!config.theme.inlineImage) console.warn("must set config.theme.inlineImage variable")
-       
-       dom = this.createDOM(config)
+    createDOM(config: EditorConfig): HTMLElement {
+        return this.createTree()
+    }
 
-       
-       return false;
+    updateDOM(prevNode: this, dom: HTMLElement, config: EditorConfig): false {
+        // if (!config.theme.inlineImage) console.warn("must set config.theme.inlineImage variable")
+
+        dom = this.createDOM(config)
+
+
+        return false;
     }
 
 }
 
 export function $createCustomTableOfContentNode({
     entries
-  }: UpdateCustomTableOfContentsPayload): CustomTableOfContentsNode {
+}: UpdateCustomTableOfContentsPayload): CustomTableOfContentsNode {
     return $applyNodeReplacement(
-      new CustomTableOfContentsNode(
-        entries
-      ),
+        new CustomTableOfContentsNode(
+            entries
+        ),
     );
-  }
+}
 
 export function $isCustomTableOfContentNode(
     node: LexicalNode | null | undefined,

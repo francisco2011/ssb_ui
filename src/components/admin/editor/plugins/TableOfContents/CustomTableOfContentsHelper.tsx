@@ -28,11 +28,19 @@ export default class CustomTableOfContentsHelper{
             if (!ent[2]) continue
 
             if (ent[2] == "h1" || ent[2] == "h2") {
-                var newNode: Node = { Entry: ent, Children: [], Prev: root, Li: null }
+                var newNode: Node = { Entry: ent, Children: [], Prev: null, Li: null }
                 root.Children.push(newNode)
                 lastAdded = newNode
             } else {
                 //for h3,h4,h5,h6
+
+                //maybe hn is at the level at which h2 should be
+                if(!lastAdded.Prev){
+                    var newNode: Node = { Entry: ent, Children: [], Prev: lastAdded, Li: null }
+                    lastAdded.Children.push(newNode)
+                    lastAdded = newNode
+                    continue
+                }
 
                 var asNum = this.toNumber(ent[2])
                 var asNumPrev = this.toNumber(lastAdded.Entry?.[2])
@@ -56,13 +64,12 @@ export default class CustomTableOfContentsHelper{
                 if (asNum < asNumPrev) {
 
                     var prev = lastAdded.Prev
-
                     while (prev != null) {
 
-                        //its the root
+                        //prev to the root
                         if (!prev.Prev) {
-                            var newNode: Node = { Entry: ent, Children: [], Prev: root, Li: null }
-                            root.Children.push(newNode)
+                            var newNode: Node = { Entry: ent, Children: [], Prev: prev, Li: null }
+                            prev.Children.push(newNode)
                             lastAdded = newNode
                             break
                         }

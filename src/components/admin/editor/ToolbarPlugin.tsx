@@ -22,6 +22,7 @@ import {
     $createTextNode,
     COMMAND_PRIORITY_EDITOR,
     CLICK_COMMAND,
+    $nodesOfType,
 } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
@@ -580,15 +581,35 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
 
     const addTableOfContents = () => {
 
-        console.log(headerTags)
-
         editor.update(() => {
+
+            const listNodes = $nodesOfType(CustomTableOfContentsNode);
+
+            if(listNodes && listNodes.length > 0) return
 
              const newNode = $createCustomTableOfContentNode({ entries: headerTags});
             $insertNodeToNearestRoot(newNode);
         },
         );
     }
+
+    useEffect(() => {
+        
+        editor.update(() => {
+
+            const listNodes = $nodesOfType(CustomTableOfContentsNode);
+            if(listNodes && listNodes.length > 0){
+                
+                //there can only be one
+                var existingNode = listNodes[0]
+                const newNode = $createCustomTableOfContentNode({ entries: headerTags});
+                existingNode?.replace(newNode)
+            }
+
+        },
+        );
+
+    }, [headerTags])
 
     ///////////////////////////////
 

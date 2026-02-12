@@ -470,7 +470,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
           <TableCellResizerPlugin />
           <SelectionAlwaysOnDisplay />
           <TabIndentationPlugin />
-          <CustomTableOfContentsPlugin onHeadersChange={(content: TableOfContentsEntry[]) => { setHeaders(content); console.log(content) }} />
+          <CustomTableOfContentsPlugin onHeadersChange={(content: TableOfContentsEntry[]) => { setHeaders(content); }} />
 
 
           <div className='editor-container'>

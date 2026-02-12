@@ -1,0 +1,52 @@
+
+
+
+
+#toc_container {
+  background: #f9f9f9; /* Light gray background */
+  border: 1px solid #aaa; /* Subtle border */
+  padding: 2rem; /* Space inside the container */
+  margin-bottom: 1em; /* Space below the container */
+  width: auto; /* Adjust width as needed */
+  display: table; /* Helps the container wrap its content neatly */
+  border-radius: 5px; /* Optional rounded corners */
+  width: 'auto';
+  margin-left: 5%;
+}
+
+.toc_title {
+  font-weight: 700; /* Bold title */
+  text-align: center; /* Center the title */
+  margin-top: 0; /* Remove default margin for the title */
+  margin-bottom: 10px; /* Space below the title */
+}
+
+.toc_list {
+  margin-left: 0%;
+}
+
+/* Remove default list styling (bullets/numbers and padding) */
+#toc_container ul {
+  list-style: none;
+  padding-left: 0;
+  
+}
+
+/* Indent nested lists for hierarchy */
+#toc_container ul ul {
+  padding-left: 20px; /* Indentation for sub-sections */
+}
+
+#toc_container li {
+  padding: 2px 0; /* Small vertical spacing for list items */
+}
+
+#toc_container a {
+  color: #4c74b9; /* Link color */
+  text-decoration: none; /* Remove underlines from links */
+  cursor: pointer;
+}
+
+#toc_container a:hover {
+  text-decoration: underline; /* Add underline on hover for interactivity */
+}
