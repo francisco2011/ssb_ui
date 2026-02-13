@@ -20,9 +20,9 @@ function GifPickerButton({ onClickCallback }: { onClickCallback: (data: InsertIm
 
     return (
         <>
-            <div>
+            <div className="tooltip tooltip-primary" data-tip="GIF">
 
-                <Popover ref={popoverRef} buttonClass={"px-1 bg-gray-400 hover:bg-gray-700 transition-colors duration-100 ease-in"}
+                <Popover  ref={popoverRef} buttonClass={"px-1 bg-gray-400 hover:bg-gray-700 transition-colors duration-100 ease-in"}
                     content={<>
                         <SearchContextManager shouldDefaultToTrending={false} apiKey={""}>
                             <GiphyPicker OnGifSelected={onSelected} />

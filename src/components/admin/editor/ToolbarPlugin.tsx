@@ -117,6 +117,7 @@ import { TableOfContentsEntry } from "./plugins/TableOfContents/CustomTableOfCon
 import { $createCustomHeadingNode, $isCustomHeadingNode } from "./plugins/CustomHeadingTag/CustomHeadingTagNode";
 import slugify from 'react-slugify';
 import { v4 as uuidv4 } from 'uuid';
+import TableOfContentsButton from "./toolbar/TableOfContentButton";
 
 export type ToolbarConfig = {
     allowImages?: boolean,
@@ -126,7 +127,8 @@ export type ToolbarConfig = {
     allowTable?: boolean,
     allowColumn?: boolean,
     allowCode?: boolean,
-    allowSection?: boolean
+    allowSection?: boolean,
+    allowTableOfContents?: boolean
 }
 
 type Props = {
@@ -730,7 +732,11 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
                         : null
                 }
 
-                <button onClick={addTableOfContents}>ADD TABLE OF CONTENT</button>
+                {   config && config.allowTableOfContents?
+                    <TableOfContentsButton onClickCallback={addTableOfContents}/>
+                    : null
+                }
+                
 
 
             </div>

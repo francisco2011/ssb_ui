@@ -385,8 +385,8 @@ export default function PostEditor() {
                         allowCode: true, allowColumn: true,
                         allowDiagram: true, allowEmogis: true,
                         allowGif: true, allowImages: true,
-                        allowTable: true,
-                        allowSection: true
+                        allowTable: true, allowSection: true,
+                        allowTableOfContents: true
                       }
                     }}></Editor>
                 </div>

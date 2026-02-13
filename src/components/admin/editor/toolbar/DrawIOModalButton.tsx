@@ -24,9 +24,9 @@ function DrawIOModalButton({ onContentCallback, src, id}:props) {
 
     return(
         <>
-        <button
+        <button data-tip="DrawIO"
         className={
-            "px-1 hover:bg-gray-600 transition-colors duration-100 ease-in bg-gray-400"
+            "px-1 hover:bg-gray-600 transition-colors duration-100 ease-in bg-gray-400 tooltip tooltip-primary"
             
           }
         onClick={() => {
