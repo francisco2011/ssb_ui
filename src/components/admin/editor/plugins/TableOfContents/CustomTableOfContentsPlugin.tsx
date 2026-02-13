@@ -7,7 +7,7 @@
  */
 
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {$isHeadingNode, HeadingNode, HeadingTagType} from '@lexical/rich-text';
+import { HeadingTagType} from '@lexical/rich-text';
 import {$getNextRightPreorderNode} from '@lexical/utils';
 import {
   $getNodeByKey,
@@ -20,20 +20,22 @@ import {
   TextNode,
 } from 'lexical';
 import {useEffect, useState} from 'react';
+import { $isCustomHeadingNode, CustomHeadingNode } from '../CustomHeadingTag/CustomHeadingTagNode';
 
 export type TableOfContentsEntry = [
   key: NodeKey,
   text: string,
   tag: HeadingTagType,
+  id: string
 ];
 
-function toEntry(heading: HeadingNode): TableOfContentsEntry {
-  return [heading.getKey(), heading.getTextContent(), heading.getTag()];
+function toEntry(heading: CustomHeadingNode): TableOfContentsEntry {
+  return [heading.getKey(), heading.getTextContent(), heading.getTag(), heading.getId()];
 }
 
 function $insertHeadingIntoTableOfContents(
-  prevHeading: HeadingNode | null,
-  newHeading: HeadingNode | null,
+  prevHeading: CustomHeadingNode | null,
+  newHeading: CustomHeadingNode | null,
   currentTableOfContents: Array<TableOfContentsEntry>,
 ): Array<TableOfContentsEntry> {
   if (newHeading === null) {
@@ -83,7 +85,7 @@ function $deleteHeadingFromTableOfContents(
 }
 
 function $updateHeadingInTableOfContents(
-  heading: HeadingNode,
+  heading: CustomHeadingNode,
   currentTableOfContents: Array<TableOfContentsEntry>,
 ): Array<TableOfContentsEntry> {
   const newTableOfContents: Array<TableOfContentsEntry> = [];
@@ -102,8 +104,8 @@ function $updateHeadingInTableOfContents(
  * is undefined, `heading` is placed at the start of table of contents
  */
 function $updateHeadingPosition(
-  prevHeading: HeadingNode | null,
-  heading: HeadingNode,
+  prevHeading: CustomHeadingNode | null,
+  heading: CustomHeadingNode,
   currentTableOfContents: Array<TableOfContentsEntry>,
 ): Array<TableOfContentsEntry> {
   const newTableOfContents: Array<TableOfContentsEntry> = [];
@@ -125,9 +127,9 @@ function $updateHeadingPosition(
   return newTableOfContents;
 }
 
-function $getPreviousHeading(node: HeadingNode): HeadingNode | null {
+function $getPreviousHeading(node: CustomHeadingNode): CustomHeadingNode | null {
   let prevHeading = $getNextRightPreorderNode(node);
-  while (prevHeading !== null && !$isHeadingNode(prevHeading)) {
+  while (prevHeading !== null && !$isCustomHeadingNode(prevHeading)) {
     prevHeading = $getNextRightPreorderNode(prevHeading);
   }
   return prevHeading;
@@ -149,11 +151,12 @@ export function CustomTableOfContentsPlugin({onHeadersChange}: Props) {
     editor.getEditorState().read(() => {
       const updateCurrentTableOfContents = (node: ElementNode) => {
         for (const child of node.getChildren()) {
-          if ($isHeadingNode(child)) {
+          if ($isCustomHeadingNode(child)) {
             currentTableOfContents.push([
               child.getKey(),
               child.getTextContent(),
               child.getTag(),
+              child.getId()
             ]);
           } else if ($isElementNode(child)) {
             updateCurrentTableOfContents(child);
@@ -171,7 +174,7 @@ export function CustomTableOfContentsPlugin({onHeadersChange}: Props) {
         editorState.read(() => {
           const updateChildHeadings = (node: ElementNode) => {
             for (const child of node.getChildren()) {
-              if ($isHeadingNode(child)) {
+              if ($isCustomHeadingNode(child)) {
                 const prevHeading = $getPreviousHeading(child);
                 currentTableOfContents = $updateHeadingPosition(
                   prevHeading,
@@ -200,12 +203,12 @@ export function CustomTableOfContentsPlugin({onHeadersChange}: Props) {
 
     // Listen to updates to heading mutations and update state
     const removeHeaderMutationListener = editor.registerMutationListener(
-      HeadingNode,
+      CustomHeadingNode,
       (mutatedNodes: Map<string, NodeMutation>) => {
         editor.getEditorState().read(() => {
           for (const [nodeKey, mutation] of mutatedNodes) {
             if (mutation === 'created') {
-              const newHeading = $getNodeByKey<HeadingNode>(nodeKey);
+              const newHeading = $getNodeByKey<CustomHeadingNode>(nodeKey);
               if (newHeading !== null) {
                 const prevHeading = $getPreviousHeading(newHeading);
                 currentTableOfContents = $insertHeadingIntoTableOfContents(
@@ -220,7 +223,7 @@ export function CustomTableOfContentsPlugin({onHeadersChange}: Props) {
                 currentTableOfContents,
               );
             } else if (mutation === 'updated') {
-              const newHeading = $getNodeByKey<HeadingNode>(nodeKey);
+              const newHeading = $getNodeByKey<CustomHeadingNode>(nodeKey);
               if (newHeading !== null) {
                 const prevHeading = $getPreviousHeading(newHeading);
                 currentTableOfContents = $updateHeadingPosition(
@@ -249,7 +252,7 @@ export function CustomTableOfContentsPlugin({onHeadersChange}: Props) {
               const currNode = $getNodeByKey(nodeKey);
               if (currNode !== null) {
                 const parentNode = currNode.getParentOrThrow();
-                if ($isHeadingNode(parentNode)) {
+                if ($isCustomHeadingNode(parentNode)) {
                   currentTableOfContents = $updateHeadingInTableOfContents(
                     parentNode,
                     currentTableOfContents,

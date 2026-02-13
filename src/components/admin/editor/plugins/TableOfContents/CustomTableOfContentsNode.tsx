@@ -84,9 +84,11 @@ export class CustomTableOfContentsNode extends DecoratorNode<Element> {
     getLiElement(entry: TableOfContentsEntry): HTMLLIElement {
 
         var content = entry[1]
+        var id = entry[3]
 
         const li = document.createElement("li");
         const a = document.createElement("a");
+        a.setAttribute("href", "#"+id)
         //<a href="#section-2">2. Core Concepts</a>
         li.appendChild(a)
         a.innerText = content
@@ -143,7 +145,7 @@ export class CustomTableOfContentsNode extends DecoratorNode<Element> {
         nav.id = "toc_container"
         const title = document.createElement('p')
         title.className = "toc_title"
-        title.innerText = "Contents"
+        title.innerText = "Table of Contents"
         nav.appendChild(title)
         let lastUl = this.getUlElement()
         lastUl.className = "toc_list"

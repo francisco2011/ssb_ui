@@ -61,13 +61,16 @@ import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin
 import { CustomTableOfContentsPlugin, TableOfContentsEntry } from './plugins/TableOfContents/CustomTableOfContentsPlugin';
 import { CustomTableOfContentsNode } from './plugins/TableOfContents/CustomTableOfContentsNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $createCustomHeadingNode, CustomHeadingNode } from './plugins/CustomHeadingTag/CustomHeadingTagNode';
+import { v4 as uuidv4 } from 'uuid';
 
 type EditorConfiguration = {
   allowedToolBarOptions: ToolbarConfig,
   heightRem: string
 }
 
-const allNodes = [HeadingNode,
+const allNodes = [
+  CustomHeadingNode,
   QuoteNode,
   ListNode,
   ListItemNode,
@@ -83,7 +86,6 @@ const allNodes = [HeadingNode,
   TableNode,
   TableCellNode,
   TableRowNode,
-  // DrawIOImageNode,
   LayoutContainerNode,
   LayoutItemNode,
   SectionNode,
@@ -125,7 +127,7 @@ type props = {
   contents: ContentModel[],
   onContentDeletedCallback: () => void,
   config: EditorConfiguration,
-  
+
 }
 
 const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
@@ -451,9 +453,9 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
             setIsLinkEditMode={setIsLinkEditMode}
             onPropertiesChange={onToolbarProperties}
             onEditorClearCallback={props.onContentDeletedCallback}
-            config={props.config.allowedToolBarOptions}  
+            config={props.config.allowedToolBarOptions}
             headerTags={headers}
-            />
+          />
           <ClearEditorPlugin />
           <ListPlugin />
           <ImagesPlugin />

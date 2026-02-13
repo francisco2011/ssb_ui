@@ -27,9 +27,7 @@ import {
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 import {
-    $createHeadingNode,
     $createQuoteNode,
-    $isHeadingNode,
     $isQuoteNode,
     HeadingTagType
 } from "@lexical/rich-text";
@@ -107,7 +105,6 @@ import DrawIOModalButton from "./toolbar/DrawIOModalButton";
 import ContentService from "~/services/ContentService";
 import ContentModel from "~/models/ContentModel";
 import DrawIOResponse from "./plugins/DrawIOPlugin/DrawIOResponse";
-import { INSERT_DRAW_IO_IMAGE_COMMAND } from "./plugins/DrawIOPlugin";
 import InsertColumnLayoutModal from "./toolbar/InsertColumnLayaoutModal";
 import ClearEditorButton from "./toolbar/ClearEditorButton";
 import { INSERT_LAYOUT_COMMAND } from "./plugins/LayoutPlugin";
@@ -117,6 +114,9 @@ import { $createSectionNode } from "./plugins/SectionPlugin/SectionNode";
 import { $isInlineImageNode } from "./plugins/imagePlugin/InlineImageNode";
 import { $createCustomTableOfContentNode, CustomTableOfContentsNode } from "./plugins/TableOfContents/CustomTableOfContentsNode";
 import { TableOfContentsEntry } from "./plugins/TableOfContents/CustomTableOfContentsPlugin";
+import { $createCustomHeadingNode, $isCustomHeadingNode } from "./plugins/CustomHeadingTag/CustomHeadingTagNode";
+import slugify from 'react-slugify';
+import { v4 as uuidv4 } from 'uuid';
 
 export type ToolbarConfig = {
     allowImages?: boolean,
@@ -214,7 +214,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
 
                     if (copiedFormat.IsQuote) $wrapNodes(selection, () => $createQuoteNode());
 
-                    if (copiedFormat.HeadingType) $wrapNodes(selection, () => $createHeadingNode(copiedFormat.HeadingType));
+                    if (copiedFormat.HeadingType) $wrapNodes(selection, () => $createCustomHeadingNode(copiedFormat.HeadingType, uuidv4()));
                     if (copiedFormat.IsListBulletList) editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
                     if (copiedFormat.IsOrderedList) editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
 
@@ -296,7 +296,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
             }
 
             setIsQuote($isQuoteNode(element))
-            setHeadingSize($isHeadingNode(element) ? element.getTag() : '');
+            setHeadingSize($isCustomHeadingNode(element) ? element.getTag() : '');
             setIsBulletList($isListNode(element) && element.getTag() == 'ul');
             setIsOrderedList($isListNode(element) && element.getTag() == 'ol');
             setAlignment(element.getFormatType())
@@ -360,7 +360,12 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
                 if ($isRangeSelection(selection)) {
 
                     if (heading) {
-                        $wrapNodes(selection, () => $createHeadingNode(heading));
+
+                        var text = selection.getTextContent()
+                        var anchorText = selection.anchor.getNode().getTextContent()
+                        const id = text? slugify(text) : anchorText ? slugify(anchorText) : uuidv4();
+
+                        $wrapNodes(selection, () => $createCustomHeadingNode(heading,id));
                     } else {
                         $wrapNodes(selection, () => $createParagraphNode());
                     }

@@ -4,6 +4,7 @@
 @import 'table.css';
 @import 'columnLayout.css';
 @import '../components/admin/editor/plugins/imagePlugin/InlineImageNode.css';
+@import '../components/admin/editor/plugins/TableOfContents/CustomTableOfContentsNode.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

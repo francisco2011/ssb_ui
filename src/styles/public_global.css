@@ -3,6 +3,7 @@
 @import './prism/dracula.css';
 @import 'table.css';
 @import '../components/admin/editor/plugins/imagePlugin/InlineImageNode.css';
+@import '../components/admin/editor/plugins/TableOfContents/CustomTableOfContentsNode.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
