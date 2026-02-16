@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import VerticalMenu from "~/components/admin/verticalMenu/VerticalMenu";
 import { Toaster } from "sonner";
+import { WebLLMProvider } from "~/components/admin/webLLM/WebLLMProvider";
 
 export const metadata: Metadata = {
   title: "Francisco Contreras Olea",
@@ -32,7 +33,9 @@ export default function RootLayout({
 
             <div className="col-span-10 m-4 text-gray-900 items-center justify-center">
               <Toaster richColors position="top-right" />
+              <WebLLMProvider>
               {children}
+              </WebLLMProvider>
             </div>
           </div>
         </main>

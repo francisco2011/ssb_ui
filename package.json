@@ -16,6 +16,8 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache"
   },
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^2.1.1",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -35,6 +37,7 @@
     "@lexical/react": "0.39.0",
     "@lexical/table": "0.39.0",
     "@lexical/utils": "0.39.0",
+    "@mlc-ai/web-llm": "^0.2.80",
     "@t3-oss/env-nextjs": "^0.10.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

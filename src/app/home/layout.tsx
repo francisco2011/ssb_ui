@@ -40,14 +40,14 @@ export default async function RootLayout({
       <body>
         
 
-        <main className="flex overflow-x-scroll min-h-screen bg-gray-50 xs:text-xs sm:text-sm md:text-lg xl:text-xl 2xl:text-2xl">
+        <main className="flex  min-h-screen bg-gray-50 xs:text-xs sm:text-sm md:text-lg xl:text-xl 2xl:text-2xl">
           <div className="w-full grid grid-cols-12 ">
 
             <div className="border-r0  md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
               <Sidebar contentHtml={html} imgSrc={mainImgSrc} />
 
             </div>
-            <div className="m-4 text-gray-900 items-center justify-center x:col-span-12 xs:col-span-12 sm:col-span-12 md:col-span-10 lg:col-span-10 xl:col-span-10 2xl:col-span-10">
+            <div className="m-4  text-gray-900 items-center justify-center x:col-span-12 xs:col-span-12 sm:col-span-12 md:col-span-10 lg:col-span-10 xl:col-span-10 2xl:col-span-10">
 
               {children}
             </div>

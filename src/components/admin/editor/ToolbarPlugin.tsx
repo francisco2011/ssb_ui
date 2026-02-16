@@ -118,6 +118,7 @@ import { $createCustomHeadingNode, $isCustomHeadingNode } from "./plugins/Custom
 import slugify from 'react-slugify';
 import { v4 as uuidv4 } from 'uuid';
 import TableOfContentsButton from "./toolbar/TableOfContentButton";
+import LLMButton from "./toolbar/LLMButton";
 
 export type ToolbarConfig = {
     allowImages?: boolean,
@@ -736,6 +737,8 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
                     <TableOfContentsButton onClickCallback={addTableOfContents}/>
                     : null
                 }
+
+                <LLMButton/>
                 
 
 

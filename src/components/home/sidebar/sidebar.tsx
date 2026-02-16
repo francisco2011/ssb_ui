@@ -13,7 +13,7 @@ export default async function Header({ contentHtml, imgSrc }: props): Promise<JS
         <>
             <div className="">
 
-                <div className="navbar w-screen bg-base-200 sm:text-sm md:text-md xl:text-xl hidden x:block xs:block sm:block md:hidden lg:hidden xl:hidden 2xl:hidden">
+                <div className="navbar  w-screen bg-base-200 sm:text-sm md:text-md xl:text-xl hidden x:block xs:block sm:block md:hidden lg:hidden xl:hidden 2xl:hidden">
                     <a href="http://localhost:3000/home">
                         <button className="btn btn-ghost text-xl">More on</button>
                     </a>

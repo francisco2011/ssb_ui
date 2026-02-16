@@ -13,7 +13,7 @@ import { ListItemNode, ListNode } from "@lexical/list";
 import { HashtagNode } from "@lexical/hashtag";
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 
 import { ImageNode } from "~/components/admin/editor/plugins/imagePlugin/ImageNode";
@@ -63,6 +63,7 @@ import { CustomTableOfContentsNode } from './plugins/TableOfContents/CustomTable
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createCustomHeadingNode, CustomHeadingNode } from './plugins/CustomHeadingTag/CustomHeadingTagNode';
 import { v4 as uuidv4 } from 'uuid';
+import { WebLLMContext, WebLLMProvider } from '../webLLM/WebLLMProvider';
 
 type EditorConfiguration = {
   allowedToolBarOptions: ToolbarConfig,
@@ -141,6 +142,8 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   const editor = useRef<LexicalEditor>(null);
 
   var FreezedState: EditorState | null = null;
+
+    const theme = useContext(WebLLMContext); // theme will be 'dark' from the provider
 
 
   useImperativeHandle(ownRef, () => ({
