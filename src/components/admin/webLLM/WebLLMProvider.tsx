@@ -2,13 +2,18 @@
 import { createContext, useEffect, useMemo, useState } from "react";
 import { CreateMLCEngine, InitProgressReport, MLCEngine } from "@mlc-ai/web-llm";
 
-export const WebLLMContext = createContext(null);
+export const WebLLMContext = createContext<ContextVal | null>(null);
+
+export type ContextVal = {
+  engine: MLCEngine | null,
+  loading: boolean
+}
 
 export const  WebLLMProvider = ({ children}) => {
   const [engine, setEngine] = useState<MLCEngine | null>(null);
   const [loading, setLoading] = useState(true);
 
-const contextValue = useMemo(() => ({
+const contextValue : ContextVal = useMemo(() => ({
     engine,
     loading,
   }), [engine, loading]); // Dependencies array

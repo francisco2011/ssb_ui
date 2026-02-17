@@ -23,6 +23,7 @@ import {
     COMMAND_PRIORITY_EDITOR,
     CLICK_COMMAND,
     $nodesOfType,
+    $applyNodeReplacement,
 } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
@@ -366,9 +367,9 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
 
                         var text = selection.getTextContent()
                         var anchorText = selection.anchor.getNode().getTextContent()
-                        const id = text? slugify(text) : anchorText ? slugify(anchorText) : uuidv4();
+                        const id = text ? slugify(text) : anchorText ? slugify(anchorText) : uuidv4();
 
-                        $wrapNodes(selection, () => $createCustomHeadingNode(heading,id));
+                        $wrapNodes(selection, () => $createCustomHeadingNode(heading, id));
                     } else {
                         $wrapNodes(selection, () => $createParagraphNode());
                     }
@@ -569,8 +570,6 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
 
     /////////////////////DRAWIO/////////////////
 
-    const service = new ContentService()
-
     const onDrawIO = async (data: DrawIOResponse | null) => {
         if (data && data.Content) {
             editor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, { src: data.Content, position: 'full', imgId: data.name });
@@ -593,24 +592,24 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
 
             const listNodes = $nodesOfType(CustomTableOfContentsNode);
 
-            if(listNodes && listNodes.length > 0) return
+            if (listNodes && listNodes.length > 0) return
 
-             const newNode = $createCustomTableOfContentNode({ entries: headerTags});
+            const newNode = $createCustomTableOfContentNode({ entries: headerTags });
             $insertNodeToNearestRoot(newNode);
         },
         );
     }
 
     useEffect(() => {
-        
+
         editor.update(() => {
 
             const listNodes = $nodesOfType(CustomTableOfContentsNode);
-            if(listNodes && listNodes.length > 0){
-                
+            if (listNodes && listNodes.length > 0) {
+
                 //there can only be one
                 var existingNode = listNodes[0]
-                const newNode = $createCustomTableOfContentNode({ entries: headerTags});
+                const newNode = $createCustomTableOfContentNode({ entries: headerTags });
                 existingNode?.replace(newNode)
             }
 
@@ -621,6 +620,33 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
 
     ///////////////////////////////
 
+    ////////////// RESULT FROM LLM ////////////////
+
+    const onllMMessageSelected = async (message: string) => {
+        editor.update(() => {
+            var selection = $getSelection()
+
+            if (!selection) return
+
+            // 2. Create the new TextNode and ParagraphNode
+            const textNode = $createTextNode(message);
+            const paragraphNode = $createParagraphNode();
+
+            // 3. Append the text node to the paragraph node
+            paragraphNode.append(textNode);
+
+            if ($isRangeSelection(selection)) {
+                // $setBlocksType will iterate over selected nodes and change their type
+                // to the new node returned by the provided function.
+                selection.insertNodes([paragraphNode])
+            }else{
+                selection.insertRawText(message)
+            }
+
+        })
+    }
+
+    //////////////////////////////////////////////
     return (
         <div style={{ "zIndex": 999 }} className=" sticky top-3  bg-white h-auto px-2 py-2 mb-4 space-x-2 items-center my-4 mx-auto rounded-sm text-black dark:text-white leading-5 font-normal text-left rounded-tl-sm rounded-tr-sm" ref={toolbarRef}>
 
@@ -733,13 +759,13 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
                         : null
                 }
 
-                {   config && config.allowTableOfContents?
-                    <TableOfContentsButton onClickCallback={addTableOfContents}/>
+                {config && config.allowTableOfContents ?
+                    <TableOfContentsButton onClickCallback={addTableOfContents} />
                     : null
                 }
 
-                <LLMButton/>
-                
+                <LLMButton onContentCallback={onllMMessageSelected} />
+
 
 
             </div>
