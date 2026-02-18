@@ -17,10 +17,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html data-theme="lofi" lang="en" className={`${GeistSans.variable}`}>
-      <body>
-        <head>
+       <head>
           <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
         </head>
+      <body>
+       
 
 
         <main className="flex min-h-screen bg-gray-50 sm:text-sm md:text-lg xl:text-xl">

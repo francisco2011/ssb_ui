@@ -38,12 +38,11 @@ export default async function RootLayout({
           <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
         </head>
       <body>
-        
 
-        <main className="flex  min-h-screen bg-gray-50 xs:text-xs sm:text-sm md:text-lg xl:text-xl 2xl:text-2xl">
+        <main className="flex bg-gray-50 xs:text-xs sm:text-sm md:text-lg xl:text-xl 2xl:text-2xl">
           <div className="w-full grid grid-cols-12 ">
 
-            <div className="border-r0  md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
+            <div className="border-r0 col-span-2">
               <Sidebar contentHtml={html} imgSrc={mainImgSrc} />
 
             </div>
