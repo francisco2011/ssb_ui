@@ -1,4 +1,3 @@
-'use client'
 import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
@@ -6,28 +5,35 @@ import { type Metadata } from "next";
 import VerticalMenu from "~/components/admin/verticalMenu/VerticalMenu";
 import { Toaster } from "sonner";
 import { WebLLMProvider } from "~/components/admin/webLLM/WebLLMProvider";
-import { SessionProvider } from 'next-auth/react';
+
 import { getServerSession } from "next-auth/next";
+import SessionProvider from "~/components/admin/auth/SessionProvider";
+import { redirect, RedirectType } from "next/navigation";
 
 
-//export const metadata: Metadata = {
-//  title: "Francisco Contreras Olea",
-//  description: "My blog",
-//  icons: [{ rel: "icon", url: "/favicon.ico" }],
-//};
+export const metadata: Metadata = {
+  title: "Francisco Contreras Olea",
+  description: "My blog",
+  icons: [{ rel: "icon", url: "/favicon.ico" }],
+};
 
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
 
-   //const data = await getServerSession();
+  const session = await getServerSession();
+
+  if(!session || !session.user){
+    redirect('/api/auth/signin', RedirectType.replace)
+  }
+
   return (
     <html data-theme="lofi" lang="en" className={`${GeistSans.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
       </head>
       <body>
-        <SessionProvider session={session}>
+
 
 
           <main className="flex min-h-screen bg-gray-50 sm:text-sm md:text-lg xl:text-xl">
@@ -46,7 +52,6 @@ export default async function RootLayout({
               </div>
             </div>
           </main>
-        </SessionProvider>
       </body>
     </html>
   );
