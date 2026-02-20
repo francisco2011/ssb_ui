@@ -156,9 +156,9 @@ export default function StorageExplorer({ allowUpload, onFileSelected }: StoraEx
     }
 
     const OnFileSelectedToAdd = async () => {
-        if(!selectedFile || !onFileSelected) return
+        if (!selectedFile || !onFileSelected) return
 
-        
+
 
         onFileSelected(selectedFile)
     }
@@ -251,12 +251,12 @@ export default function StorageExplorer({ allowUpload, onFileSelected }: StoraEx
                         }
                         {
                             onFileSelected ? <button onClick={OnFileSelectedToAdd} disabled={!selectedFile} className="m-1 bg-gray-400">
-                            <FontAwesomeIcon
-                                icon={faAdd}
-                                className="text-white w-4 h-4"
-                            />
+                                <FontAwesomeIcon
+                                    icon={faAdd}
+                                    className="text-white w-4 h-4"
+                                />
 
-                        </button>: null
+                            </button> : null
                         }
 
 
@@ -286,58 +286,69 @@ export default function StorageExplorer({ allowUpload, onFileSelected }: StoraEx
 
                     {
                         selectedFile ?
-                            <><div>
-                                <h1 className="font-extrabold">Metadata</h1>
-                            </div>
-                                <div className="grid grid-cols-1 auto-rows-auto  w-full h-full m-4">
+                            <>
 
-                                    <div className="row-span-1 max-h-[30%] h-fit" >
-
-                                        <div className="grid float-right grid-cols-6 grid-rows-3 min-w-full">
-
-                                            <div className="col-span-1 row-span-1">
-                                                <label className="font-bold">Name</label>
-                                            </div>
-
-                                            <div className="col-span-5 row-span-1">
-                                                <p className="break-words line-clamp-2">{selectedFile.name}</p>
-                                            </div>
-
-                                            <div className="col-span-1 row-span-1">
-                                                <label className="font-bold">Updated on</label>
-                                            </div>
-                                            <div className="col-span-2 row-span-1">
-                                                {selectedFile.updatedOn ? selectedFile.updatedOn : "-"}
-                                            </div>
-
-                                            <div className="col-span-1 row-span-1">
-                                                <label className="font-bold">Size</label>
-                                            </div>
-                                            <div className="col-span-2 row-span-1">
-                                                {selectedFile.size ? selectedFile.size : "-"}
-                                            </div>
-
-
-                                            <div className="col-span-1 row-span-1">
-                                                <label className="font-bold">Url</label>
-                                            </div>
-                                            <div className="col-span-5 row-span-1 line-clamp-2">
-                                                {selectedFile.url}
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    <div className="row-span-1">
-
-                                        <h1 className="font-extrabold">Preview</h1>
-                                        <div className="max-w-[30%] max-h-[30%]">
-                                            <img className="object-contain" src={selectedFile?.url}></img>
+                                <div className="flex justify-center">
+                                    <div>
+                                        <div>
+                                            <h1 className="font-extrabold">Metadata</h1>
                                         </div>
 
+                                        <div className="w-full m-4">
+
+                                            <div className="row-span-1 max-h-[30%] h-fit" >
+
+                                                <div className="grid float-right grid-cols-6 grid-rows-3 min-w-full">
+
+                                                    <div className="col-span-1 row-span-1">
+                                                        <label className="font-bold">Name</label>
+                                                    </div>
+
+                                                    <div className="col-span-5 row-span-1">
+                                                        <p className="break-words line-clamp-2">{selectedFile.name}</p>
+                                                    </div>
+
+                                                    <div className="col-span-1 row-span-1">
+                                                        <label className="font-bold">Updated on</label>
+                                                    </div>
+                                                    <div className="col-span-2 row-span-1">
+                                                        {selectedFile.updatedOn ? selectedFile.updatedOn : "-"}
+                                                    </div>
+
+                                                    <div className="col-span-1 row-span-1">
+                                                        <label className="font-bold">Size</label>
+                                                    </div>
+                                                    <div className="col-span-2 row-span-1">
+                                                        {selectedFile.size ? selectedFile.size : "-"}
+                                                    </div>
+
+
+                                                    <div className="col-span-1 row-span-1">
+                                                        <label className="font-bold">Url</label>
+                                                    </div>
+                                                    <div className="col-span-5 row-span-1 line-clamp-2">
+                                                        {selectedFile.url}
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <div className="m-4">
+
+                                                <h1 className="font-extrabold">Preview</h1>
+                                                <div className="max-w-[30%] max-h-[30%]">
+                                                    <img className="object-contain" src={selectedFile?.url}></img>
+                                                </div>
+
+                                            </div>
+
+
+                                        
                                     </div>
+                                </div>
 
 
-                                </div></> : null
+                            </> : null
                     }
 
 

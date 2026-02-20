@@ -63,7 +63,7 @@ export default function Sections() {
 
         const offset = _state.page == 1 ? 0 : (_state.pageSize * (_state.page - (_state.page == 1 ? 0 : 1)))
 
-        const data = (await service.List(_state.pageSize, offset, ));
+        const data = (await service.List(_state.pageSize, offset,));
 
 
         setPostResponse(data)
@@ -127,52 +127,55 @@ export default function Sections() {
             modifiable: true,
             tag: '',
             contentHtml: ''
-          };
-  
-          const p = await service.Save(_section)
-          await goTo(p.id)
+        };
+
+        const p = await service.Save(_section)
+        await goTo(p.id)
     }
 
 
 
     return (
-        <div className="">
+        <div className="flex justify-center">
 
             <div>
-                <h1 className='font-extrabold text-4xl mt-4'>Sections</h1>
-            </div>
-
-            <div className='flex flex-row m-8 justify-end'>
-
-                <button onClick={() => onClearClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Clear</button>
-                <div className='ml-1'>
-                    <button onClick={() => onSearchClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Search</button>
-                </div>
-                <div className='ml-1'>
-                    <button onClick={() => onNewClicked()} className="btn btn-sm sm:btn-sm md:btn-md">New</button>
+                <div>
+                    <h1 className='font-extrabold text-4xl mt-4'>Sections</h1>
                 </div>
 
-            </div>
-            <div>
-                <table className="">
-                    <thead>
-                        <tr>
-                            <th className="w-16">ID</th>
-                            <th className="w-48">Name</th>
-                            <th className="w-48">Tag</th>
-                            <th className="w-32">Modifiable</th>
-                            <th className="w-48">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            postResponse?.sections.map(c => <SectionRow key={c.id} section={c} onEditClickCallback={goTo} onDeleteClickCallback={onDeleteClicked} />)
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <CustomPaginator onPageSelected={handlePageChanged} onPageSizeChanged={handlePageSizeChanged} model={postResponse?.pagination} ></CustomPaginator>
+                <div className='flex flex-row m-8 justify-end'>
 
+                    <button onClick={() => onClearClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Clear</button>
+                    <div className='ml-1'>
+                        <button onClick={() => onSearchClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Search</button>
+                    </div>
+                    <div className='ml-1'>
+                        <button onClick={() => onNewClicked()} className="btn btn-sm sm:btn-sm md:btn-md">New</button>
+                    </div>
+
+                </div>
+
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th className="w-16">ID</th>
+                                <th className="w-48">Name</th>
+                                <th className="w-48">Tag</th>
+                                <th className="w-32">Modifiable</th>
+                                <th className="w-48">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                postResponse?.sections.map(c => <SectionRow key={c.id} section={c} onEditClickCallback={goTo} onDeleteClickCallback={onDeleteClicked} />)
+                            }
+                        </tbody>
+                    </table>
+                    <CustomPaginator onPageSelected={handlePageChanged} onPageSizeChanged={handlePageSizeChanged} model={postResponse?.pagination} ></CustomPaginator>
+                </div>
+
+            </div>
             <div>
 
             </div>

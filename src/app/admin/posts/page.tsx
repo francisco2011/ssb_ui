@@ -52,14 +52,14 @@ export default function Posts() {
     const [state, setState] = useState<LocalState>(getEmptyState())
 
     const [isClient, setIsClient] = useState(false)
-        const router = useRouter()
+    const router = useRouter()
 
     const selectInputRef = useRef<SelectInstance<option | null>>(null)
 
 
     const postService = new PostService();
 
-    var postToDelete: PostModel  | null = null
+    var postToDelete: PostModel | null = null
 
     async function goTo(id: number) {
 
@@ -85,7 +85,7 @@ export default function Posts() {
     const loadPostTypes = async () => {
 
         try {
-            const pt = await new PostTypeService().Get(1000,0)
+            const pt = await new PostTypeService().Get(1000, 0)
             if (pt && pt.data) setPostTypes(pt.data)
 
         } catch (error) {
@@ -162,8 +162,8 @@ export default function Posts() {
     }
 
     const executeDelete = async () => {
-        
-        if(!postToDelete || !postToDelete.id) return
+
+        if (!postToDelete || !postToDelete.id) return
 
         postService.Delete(postToDelete?.id)
             .then(data => {
@@ -219,12 +219,12 @@ export default function Posts() {
 
         postService.Save(_post)
             .then(post => {
-            if (post?.id) goTo(post.id)
-            toast.success('Post created!')
-          })
-          .catch(error => toast.error('Post not created!'))
+                if (post?.id) goTo(post.id)
+                toast.success('Post created!')
+            })
+            .catch(error => toast.error('Post not created!'))
 
-        
+
     }
 
     const onTagSelected = (tags: option[]) => {
@@ -234,87 +234,86 @@ export default function Posts() {
     }
 
     return (
-        <div className="">
-
+        <div className="flex justify-center">
             <div>
-                <h1 className='font-extrabold text-4xl mt-4'>Posts</h1>
-            </div>
-
-            <div className='flex flex-row m-8 justify-end'>
                 <div>
-                    <div className="label">
-                        <span className="label-text">Type</span>
+                    <h1 className='font-extrabold text-4xl mt-4'>Posts</h1>
+                </div>
+
+                <div className='flex flex-row  justify-end'>
+                    <div>
+                        <div className="label">
+                            <span className="label-text">Type</span>
+                        </div>
+
+                        <div className="mr-2 ml-2">
+                            <select onChange={(e) => handleTypeSelected(e)} value={state.type ? state.type.name : 'DEFAULT'} className="select select-sm select-bordered">
+                                <option value="DEFAULT" selected={true}>Choose a type</option>
+                                {
+                                    postTypes.map(c => <option key={c.id}>{c.name}</option>)
+                                }
+
+                            </select>
+                        </div>
                     </div>
 
-                    <div className="mr-2 ml-2">
-                        <select onChange={(e) => handleTypeSelected(e)} value={state.type ? state.type.name : 'DEFAULT'} className="select select-sm select-bordered">
-                            <option value="DEFAULT" selected={true}>Choose a type</option>
+                    <div>
+                        <div className="label">
+                            <span className="label-text">Tags</span>
+                        </div>
+
+                        <div className="mr-2 ml-2">
+
                             {
-                                postTypes.map(c => <option key={c.id}>{c.name}</option>)
+                                isClient ? <Select
+                                    onChange={onTagSelected}
+                                    options={tags}
+                                    isMulti
+                                    ref={selectInputRef}
+                                    className='select-bordered'
+                                /> : null
                             }
 
-                        </select>
+
+
+
+
+                        </div>
                     </div>
+
+
+                    <button onClick={() => onClearClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Clear</button>
+                    <div className='ml-1'>
+                        <button onClick={() => onSearchClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Search</button>
+                    </div>
+                    <div className='ml-1'>
+                        <button onClick={() => onNewClicked()} className="btn btn-sm sm:btn-sm md:btn-md">New</button>
+                    </div>
+
                 </div>
 
                 <div>
-                    <div className="label">
-                        <span className="label-text">Tags</span>
-                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th className="w-16">ID</th>
+                                <th className="w-48">Name</th>
+                                <th className="w-48">Type</th>
+                                <th className="w-32">Date</th>
+                                <th className="w-96">Tags</th>
+                                <th className="w-16">published</th>
+                                <th className="w-48">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                postResponse?.posts.map(c => <PostRow key={c.id} post={c} onCloneClickCallback={onCloneClicked} onEditClickCallback={goTo} onDeleteClickCallback={onDeleteClicked} />)
+                            }
+                        </tbody>
+                    </table>
 
-                    <div className="mr-2 ml-2">
-
-                        {
-                            isClient ? <Select
-                                onChange={onTagSelected}
-                                options={tags}
-                                isMulti
-                                ref={selectInputRef}
-                                className='select-bordered'
-                            /> : null
-                        }
-
-
-
-
-
-                    </div>
+                    <CustomPaginator onPageSelected={handlePageChanged} onPageSizeChanged={handlePageSizeChanged} model={postResponse?.pagination} ></CustomPaginator>
                 </div>
-
-
-                <button onClick={() => onClearClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Clear</button>
-                <div className='ml-1'>
-                    <button onClick={() => onSearchClicked()} className="btn btn-sm sm:btn-sm md:btn-md">Search</button>
-                </div>
-                <div className='ml-1'>
-                    <button onClick={() => onNewClicked()} className="btn btn-sm sm:btn-sm md:btn-md">New</button>
-                </div>
-
-            </div>
-            <div>
-                <table className="">
-                    <thead>
-                        <tr>
-                            <th className="w-16">ID</th>
-                            <th className="w-48">Name</th>
-                            <th className="w-48">Type</th>
-                            <th className="w-32">Date</th>
-                            <th className="w-96">Tags</th>
-                            <th className="w-16">published</th>
-                            <th className="w-48">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            postResponse?.posts.map(c => <PostRow key={c.id} post={c} onCloneClickCallback={onCloneClicked} onEditClickCallback={goTo} onDeleteClickCallback={onDeleteClicked} />)
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <CustomPaginator onPageSelected={handlePageChanged} onPageSizeChanged={handlePageSizeChanged} model={postResponse?.pagination} ></CustomPaginator>
-
-            <div>
-
             </div>
         </div>
     );

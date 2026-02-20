@@ -113,6 +113,7 @@ export default class ContentService extends FetchBase {
             url += "&bucket=" + bucket
         }
 
+        url += "&exclude=render"
         return this.GetBase(url)
     }
 }

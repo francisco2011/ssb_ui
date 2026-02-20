@@ -113,25 +113,20 @@ export default function SectionEditor() {
 
         <>
 
-          <main className="flex min-h-screen flex-col">
+          <main className="flex justify-center">
 
             <div>
-              <h1 className='font-extrabold text-4xl m-4'>{name}</h1>
-            </div>
+              <div>
+                <h1 className='font-extrabold text-4xl m-4'>{name}</h1>
+              </div>
 
-            <div className="m-4">
-              <TextInput onChange={setName} value={name} label="Name"></TextInput>
-            </div>
-
-            <div className="">
-
-
+              <div className="m-4">
+                <TextInput onChange={setName} value={name} label="Name"></TextInput>
+              </div>
 
               <div>
 
                 <div className='grid grid-cols-[85%_15%]'>
-                  <h1 className='font-extrabold text-4xl'>{section.name}</h1>
-
                   <div className="flex justify-end">
 
                     <div className="m-1 tooltip tooltip-left" data-tip="save">
@@ -161,7 +156,7 @@ export default function SectionEditor() {
                     contents={[]}
                     onContentDeletedCallback={() => { }}
                     config={{
-                      heightRem: '50rem', allowedToolBarOptions: {
+                      heightRem: '20rem', allowedToolBarOptions: {
                         allowCode: true, allowColumn: true,
                         allowDiagram: true, allowEmogis: true,
                         allowGif: true, allowImages: true,
@@ -171,12 +166,7 @@ export default function SectionEditor() {
                 </div>
 
               </div>
-
-
-
-
             </div>
-
           </main></>
 
         : null

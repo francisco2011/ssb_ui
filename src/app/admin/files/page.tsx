@@ -13,7 +13,7 @@ export default function Files() {
             </div>
 
 
-            <div className="m-4  w-[70%] min-h-screen h-dvh">
+            <div className="m-4   min-h-screen h-dvh">
 
 
                 <StorageExplorer allowUpload={true} />
