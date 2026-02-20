@@ -716,7 +716,7 @@ export default function ToolbarPlugin({ setIsLinkEditMode, onPropertiesChange, o
 
                 {
                     config && config.allowImages ?
-                        <InsertImageModal isActive={false} _className={"max-w-[30rem]"} contentType={"imgBody"} />
+                        <InsertImageModal isActive={false} contentType={"imgBody"} />
                         : null
                 }
 

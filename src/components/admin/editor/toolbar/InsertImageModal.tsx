@@ -23,11 +23,6 @@ function ImageDialog({
     imgClassName: string
 }): JSX.Element {
 
-    const onClick = (payload: InsertImagePayload) => {
-        activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
-        onClose();
-    };
-
     const onClickLoadInline = (payload: InsertInlineImagePayload) => {
         activeEditor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload);
         onClose();
@@ -37,12 +32,12 @@ function ImageDialog({
 
     return (
         <>
-            <UploadImageDialogBody allowLoadInline={true} alreadyLoadedImgUrl={null} onClickLoadInline={onClickLoadInline} contentType={contentType} onImageLoaded={() => { }} onClick={onClick} showDialogAction={true} showAlternativeText={true} imgClassname={imgClassName} />
+            <UploadImageDialogBody alreadyLoadedImgUrl={null} onClickLoadInline={onClickLoadInline} contentType={contentType} onImageLoaded={() => { }}  showDialogAction={true} showAlternativeText={true} imgClassname={imgClassName} />
         </>
     );
 }
 
-function InsertImageModal({ isActive, contentType, _className }) {
+function InsertImageModal({ isActive, contentType }) {
 
     const [modal, showModal] = useModal();
     const [editor] = useLexicalComposerContext();
@@ -54,12 +49,12 @@ function InsertImageModal({ isActive, contentType, _className }) {
                 isActive ? "bg-gray-600" : "bg-gray-400"
             )}
             onClick={() => {
-                showModal('Column Layout', (onClose) => (
+                showModal('Load image', (onClose) => (
                     <ImageDialog
                         activeEditor={editor}
                         onClose={onClose}
                         contentType={contentType}
-                        imgClassName={_className}
+                        imgClassName={"h-[25rem] object-scale-down"}
                     />
 
                 ));

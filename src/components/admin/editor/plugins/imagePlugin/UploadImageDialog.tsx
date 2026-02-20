@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InsertImagePayload } from "./ImagesPlugin";
 import FileInput from "~/components/FileInput";
 import TextInput from "~/components/TextInput";
@@ -11,31 +11,35 @@ import { v4 as uuidv4 } from 'uuid';
 import StorageExplorerModal from "~/components/storageExplorer/storageExplorerModal";
 import { FileFromStorage } from "~/components/storageExplorer/storageExplorer";
 
+import ReactCrop, { Crop } from 'react-image-crop';
+
 export function UploadImageDialogBody({
-    onClick,
+
     onClickLoadInline,
     showDialogAction,
     showAlternativeText,
     onImageLoaded,
     imgClassname,
-    alreadyLoadedImgUrl,
-    allowLoadInline
+    alreadyLoadedImgUrl
 }: {
-    onClick: (payload: InsertImagePayload) => void;
+
     onClickLoadInline: (payload: InsertInlineImagePayload) => void;
     showDialogAction: boolean,
     showAlternativeText: boolean,
     onImageLoaded: (payload: InsertImagePayload) => void | null;
     imgClassname: string,
     contentType: string,
-    alreadyLoadedImgUrl: ImgModel | null,
-    allowLoadInline: boolean | undefined
+    alreadyLoadedImgUrl: ImgModel | null
 }) {
     const [src, setSrc] = useState('');
     const [imgId, setImgId] = useState(uuidv4());
     const [altText, setAltText] = useState('');
     const [loadInline, setLoadInline] = useState(true)
+    const [crop, setCrop] = useState<Crop>()
 
+    let imgSrcFromCrop = ''
+
+    const imageRef = useRef(null)
 
     const handleChange = () => {
         setLoadInline(!loadInline);
@@ -44,7 +48,7 @@ export function UploadImageDialogBody({
     useEffect(() => {
         if (alreadyLoadedImgUrl && alreadyLoadedImgUrl.src) {
             setSrc(alreadyLoadedImgUrl.src)
-            if(alreadyLoadedImgUrl.name) setImgId(alreadyLoadedImgUrl.name)
+            if (alreadyLoadedImgUrl.name) setImgId(alreadyLoadedImgUrl.name)
         }
 
     }, [alreadyLoadedImgUrl]);
@@ -53,12 +57,35 @@ export function UploadImageDialogBody({
 
     const service = new ContentService()
 
+    const onAccept = async (payload: InsertInlineImagePayload) => {
+
+
+        var newImg = await makeClientCrop(crop)
+
+        if (newImg != null) {
+            await readAsDataURLAsync(newImg).then(src => payload.src = src)
+        }
+
+        onClickLoadInline(payload)
+    }
+
     const loadImageFromStorage = (file: FileFromStorage) => {
-        
-        if(!file.url) return
-        
+
+        if (!file.url) return
+
         setSrc(file.url)
-        onImageLoaded({ src: file.url, imgId: file.name, altText: ""})
+        onImageLoaded({ src: file.url, imgId: file.name, altText: "" })
+    }
+
+    const readAsDataURLAsync = async (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => resolve(reader.result); // Resolve on 'load' event
+            reader.onerror = (error) => reject(error);   // Reject on 'error' event
+
+            reader.readAsDataURL(file);
+        });
     }
 
     const loadImage = async (files: FileList | null) => {
@@ -69,41 +96,93 @@ export function UploadImageDialogBody({
         const reader = new FileReader();
 
         reader.addEventListener("load", () => {
-            
-           if(reader.result){
-            setSrc(reader.result as string)
-            onImageLoaded({ src: reader.result, altText: ''})
-           } 
-            
+
+            if (reader.result) {
+                setSrc(reader.result as string)
+                onImageLoaded({ src: reader.result, altText: '' })
+            }
+
         });
 
-  if (file) {
-    reader.readAsDataURL(file);
-  }
+        if (file) {
+            reader.readAsDataURL(file);
+        }
 
-
- 
     };
+
+    ///////////taken from: https://codesandbox.io/p/sandbox/react-image-crop-demo-s8xr4?file=%2Fsrc%2Findex.js%3A45%2C3-89%2C4
+
+    const makeClientCrop = async (crop) => {
+        if (imageRef && crop.width && crop.height) {
+            const croppedImageUrl = await getCroppedImg(
+                imageRef.current,
+                crop,
+                "newFile.png"
+            );
+            return croppedImageUrl;
+        }
+
+        return null
+    }
+
+    const getCroppedImg = (image, crop, fileName) => {
+
+        const canvas = document.createElement("canvas");
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        canvas.width = crop.width;
+        canvas.height = crop.height;
+        const ctx = canvas.getContext("2d");
+
+        ctx.drawImage(
+            image,
+            crop.x * scaleX,
+            crop.y * scaleY,
+            crop.width * scaleX,
+            crop.height * scaleY,
+            0,
+            0,
+            crop.width,
+            crop.height
+        );
+
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(blob => {
+                if (!blob) {
+                    //reject(new Error('Canvas is empty'));
+                    console.error("Canvas is empty");
+                    return;
+                }
+                blob.name = fileName;
+                //window.URL.revokeObjectURL(this.fileUrl);
+                //var fileUrl = window.URL.createObjectURL(blob);
+                resolve(new File([blob], fileName));
+            }, "image/png");
+        });
+    }
 
     return (
         <>
             <></>
 
-            <div className="mb-1 flex justify-center items-center">
+            <div className="mb-1 h-[30rem] flex justify-center">
 
                 {
                     src ?
-                        <img
-                            className={imgClassname}
-                            alt=""
-                            src={src} /> : null
+                        <ReactCrop crop={crop} ruleOfThirds onChange={c => setCrop(c)}>
+                            <img
+                                ref={imageRef}
+                                className={imgClassname}
+                                alt=""
+                                src={src} />
+                        </ReactCrop> : null
 
                 }
             </div>
 
 
             <div>
-                <StorageExplorerModal onContentCallback={loadImageFromStorage}/>
+                <StorageExplorerModal onContentCallback={loadImageFromStorage} />
             </div>
 
             <FileInput
@@ -128,15 +207,11 @@ export function UploadImageDialogBody({
                     /> : null
             }
 
-            {
-                allowLoadInline ?
-            
-                        <label className="cursor-pointer label">
-                            <span className="label-text">Load inline</span>
-                            <input type="checkbox"  checked={loadInline} onChange={handleChange}  className="checkbox" />
-                        </label>
-                    : null
-            }
+
+            <label className="cursor-pointer label">
+                <span className="label-text">Load inline</span>
+                <input type="checkbox" checked={loadInline} onChange={handleChange} className="checkbox" />
+            </label>
 
 
 
@@ -145,14 +220,14 @@ export function UploadImageDialogBody({
                     <Button
                         data-test-id="image-modal-file-upload-btn"
                         disabled={isDisabled}
-                        onClick={() => loadInline ? onClickLoadInline({ altText, src, imgId }) : onClick({ altText, src, imgId })}
+                        onClick={() => onAccept({ altText, src, imgId })}
                     >
                         Confirm
                     </Button>
                 </DialogActions> : null
             }
 
-            
+
 
 
         </>
