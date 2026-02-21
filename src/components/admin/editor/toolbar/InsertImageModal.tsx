@@ -2,29 +2,29 @@ import { faImage, faUnderline } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { LexicalEditor } from "lexical";
-
-import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../plugins/imagePlugin/ImagesPlugin";
-import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
-import { useEffect, useState } from "react";
+import { ImageLoaded, UploadImageDialogBody } from "~/components/admin/imageUploader/UploadImageDialog";
 import { INSERT_INLINE_IMAGE_COMMAND, InsertInlineImagePayload } from "../plugins/imagePlugin/InlineImagePlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import useModal from "~/components/useModal";
-import { v4 as uuidv4 } from 'uuid';
 
 function ImageDialog({
     activeEditor,
     onClose,
     contentType,
-    imgClassName
 }: {
     activeEditor: LexicalEditor;
     onClose: () => void;
     contentType: string,
-    imgClassName: string
 }): JSX.Element {
 
-    const onClickLoadInline = (payload: InsertInlineImagePayload) => {
-        activeEditor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload);
+    const onClickLoadInline = (payload: ImageLoaded) => {
+
+        let transformedPayload: InsertInlineImagePayload = {
+            src: payload.src, imgId: payload.imgId, altText: payload?.altText ?? '',
+            height: 'inherit'
+        }
+
+        activeEditor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, transformedPayload);
         onClose();
     };
 
@@ -32,7 +32,7 @@ function ImageDialog({
 
     return (
         <>
-            <UploadImageDialogBody alreadyLoadedImgUrl={null} onClickLoadInline={onClickLoadInline} contentType={contentType} onImageLoaded={() => { }}  showDialogAction={true} showAlternativeText={true} imgClassname={imgClassName} />
+            <UploadImageDialogBody alreadyLoadedImgUrl={null} onAccept={onClickLoadInline} contentType={contentType} onImageLoaded={() => { } } showDialogAction={true} showAlternativeText={true}/>
         </>
     );
 }
@@ -54,7 +54,6 @@ function InsertImageModal({ isActive, contentType }) {
                         activeEditor={editor}
                         onClose={onClose}
                         contentType={contentType}
-                        imgClassName={"h-[25rem] object-scale-down"}
                     />
 
                 ));

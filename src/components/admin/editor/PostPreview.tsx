@@ -1,12 +1,12 @@
-import { UploadImageDialogBody } from "~/components/admin/editor/plugins/imagePlugin/UploadImageDialog";
+import { ImageLoaded, UploadImageDialogBody } from "~/components/admin/imageUploader/UploadImageDialog";
 import { useCallback, useEffect, useState } from "react";
 import PostTypeService from "~/services/PostTypeService";
 import PostTypeModel from "~/models/PostTypeModel";
-import { InsertImagePayload } from "~/components/admin/editor/plugins/imagePlugin/ImagesPlugin";
 import ContentMetadaModel from "~/models/ContentMetadata";
 import PostModel from "~/models/PostModel";
 import { ContentType } from "~/models/ContentType";
 import { toast } from "sonner";
+import ImageLoadDialogButton from "../imageUploader/ImageLoadDialogButton";
 
 export default function PostPreview({ onChange, post }: { onChange: any, post: PostModel | null }): JSX.Element {
 
@@ -19,7 +19,7 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
         name: null
     })
 
-    const onSetImg = useCallback((payload: InsertImagePayload) => {
+    const onSetImg = useCallback((payload: ImageLoaded) => {
 
         if (!post) return
 
@@ -34,7 +34,7 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
     useEffect(() => {
         const loadPostTypes = async () => {
 
-            new PostTypeService().Get(1000,0)
+            new PostTypeService().Get(1000, 0)
                 .then(data => {
                     if (data) setPostTypes(data.data)
                 })
@@ -134,8 +134,22 @@ export default function PostPreview({ onChange, post }: { onChange: any, post: P
                 <div className="label">
                     <span className="label-text">Background img</span>
                 </div>
-                <div className="mr-2 ml-2">
-                    <UploadImageDialogBody alreadyLoadedImgUrl={state.imgModel} imgClassname="h-46 w-auto" onImageLoaded={onSetImg} showDialogAction={false} showAlternativeText={false}  onClickLoadInline={() => { }} />
+                <div className="">
+
+                    <div className="flex justify-end m-2">
+                        <ImageLoadDialogButton isActive={true} onAccept={onSetImg} />
+                    </div>
+
+                    <div>
+                        {
+                            state?.imgModel?.src ?
+                                <img
+                                    className="object-fill"
+                                    alt=""
+                                    src={state?.imgModel?.src} /> : null
+                        }
+
+                    </div>
                 </div>
             </div>
 
