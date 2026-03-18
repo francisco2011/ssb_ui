@@ -64,6 +64,8 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $createCustomHeadingNode, CustomHeadingNode } from './plugins/CustomHeadingTag/CustomHeadingTagNode';
 import { v4 as uuidv4 } from 'uuid';
 import { WebLLMContext, WebLLMProvider } from '../webLLM/WebLLMProvider';
+import { $createMyDivNode, DivNode } from './plugins/Div/DivNode';
+import SectionGeneratorInterface from './SectionReplaceHelpers/SectionGeneratorInterface';
 
 type EditorConfiguration = {
   allowedToolBarOptions: ToolbarConfig,
@@ -90,7 +92,8 @@ const allNodes = [
   LayoutContainerNode,
   LayoutItemNode,
   SectionNode,
-  CustomTableOfContentsNode
+  CustomTableOfContentsNode,
+  DivNode
 ]
 
 const sectionEditor = createHeadlessEditor({
@@ -143,7 +146,7 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
 
   var FreezedState: EditorState | null = null;
 
-    const theme = useContext(WebLLMContext); // theme will be 'dark' from the provider
+  const theme = useContext(WebLLMContext); // theme will be 'dark' from the provider
 
 
   useImperativeHandle(ownRef, () => ({
@@ -155,6 +158,12 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
     replaceContent: (externalContent: string[], templates: string[]) => {
       if (!editor?.current) return;
       return replaceContent(externalContent, templates, editor.current)
+    },
+
+    replaceSingleContent: (sectionGenerator:SectionGeneratorInterface, tag: string) => {
+      if (!editor?.current) return;
+
+      return replaceSingleContent(sectionGenerator, tag, editor.current)
     },
 
     getState: (): ContentState | null => {
@@ -314,6 +323,22 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
   }
 
 
+  const replaceSingleContent = (sectionGenerator:SectionGeneratorInterface, tag: string, editor: LexicalEditor) => {
+
+    editor.update(() => {
+
+      const sectionNodes = $nodesOfType(SectionNode);
+
+      const sectionNode = sectionNodes.find(c => c.__text == tag)
+      debugger
+      if (!sectionNode ) return
+
+      var newNode = sectionGenerator.execute()
+      sectionNode.replace(newNode)
+
+    })
+
+  }
 
   const replaceContent = (externalContentHtml: string[], tags: string[], editor: LexicalEditor) => {
 
@@ -334,15 +359,19 @@ const Editor = forwardRef<typeof Editor, props>((props, ownRef) => {
         const dom = parser.parseFromString(content, 'text/html');
         // Generate Lexical nodes from the DOM
         const nodesFromDom = $generateNodesFromDOM(editor, dom);
-        const firstNodeFromDom = nodesFromDom[0];
-        const firstNodeFromDomAs = firstNodeFromDom as ElementNode
-        const parentNode = sectionNode.getParent()
-        if (parentNode) {
-          const format = parentNode.getFormatType()
-          firstNodeFromDomAs.setFormat(format)
-          sectionNode.replace(firstNodeFromDomAs)
-        }
 
+
+          const firstNodeFromDom = nodesFromDom[0];
+          const firstNodeFromDomAs = firstNodeFromDom as ElementNode
+          const parentNode = sectionNode.getParent()
+          if (parentNode) {
+            const format = parentNode.getFormatType()
+
+            if (format) firstNodeFromDomAs.setFormat(format)
+
+            sectionNode.replace(firstNodeFromDomAs)
+          }
+        
       }
 
     })

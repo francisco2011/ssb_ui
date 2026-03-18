@@ -35,8 +35,8 @@ export default async function RootLayout({
   return (
     <html data-theme="dracula" lang="en" className={`${GeistSans.variable}`}>
       <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
-        </head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+      </head>
       <body>
 
         <main className="flex bg-gray-50 xs:text-xs sm:text-sm md:text-lg xl:text-xl 2xl:text-2xl">

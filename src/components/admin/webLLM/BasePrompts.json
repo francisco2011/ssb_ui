@@ -19,6 +19,10 @@
     {
         "value": "Re-write the paragraph or phrase in a professional style, only output result,do not explain, apply to: ",
         "option": "Make professional"
+    },
+    {
+        "value": "extract tags, return as json array, apply to: ",
+        "option": "Extract tags"
     }
 
 ]

@@ -49,7 +49,7 @@ export default function TagsDisplay({ allTags, rootPath }: Props): JSX.Element {
 
         <>
 
-            <div className="">
+            <div className="flex justify-center">
 
                 <button
                     className={''}

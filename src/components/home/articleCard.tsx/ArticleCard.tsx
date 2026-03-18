@@ -21,13 +21,13 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
     const service = new ContentService()
 
     useEffect(() => {
-            if (post.contents && post.contents.length > 0){
-            const titleUrl =   post.contents.find(c => c.type == ContentType.titleRender)
-            const descriptionUrl =   post.contents.find(c => c.type == ContentType.descriptionRender)
+        if (post.contents && post.contents.length > 0) {
+            const titleUrl = post.contents.find(c => c.type == ContentType.titleRender)
+            const descriptionUrl = post.contents.find(c => c.type == ContentType.descriptionRender)
             var previewContent = post.contents.find(c => c.type == ContentType.preview);
-         
-            if(titleUrl && titleUrl.url){
-                
+
+            if (titleUrl && titleUrl.url) {
+
                 const getTitle = async () => {
 
                     var titleHtml = await service.GetExternalContentAsStr(titleUrl.url)
@@ -36,8 +36,8 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
 
                 getTitle()
             }
-            
-            if(descriptionUrl && descriptionUrl.url){
+
+            if (descriptionUrl && descriptionUrl.url) {
                 const getDescription = async () => {
 
                     var descriptionHtml = await service.GetExternalContentAsStr(descriptionUrl.url)
@@ -47,12 +47,12 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
                 getDescription()
             }
 
-            if(previewContent && previewContent.url) setPreviewUrl(previewContent.url)
-            
+            if (previewContent && previewContent.url) setPreviewUrl(previewContent.url)
+
         }
 
     }, [])
-    
+
 
 
 
@@ -61,26 +61,31 @@ export default function ArticleCard({ post, onTagClickCallback }: Props) {
 
             {
                 previewUrl ?
-                    <figure className="h-full w-[30%] object-cover">
-                        <img 
-                            src={previewUrl} />
-                    </figure>
+                    <>
+                        <figure className="h-full w-[0%] lg:w-[30%] xl:w-[30%] 2xl:w-[30%]">
+                            <a href={"/home/post/" + post.id}>
+                                <img
+                                    className=" object-cover hidden lg:block xl:block 2xl:block"
+                                    src={previewUrl} />
+                            </a>
+                        </figure>
+                    </>
                     : null
             }
 
-            <div className="card-body w-[70%]">
-                <h6 className="text-right">
+            <div className="card-body h-full w-[70%]">
+                <h6 className="text-right text-sm">
                     {format(post.createdAt, "yyyy-MM-dd")}
                 </h6>
                 <div className="card-title">
                     <Link className="line-clamp-2 break-all" href={"/home/post/" + post.id} dangerouslySetInnerHTML={{ __html: titleHtml }}></Link>
                 </div>
 
-                <div className="line-clamp-2" dangerouslySetInnerHTML={{ __html: descriptionHtml }}></div>
-                <div className="card-actions justify-end line-clamp-2">
+                <div className="line-clamp-2 text-sm" dangerouslySetInnerHTML={{ __html: descriptionHtml }}></div>
+                <div className="card-actions mt-0 justify-end hidden lg:block xl:block 2xl:block">
 
                     {
-                        post.tags.map(c => <div key={c} onClick={() => onTagClickCallback([c])} className="badge badge-outline cursor-pointer">{c}</div>)
+                        post.tags.map(c => <div key={c} onClick={() => onTagClickCallback([c])} className="badge text-sm badge-outline cursor-pointer">{c}</div>)
                     }
 
                 </div>

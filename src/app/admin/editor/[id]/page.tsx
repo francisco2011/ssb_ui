@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createRef, forwardRef, useContext, useEffect, useRef, useState } from 'react';
+import React, { createElement, createRef, forwardRef, useContext, useEffect, useRef, useState } from 'react';
 
 import PostModel from '~/models/PostModel';
 import PostService from '~/services/PostService';
@@ -19,6 +19,7 @@ import { Toaster, toast } from 'sonner'
 import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faSave } from '@fortawesome/free-solid-svg-icons';
+import TagSectionGenerator from '~/components/admin/editor/SectionReplaceHelpers/TagSectionGenerator';
 
 
 export default function PostEditor() {
@@ -171,11 +172,11 @@ export default function PostEditor() {
     var newImages = await saveImgs(images, "imgBody")
 
     if (metadata.imgModel && metadata.imgModel.src) {
-      if(metadata.imgModel.src.startsWith('http')){
+      if (metadata.imgModel.src.startsWith('http')) {
         await saveImgsWithUrl([{ src: metadata.imgModel.src, imgId: metadata.imgModel.name }], "preview")
-      }else{
+      } else {
         await saveImgs([{ src: metadata.imgModel.src, imgId: metadata.imgModel.name }], "preview")
-      } 
+      }
 
     }
 
@@ -261,6 +262,7 @@ export default function PostEditor() {
 
     const sectionTitle = sections.sections.find(c => c.tag == "{{title}}")
     const sectionDescription = sections.sections.find(c => c.tag == "{{description}}")
+    const sectionTags = sections.sections.find(c => c.tag == "{{tags}}")
 
     if (sectionTitle) {
       // @ts-ignore
@@ -274,12 +276,21 @@ export default function PostEditor() {
       sectionDescription.contentHtml = descriptionHtml
     }
 
+
+    ///replace content from external sections 
+
+    if (sectionTags && tags && tags.length > 0) {
+
+      var newSectionGenerator = new TagSectionGenerator(tags)
+      //@ts-ignore
+      editorRef.current.replaceSingleContent(newSectionGenerator, "{{tags}}")
+    }
+
     //@ts-ignore
     editorRef.current.replaceContent(sections.sections.map(c => c.contentHtml),
       sections.sections.map(c => c.tag));
 
-    ///replace content from external sections 
-
+    
 
     //@ts-ignore
     const mainContentAsHtml = editorRef.current.toHtml()

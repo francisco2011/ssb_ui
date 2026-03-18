@@ -19,16 +19,16 @@ export default function TagsDisplay({ tag, onTagClicked }: Props): JSX.Element {
         <>
             {isClicked ?
                 <li onClick={(e) => onClick(tag.term) }
-                    className="cursor-pointer px-2 py-1 relative text-gray-500 bg-gray-100 rounded-badge hover:shadow shadow-teal-700 outline outline-teal-600 border border-gray-800">
+                    className="text-md x:text-xs xs:text-xs sm:text-xs cursor-pointer px-2 py-1 relative text-gray-500 bg-gray-100 rounded-badge hover:shadow shadow-teal-700 outline outline-teal-600 border border-gray-800">
 
                     <a>
                         {tag.term}
                     </a >
-                    <span className="absolute bg-gray-200 text-gray-900 px-2 py-1 text-xs font-bold rounded-full -top-3 -right-3">{tag.ocurrences > 99 ? '99+' : tag.ocurrences}</span>
+                    <span className="absolute bg-gray-200 text-gray-900 px-2 py-1 font-bold rounded-full -top-3 -right-3">{tag.ocurrences > 99 ? '99+' : tag.ocurrences}</span>
 
                 </li > :
                 <li onClick={(e) => onClick(tag.term)}
-                    className="cursor-pointer xl:text-xl px-2 py-1 relative text-gray-500 bg-gray-100 rounded-badge select-none hover:shadow hover:shadow-teal-700 hover:outline hover:outline-teal-600 border border-gray-800">
+                    className="text-md x:text-xs xs:text-xs sm:text-xs cursor-pointer px-2 py-1 relative text-gray-500 bg-gray-100 rounded-badge select-none hover:shadow hover:shadow-teal-700 hover:outline hover:outline-teal-600 border border-gray-800">
 
                     <a>
                         {tag.term}
